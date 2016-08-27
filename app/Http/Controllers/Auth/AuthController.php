@@ -6,6 +6,7 @@ use App\User;
 use App\UserInformation;
 use Validator;
 use Auth;
+use Session;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -92,7 +93,7 @@ class AuthController extends Controller
         $user_info->save();
 
         Auth::guard($this->getGuard())->login($user);
-
+        $request->session()->flash('success', 'Register Completed!');
         return redirect($this->redirectPath());
     }
     /**
@@ -113,5 +114,18 @@ class AuthController extends Controller
     //custom login error message
     protected function getFailedLoginMessage(){
         return "Username หรือ Password ผิดพลาด";
+    }
+
+    public function authenticated($request, $user)
+    {
+        $request->session()->flash('success', 'Logged in as ' . $user->username);
+        return redirect($this->redirectPath());
+    }
+
+    public function logout()
+    {
+        Auth::guard($this->getGuard())->logout();
+        Session::flash('success', 'You have been successfully logged out!');
+        return redirect($this->redirectAfterLogout);
     }
 }

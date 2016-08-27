@@ -28,18 +28,69 @@ function updateClock ()
 	   	$("#clock").html(currentTimeString);
 	   }
 
+function preloading(){
+	$.each($('#UserQueue tr'),function(i,row){
+		$(row).find('#within').html('<div class="preloader-wrapper small active">'
+	    	+'<div class="spinner-layer spinner-blue-only">'
+			      +'<div class="circle-clipper left">'
+			       +' <div class="circle"></div>'
+			      +'</div><div class="gap-patch">'
+			       +' <div class="circle"></div>'
+			      +'</div><div class="circle-clipper right">'
+			       +' <div class="circle"></div>'
+			     +' </div>'
+			    +'</div>'
+			 +' </div>');
+	});
+
+	$.each($('#AllQueue tr'),function(i,row){
+		$(row).find('#remaining').html('<div class="preloader-wrapper small active">'
+	    	+'<div class="spinner-layer spinner-blue-only">'
+			      +'<div class="circle-clipper left">'
+			       +' <div class="circle"></div>'
+			      +'</div><div class="gap-patch">'
+			       +' <div class="circle"></div>'
+			      +'</div><div class="circle-clipper right">'
+			       +' <div class="circle"></div>'
+			     +' </div>'
+			    +'</div>'
+			 +' </div>');
+
+	});
+
+}
 $(document).ready(function()
 {
-   setInterval('updateClock()', 1000);
-   setInterval('remaining()', 1000);
-   $(".button-collapse").sideNav();
+	preloading();
+	setInterval('updateClock()', 1000);
+	setInterval('remaining()', 1000);
+	$(".button-collapse").sideNav();
 	$('.datepicker').pickadate({
 		selectMonths: true, // Creates a dropdown to control month
 	    selectYears: 100 // Creates a dropdown of 15 years to control year
 	});
+
 });
 function remaining(){
    var now = new Date();
+   $.each($('#UserQueue tr'),function(i,row){
+      var end = $(row).find('td:eq(2)').attr('id');
+      $(row).find('#within').countdown(end)
+      .on('update.countdown', function(event) {
+        var format = '%H:%M:%S';
+        if(event.offset.totalDays > 0) {
+          format = '%-d day%!d ' + format;
+        }
+        if(event.offset.weeks > 0) {
+          format = '%-w week%!w ' + format;
+        }
+        $(this).html(event.strftime(format));
+      })
+      .on('finish.countdown', function(event) {
+        $(this).html('หมดเวลา').parent().addClass('color red lighten-2');
+          $(this).parent().fadeOut('slow');
+      });
+   })
    $.each($('#AllQueue tr'),function(i,row){
       var end = $(row).find('td:eq(4)').attr('id');
       $(row).find('#remaining').countdown(end)
@@ -55,7 +106,7 @@ function remaining(){
       })
       .on('finish.countdown', function(event) {
         $(this).html('หมดเวลา').parent().addClass('color red lighten-2');
-          console.log($(this).parent().fadeOut('slow'));
+          $(this).parent().fadeOut('slow');
       });
    })
 }

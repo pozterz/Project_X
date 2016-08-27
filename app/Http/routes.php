@@ -20,13 +20,8 @@ Route::get('/test', function () {
     return view('test');
 });
 
-Route::get('progress','ProgressController@index');
 
-use App\MainQueue;
-Route::get('/test2', function () {
-	$mainqueue = MainQueue::where('status','ready')->orWhere('status','begin')->orderBy('start','asc')->paginate(10);
-    return view('material.index2',compact('mainqueue'));
-});
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -41,5 +36,7 @@ Route::get('/test2', function () {
 
 Route::group(['middleware' => 'web'], function () {
     Route::auth();
-    Route::get('/index', 'MainController@index');
+    Route::get('/index','MainController@Index');
+    Route::get('/reserve/{q_id}','MainController@Reserve');
+    Route::post('/reserve/{q_id}','MainController@PostReserve');
 });

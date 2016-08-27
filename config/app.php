@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Bangkok',
 
     /*
     |--------------------------------------------------------------------------
@@ -156,6 +156,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         'Artisaninweb\SoapWrapper\ServiceProvider',
+        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
 
     ],
 

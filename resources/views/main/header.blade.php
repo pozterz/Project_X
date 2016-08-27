@@ -1,7 +1,7 @@
-<ul id="dropdown1" class="dropdown-content">
-  <li><a href="{{ url('profile') }}"><i class="fa fa-user"></i> Profile</a></li>
-  <li class="divider"></li>
-  <li><a href="{{ url('logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+<ul id="nav_dropdown" class="dropdown-content">
+    <li><a href="{{ url('profile') }}"><i class="fa fa-user"></i> Profile</a></li>
+    <li class="divider"></li>
+    <li><a href="{{ url('logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
 </ul>
 <nav class="blue lighten-1 z-depth-2">
     <div class="navbar-fixed container">
@@ -10,21 +10,45 @@
         <ul class="right hide-on-med-and-down">
             <li><a href="{{ url('index') }}"><i class="fa fa-home"></i> Home</a></li>
             @if(Auth::guest())
-                <li><a href="{{ url('login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
-                <li><a href="{{ url('register') }}"><i class="fa fa-pencil"></i> Register</a></li>
-
+            <li><a href="{{ url('login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
+            <li><a href="{{ url('register') }}"><i class="fa fa-pencil"></i> Register</a></li>
             @else
-                <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ Auth::user()->username }} <i class="fa fa-caret-down"></i></a></li>
+            <li><a class="dropdown-button" data-beloworigin="true" data-hover="true" href="#!" data-activates="nav_dropdown">{{ Auth::user()->username }}  <i class="fa fa-caret-down"></i></a></li>
             @endif
         </ul>
         <ul class="side-nav" id="mobile-demo">
-           <li><a href="{{ url('index') }}"><i class="fa fa-home"></i> Home</a></li>
-           @if(Auth::guest())
-               <li><a href="{{ url('login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
-               <li><a href="{{ url('register') }}"><i class="fa fa-pencil"></i> Register</a></li>
-           @else
-               <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ Auth::user()->username }} <i class="fa fa-caret-down"></i></a></li>
-           @endif
+            
+            @if(Auth::guest())
+            <li>
+                <div style="background: rgba(0,0,0,0.3);">
+                    <div class="userView">
+                        <img class="background" src="http://static1.squarespace.com/static/524d09ece4b05018590c5c59/t/5260e196e4b055fef802e254/1382080921506/sea-sanctuaries-siteimage01.jpg"></img>
+                        <a href="{{ url('profile') }}"> <img src="http://110.77.148.80:8080/eqanavy/image/icon2/User03589.png" width="54px" class="circle responsive-img" > </a>
+                        <a href="#!"><p class="flow-text white-text"> Guest </p> </a>
+                    </div>
+                </div>
+            </li>
+            <li><div class="divider"></div></li>
+            <li><a href="{{ url('index') }}"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="{{ url('login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
+            <li><a href="{{ url('register') }}"><i class="fa fa-pencil"></i> Register</a></li>
+            @else
+            <li>
+             <div style="background: rgba(0,0,0,0.3);">
+                <div class="userView">
+                    <img class="background" src="http://static1.squarespace.com/static/524d09ece4b05018590c5c59/t/5260e196e4b055fef802e254/1382080921506/sea-sanctuaries-siteimage01.jpg"></img>
+                   
+                    <a href="{{ url('profile') }}"> <img src="https://graph.facebook.com/100005406396686/picture?width=800" width="54px" class="circle responsive-img" > </a>
+                    <a href="{{ url('profile') }}"><p class="flow-text white-text"> {{ Auth::user()->user_info->name }} </p></a>
+
+                    </div>
+                </div>
+            </li>
+            <li><div class="divider"></div></li>
+            <li><a href="{{ url('index') }}"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="{{ url('profile') }}"><i class="fa fa-user"></i> Profile</a></li>
+            <li><a href="{{ url('logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+            @endif
         </ul>
     </div>
 </nav>

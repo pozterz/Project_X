@@ -11,7 +11,7 @@
 
 		<link rel="stylesheet"  type="text/css" href="{{ url('css/reset.css') }}">
 	    <!-- Fonts -->
-	    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
+	    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
  		<link rel="icon" href="{{ url('icon.png') }}">
 	    <!-- Styles -->
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
@@ -37,4 +37,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
     <script src="{{ url('js/jquery.countdown.min.js')}}"></script>
     <script src="{{ url('js/pagejs.js')}}"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    @yield('js')
 </html>

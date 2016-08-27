@@ -1,9 +1,9 @@
 @extends('main.template') @section('content')
 <div class="container">
 	<div class="row">
-		<div class="col m3 l3"> </div>
-		<div class="col s12 m6 l6">
-			<div class="content card center">
+		<div class="col l3"> </div>
+		<div class="col s12 m12 l6">
+			<div class="content card center z-depth-2">
 				<div class="card-content">
 					<form  role="form" method="POST" action="{{ url('/login') }}">
 					<span class="card-title">Login</span>
@@ -38,10 +38,10 @@
 					  </div>
 					  <div class="row">
 					  	<div class="center">
-					  		<button type="submit" class="btn waves-effect waves-light">
-							<i class="fa fa-btn fa-sign-in"></i> Login
-						</button> 
-							<a class="btn waves-effect waves-light" href="{{ url('/password/reset') }}"><i class="fa fa-btn fa-key"></i> Forgot Your Password?</a>
+					  		<button type="submit" class="btn waves-effect waves-blue blue">
+								<i class="fa fa-btn fa-sign-in"></i> Login
+							</button> 
+							<a class="btn waves-effect waves-blue blue" href="{{ url('/password/reset') }}"><i class="fa fa-btn fa-key"></i> Forgot Your Password?</a>
 						</div>
 					  </div>
 					</form>

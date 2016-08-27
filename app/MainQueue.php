@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class MainQueue extends Model
 {
 	protected $dates = [
+        'opentime',
 		'start',
 		'end',
 		'created_at',
 		'updated_at',
 	];
+
     public function users()
     {
         return $this->belongsTo(User::class);

@@ -3,9 +3,9 @@
 @section('content')
 <div class="container">
 	<div class="row">
-		<div class="col m3 l3"> </div>
+		<div class="col s12 m2 l2"> </div>
 			<div class="col s12 m8 l8">
-				<div class="content card center">
+				<div class="content card center z-depth-2">
 					<div class="card-content">
 						<form role="form" method="POST" action="{{ url('/register') }}">
 							<span class="card-title">Register</span>
@@ -62,57 +62,59 @@
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
-									<input id="card_id" type="text" name="card_id" class="validate{{ $errors->has('card_id') ? ' invalid' : '' }}" value="{{ old('card_id') }}" pattern="[0-9].{12}">
+									<input id="card_id" type="text" name="card_id" class="validate{{ $errors->has('card_id') ? ' invalid' : '' }}" value="{{ old('card_id') }}" pattern="[0-9].{12}"  length="13">
 									@if ($errors->has('card_id'))
-										<label for="card_id" data-error="{{ $errors->first('card_id') }}">รหัสบัตรประชาชน</label>
+										<label for="card_id" data-error="{{ $errors->first('card_id') }}">Card ID</label>
 									@else
-										<label for="card_id" data-error="Card ID had 13 digits and number only" data-success="Validated">รหัสบัตรประชาชน</label>
+										<label for="card_id" data-error="Card ID had 13 digits and number only" data-success="Validated">Card ID</label>
 									@endif
 								</div>
 							</div>
 							<div class="row">
 								<div class="col s12">
-									<label for="gender">เพศ</label>
-									<input class="with-gap" name="gender" type="radio" id="genderm" value="male" checked/>
-									<label for="genderm">Male</label> &nbsp;
-									<input class="with-gap" name="gender" type="radio" id="genderf" value="female"/>
-									<label for="genderf">Female</label>
+									<p style="color:#9e9e9e;">
+										Gender : 
+										<input class="with-gap" name="gender" type="radio" id="genderm" value="male" checked/>
+										<label for="genderm">Male</label> &nbsp;
+										<input class="with-gap" name="gender" type="radio" id="genderf" value="female"/>
+										<label for="genderf">Female</label>
+									</p>
 								</div>
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
 									<textarea id="address" type="text" name="address" class="materialize-textarea validate{{ $errors->has('address') ? ' invalid' : '' }}" rows="4" cols="45">{{ old('address') }}</textarea> 
 									@if ($errors->has('address'))
-										<label for="address" data-error="{{ $errors->first('address') }}">ที่อยู่</label>
+										<label for="address" data-error="{{ $errors->first('address') }}">Address</label>
 									@else
-										<label for="address">ที่อยู่</label>
+										<label for="address">Address</label>
 									@endif
 								</div>
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
-									<input id="tel" type="text" name="tel" class="validate{{ $errors->has('tel') ? ' invalid' : '' }}" value="{{ old('tel') }}" pattern="[0-9].{9}">
-									@if ($errors->has('card_id'))
-										<label for="tel" data-error="{{ $errors->first('tel') }}">หมายเลขโทรศัพท์</label>
+									<input id="tel" type="text" name="tel" class="validate{{ $errors->has('tel') ? ' invalid' : '' }}" value="{{ old('tel') }}" pattern="[0-9].{9}" length="10">
+									@if ($errors->has('tel'))
+										<label for="tel" data-error="{{ $errors->first('tel') }}">Phone</label>
 									@else
-										<label for="tel" data-error="Phone number had 10 digits and number only" data-success="Validated">หมายเลขโทรศัพท์</label>
+										<label for="tel" data-error="Phone number had 10 digits and number only" data-success="Validated">Phone</label>
 									@endif
 								</div>
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
 									<input id="birthday" type="date" name="birthday" class="datepicker" value="{{ old('birthday') }}">
-									@if ($errors->has('card_id'))
-										<label for="birthday" data-error="{{ $errors->first('birthday') }}">วัน เดือน ปีเกิด</label>
+									@if ($errors->has('birthday'))
+										<label for="birthday" data-error="{{ $errors->first('birthday') }}">Birthday</label>
 									@else
-										<label for="birthday">วัน เดือน ปีเกิด</label>
+										<label for="birthday">Birthday</label>
 									@endif
 								</div>
 							</div>
 							<input type="hidden" name="ip" value="{{Request::getClientIp()}}">
 							<div class="row">
 						  	<div class="center">
-						  		<button type="submit" class="btn waves-effect waves-light">
+						  		<button type="submit" class="btn waves-effect waves-light blue">
 									<i class="fa fa-btn fa-user-plus"></i> Register
 								</button> 
 							</div>

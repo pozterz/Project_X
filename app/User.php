@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -28,14 +29,12 @@ class User extends Authenticatable
         return $this->hasOne(UserInformation::class);
     }
     public function mainqueue(){
-        return $this->hasOne(MainQueue::class);
+        return $this->hasMany(MainQueue::class);
     }
 
     public function userqueue()
     {
         return $this->hasMany(UserQueue::class)->orderBy('queue_time');
     }
-    public function owns($user,$userqueue){
-        return $user->id == $userqueue->user_id; 
-    }
+    
 }
