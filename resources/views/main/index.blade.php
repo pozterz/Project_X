@@ -1,7 +1,7 @@
 @extends('main.template')
 
 @section('content')
-<div class="container">
+<div class="ctn"
 	<div class="row">
 		<div class="content">
 			<div id="clock"></div><br/>
@@ -16,6 +16,8 @@
 									<tr>
 										<th>#</th>
 										<th>Queue Name</th>
+										<th>Service Time</th>
+										<th>Service/Mins</th>
 										<th>Queue Time</th>
 										<th>Within</th>
 										<th>Verify Key</th>
@@ -27,6 +29,8 @@
 									<tr>
 										<td>{{ $key+1 }}</td>
 										<td>{{ $queue_detail[$key][0]->queue_name }}</td>
+										<td>{{ $queue_detail[$key][0]->opentime->format('d M H:i') }}</td>
+										<td>{{ $queue_detail[$key][0]->service_time }}</td>
 										<td id="{{ $uq->queue_time }}">{{ $uq->queue_time->format("d M H:i") }}</td>
 										<td id="within"></td>
 										<td><button type="button" class="btn tooltipped waves-effect waves-light red lighten-2" data-position="right" data-delay="50" data-tooltip="{{ $uq->queue_captcha }}" >Show</button></td>
@@ -47,6 +51,8 @@
 										<th>#</th>
 										<th>Queue Name</th>
 										<th>Counter</th>
+										<th>Service time</th>
+										<th>Service/Mins</th>
 										<th>Start</th>
 										<th>End</th>
 										<th>Ramaining</th>
@@ -62,6 +68,8 @@
 										<td>{{ $key+1 }}</td>
 										<td>{{ $mq->queue_name }}</td>
 										<td>{{ $mq->counter }}</td>
+										<td>{{ $mq->opentime->format("d M H:i") }}</td>
+										<td>{{ $mq->service_time }}</td>
 										<td>{{ $mq->start->format("d M H:i") }}</td>
 										<td id="{{ $mq->end }}">{{ $mq->end->format("d M H:i") }}</td>
 										<td id="remaining"></td>
@@ -92,7 +100,6 @@
 			</div>
 		</div>
 	</div>
-</div>
 @endsection
 
 @section('js')

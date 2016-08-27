@@ -74,7 +74,7 @@ $(document).ready(function()
 function remaining(){
    var now = new Date();
    $.each($('#UserQueue tr'),function(i,row){
-      var end = $(row).find('td:eq(2)').attr('id');
+      var end = $(row).find('td:eq(4)').attr('id');
       $(row).find('#within').countdown(end)
       .on('update.countdown', function(event) {
         var format = '%H:%M:%S';
@@ -92,7 +92,7 @@ function remaining(){
       });
    })
    $.each($('#AllQueue tr'),function(i,row){
-      var end = $(row).find('td:eq(4)').attr('id');
+      var end = $(row).find('td:eq(6)').attr('id');
       $(row).find('#remaining').countdown(end)
       .on('update.countdown', function(event) {
         var format = '%H:%M:%S';

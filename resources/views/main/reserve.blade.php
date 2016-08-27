@@ -11,13 +11,16 @@
 					@if($mainqueue)
 					 <ul class="collection with-header">
 						<li class="collection-header">
-							<h5 class="flow-text"><i class="fa fa-hashtag"></i> Activity name : {{$mainqueue->queue_name}} <p class="right" id="remaining"></p></h5>
+							<h5 class="flow-text"><i class="fa fa-hashtag"></i> Activity name : {{$mainqueue->queue_name}} 
 							<br>
 						</li>
 						<form action="" method="POST">
 							{{ csrf_field() }}
 							<li class="collection-item">
 								Counter : {{ $mainqueue->counter }}
+							</li>
+							<li class="collection-item">
+								Remaining : <span id="remaining"></span>
 							</li>
 							<li class="collection-item">
 								Service time : {{ $mainqueue->opentime->format("d M | H:i") }}  | {{ $mainqueue->service_time }} Minutes/User
