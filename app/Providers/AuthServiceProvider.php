@@ -29,6 +29,6 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('show_userqueue', function($user,$userqueue) {            
             return $user->owns($user,$userqueue);   // and define owns method in User model     
         }); 
-        //
+        
     }
 }

@@ -37,6 +37,8 @@ Route::get('/test', function () {
 Route::group(['middleware' => 'web'], function () {
     Route::auth();
     Route::get('/index','MainController@Index');
+    Route::get('/admin','AdminController@Index');
+    Route::get('/admin/{cmd}','AdminController@getCmd');
     Route::get('/reserve/{q_id}','MainController@Reserve');
     Route::post('/reserve/{q_id}','MainController@PostReserve');
 });

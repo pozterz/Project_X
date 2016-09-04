@@ -15,7 +15,7 @@ class UserQueue extends Migration
         Schema::create('user_queues', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('queue_id')->unsigned()->index();
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->unsigned()->index();
             $table->string('queue_captcha',40);
             $table->dateTime('queue_time');
             $table->string('ip',20);
