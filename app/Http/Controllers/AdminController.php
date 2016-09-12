@@ -36,7 +36,7 @@ class AdminController extends Controller
         return view('admin.edituser',compact('user'));
     }
     public function PostEdit(Request $req){
-        $user = User::find();
+        $user = User::find($req->id);
         echo $user;
     }
     public function DeleteUser($id){
