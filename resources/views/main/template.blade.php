@@ -14,7 +14,7 @@
 	    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
  		<link rel="icon" href="{{ asset('icon.png') }}">
 	    <!-- Styles -->
-		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
 		<link rel="stylesheet" type="text/css" href="{{ url('/')}}{{ elixir('css/all.css') }}">
 
 </head>
@@ -34,7 +34,8 @@
 </body>
 <!-- JavaScripts -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+    <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
     <script src="{{ asset('js/jquery.countdown.min.js')}}"></script>
     <script src="{{ url('/')}}{{ elixir('js/all.js')}}"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>

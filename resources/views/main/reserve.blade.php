@@ -4,8 +4,7 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col l3"> </div>
-		<div class="col s12 m12 l7">
+		<div class="col s12 m12 l8 offset-l2">
 			<div class="card">
 				<div class="card-panel white z-depth-1">
 					@if($mainqueue)
@@ -23,13 +22,13 @@
 								Remaining : <span id="remaining"></span>
 							</li>
 							<li class="collection-item">
-								Service time : {{ $mainqueue->opentime->format("d M | H:i") }}  | {{ $mainqueue->service_time }} Minutes/User
+								Service time : {{ $mainqueue->opentime->format("j F Y | H:i") }}  | {{ $mainqueue->service_time }} Minutes/User
 							</li>
 							<li class="collection-item">
-								Open : {{ $mainqueue->start->format("d M | H:i") }}
+								Open : {{ $mainqueue->start->format("j F Y | H:i") }}
 							</li>
 							<li class="collection-item">
-								<p id="{{$mainqueue->end}}">End : {{ $mainqueue->end->format("d M | H:i") }}</p>
+								<p id="{{$mainqueue->end}}">End : {{ $mainqueue->end->format("j F Y | H:i") }}</p>
 							</li>
 							<li class="collection-item">
 								Status : 
@@ -46,7 +45,7 @@
 								By :  {{ $owner->user_info->name }}
 							</li>
 							<li class="collection-item">
-								Created : {{ $mainqueue->created_at->format("d M | H:i") }}
+								Created : {{ $mainqueue->created_at->format("j F Y | H:i") }}
 							</li>
 							<li class="collection-item">
 								{!! app('captcha')->display()!!}

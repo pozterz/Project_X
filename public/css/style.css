@@ -56,7 +56,8 @@ label:not(.active):after {
 .side-nav li {
     padding: 0px;
 }
-
+.grow { transition: all .2s ease-in-out; }
+.grow:hover { transform: scale(1.1); }
 .side-nav .userView {
     padding-top: 25px;
     overflow: hidden;

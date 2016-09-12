@@ -29,9 +29,9 @@
 									<tr>
 										<td>{{ $key+1 }}</td>
 										<td>{{ $queue_detail[$key][0]->queue_name }}</td>
-										<td>{{ $queue_detail[$key][0]->opentime->format('d M H:i') }}</td>
+										<td>{{ $queue_detail[$key][0]->opentime->format('j M H:i') }}</td>
 										<td>{{ $queue_detail[$key][0]->service_time }}</td>
-										<td id="{{ $uq->queue_time }}">{{ $uq->queue_time->format("d M H:i") }}</td>
+										<td id="{{ $uq->queue_time }}">{{ $uq->queue_time->format("j M H:i") }}</td>
 										<td id="within"></td>
 										<td><button type="button" class="btn tooltipped waves-effect waves-light red lighten-2" data-position="right" data-delay="50" data-tooltip="{{ $uq->queue_captcha }}" >Show</button></td>
 									</tr>
@@ -68,10 +68,10 @@
 										<td>{{ $key+1 }}</td>
 										<td>{{ $mq->queue_name }}</td>
 										<td>{{ $mq->counter }}</td>
-										<td>{{ $mq->opentime->format("d M H:i") }}</td>
+										<td>{{ $mq->opentime->format("j M H:i") }}</td>
 										<td>{{ $mq->service_time }}</td>
-										<td>{{ $mq->start->format("d M H:i") }}</td>
-										<td id="{{ $mq->end }}">{{ $mq->end->format("d M H:i") }}</td>
+										<td>{{ $mq->start->format("j M H:i") }}</td>
+										<td id="{{ $mq->end }}">{{ $mq->end->format("j M H:i") }}</td>
 										<td id="remaining"></td>
 										@if($mq->status == 'ready')
 											<td><p class="blue-text">Ready</p></td>

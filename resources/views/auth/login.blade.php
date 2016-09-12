@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="col l3"> </div>
 		<div class="col s12 m12 l6">
-			<div class="content card center z-depth-2">
+			<div class="content card z-depth-2">
 				<div class="card-content">
 					<form  role="form" method="POST" action="{{ url('/login') }}">
 					<span class="card-title">Login</span>

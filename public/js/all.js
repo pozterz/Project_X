@@ -1,6 +1,5 @@
-function updateClock ()
-{
- 		var THmonth = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+function updateClock (){
+ 		/*var THmonth = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 	 	var currentTime = new Date();
 	 	var currentDate = currentTime.getDate();
 	 	var currentMonth = currentTime.getMonth();
@@ -24,10 +23,15 @@ function updateClock ()
 
 	  	// Compose the string for display
 	  	var currentTimeString = currentDate + " " + THmonth[currentMonth]+ " " + (currentYear+543) +"  เวลาปัจจุบัน : "+ currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
-
-	   	$("#clock").html(currentTimeString);
-	   }
-
+*/
+		var now = moment().locale('th').format('D MMMM YYYY HH:mm:ss');
+	   	$("#clock").html(now);
+}
+function TimeUpdate(){
+	updateClock();
+	remaining();
+	setTimeout(TimeUpdate,1000)
+}
 function preloading(){
 	$.each($('#UserQueue tr'),function(i,row){
 		$(row).find('#within').html('<div class="preloader-wrapper small active">'
@@ -59,18 +63,7 @@ function preloading(){
 	});
 
 }
-$(document).ready(function()
-{
-	preloading();
-	setInterval('updateClock()', 1000);
-	setInterval('remaining()', 1000);
-	$(".button-collapse").sideNav();
-	$('.datepicker').pickadate({
-		selectMonths: true, // Creates a dropdown to control month
-	    selectYears: 100 // Creates a dropdown of 15 years to control year
-	});
 
-});
 function remaining(){
    var now = new Date();
    $.each($('#UserQueue tr'),function(i,row){
@@ -110,5 +103,13 @@ function remaining(){
       });
    })
 }
-
+$(document).ready(function(){
+	preloading();
+	$(".button-collapse").sideNav();
+	$('.datepicker').pickadate({
+		selectMonths: true, // Creates a dropdown to control month
+	    selectYears: 100 // Creates a dropdown of 15 years to control year
+	});
+	TimeUpdate();
+});
 //# sourceMappingURL=all.js.map

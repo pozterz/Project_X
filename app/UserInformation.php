@@ -14,6 +14,7 @@ class UserInformation extends Model
     protected $fillable = [
         'name','id','card_id', 'tel','address','birthday','gender'
     ];
+    protected $dates = ['birthday'];
     public function user()
     {
         return $this->belongsTo(User::class);
