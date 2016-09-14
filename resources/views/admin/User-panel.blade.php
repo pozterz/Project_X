@@ -19,7 +19,7 @@
 										<th data-field="username">Level</th>
 										<th data-field="gender">Gender</th>
 										<th data-field="profile">Profile</th>
-										<th data-field="userqueue">Users's Queue</th>
+										<th data-field="userqueue">Queue</th>
 										<th data-field="history">History</th>
 										<th data-field="delete">Delete</th>
 									</tr>

@@ -2,7 +2,7 @@
 <nav class="blue lighten-1 z-depth-2">
     <div class="navbar-fixed container nav-wrapper">
         <a href="{{ url('index') }}" class="brand-logo">Queue System</a>
-        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="fa fa-bars"></i></a>
         <ul class="right hide-on-med-and-down">
             <li><a href="{{ url('index') }}"><i class="fa fa-home"></i> Home</a></li>
             @if(Auth::guest())

@@ -70,15 +70,18 @@
 										<td>{{ $mq->counter }}</td>
 										<td>{{ $mq->opentime->format("j M H:i") }}</td>
 										<td>{{ $mq->service_time }}</td>
-										<td>{{ $mq->start->format("j M H:i") }}</td>
+										<td id="{{ $mq->start }}">{{ $mq->start->format("j M H:i") }}</td>
 										<td id="{{ $mq->end }}">{{ $mq->end->format("j M H:i") }}</td>
 										<td id="remaining"></td>
-										@if($mq->status == 'ready')
-											<td><p class="blue-text">Ready</p></td>
-										@elseif($mq->status == 'begin')
-											<td><p class="green-text">Begin</p></td>
+										<td id="status">
+										@if($mq->start > Carbon\Carbon::now())
+											<p class="blue-text">Ready</p>
+										@elseif($mq->end >= Carbon\Carbon::now() && $mq->start <= Carbon\Carbon::now())
+											<p class="green-text">Begin</p>
+										@elseif($mq->end->addMinutes(5) > Carbon\Carbon::now())
+											<p class="red-text">Closed</p>
 										@endif
-
+										</td>
 										@if(!Auth::guest())
 											<td>
 												<a href="{{ url('reserve') }}/{{ $mq->id }}">

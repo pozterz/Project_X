@@ -65,7 +65,7 @@ function preloading(){
 }
 
 function remaining(){
-   var now = new Date();
+   var now = new Date().getTime();
    $.each($('#UserQueue tr'),function(i,row){
       var end = $(row).find('td:eq(4)').attr('id');
       $(row).find('#within').countdown(end)
@@ -81,11 +81,12 @@ function remaining(){
       })
       .on('finish.countdown', function(event) {
         $(this).html('หมดเวลา').parent().addClass('color red lighten-2');
-          $(this).parent().fadeOut('slow');
       });
    })
    $.each($('#AllQueue tr'),function(i,row){
-      var end = $(row).find('td:eq(6)').attr('id');
+      var end = $(row).find('td:eq(5)').attr('id');
+      var flag = 0;
+      if(new Date(end).getTime() < now){ flag = 1; end = $(row).find('td:eq(6)').attr('id'); }
       $(row).find('#remaining').countdown(end)
       .on('update.countdown', function(event) {
         var format = '%H:%M:%S';
@@ -98,8 +99,14 @@ function remaining(){
         $(this).html(event.strftime(format));
       })
       .on('finish.countdown', function(event) {
-        $(this).html('หมดเวลา').parent().addClass('color red lighten-2');
-          $(this).parent().fadeOut('slow');
+      	if(flag){
+      		var status = $(this).closest('td').next();
+      		status.html("<p class='red-text'>Closed</p>");
+      		$(this).html('หมดเวลา').parent().addClass('color red lighten-2');
+      	}else{
+      		var status = $(this).closest('td').next();
+      		status.html("<p class='green-text'>Begin</p>");
+      	}
       });
    })
 }
