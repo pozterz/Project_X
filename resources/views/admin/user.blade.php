@@ -8,38 +8,38 @@
 				@if(isset($user))
 					<div class="card-content">
 						<ul class="collection with-header">
-							<li class="collection-item">
+							<li class="collection-item pink-border">
 								<h4>
 									<span class="card-title flow-text">
-										Profile #{{$user->id}}
+										<i class="fa fa-user"></i> Profile #{{$user->id}}
 									</span>
 								</h4>
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Name : {{ $user->user_info->name }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item yellow-border">
 								Gender : {{ $user->user_info->gender }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item orange-border">
 								Username : {{ $user->username }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item green-border">
 								Level : {{ $user->level }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item purple-border">
 								E-mail : {{ $user->email }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item red-border">
 								Card ID : {{ $user->user_info->card_id }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item lime-border">
 								Address : {{ $user->user_info->address }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item indigo-border">
 								Tel. : {{ $user->user_info->tel }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item amber-border">
 								Birthday : {{ $user->user_info->birthday->format('j F Y') }}
 							</li>
 						</ul>

@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col s12 m2 l2"> </div>
 			<div class="col s12 m8 l8">
-				<div class="content card  z-depth-2">
+				<div class="content card z-depth-2">
 					<div class="card-content">
 						<form role="form" method="POST" action="{{ url('/PostEdit') }}/{{$user->id}}">
 							<span class="card-title">Edit #{{$user->id}}</span>

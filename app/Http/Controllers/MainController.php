@@ -35,6 +35,10 @@ class MainController extends Controller
 		return view('main.index',compact('user_queue','queue_detail','mainqueue'));
 	}
 
+	public function Profile(){
+		return view('main.profile');
+	}
+
 	public function Reserve($q_id){
 		$mainqueue = MainQueue::find($q_id);
 		$owner = User::find($mainqueue->owner);

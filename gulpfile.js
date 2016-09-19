@@ -12,14 +12,18 @@ var elixir = require('laravel-elixir');
  */
 elixir(function (mix) {
 
+	mix.sass([
+    	'clockpicker.scss',
+    ]);
+
     mix.styles([
         'style.css',
     ]);
 
-     mix.scripts([
+    mix.scripts([
         'pagejs.js',
     ])
 
-     mix.version(['/css/all.css','/js/all.js']);
+     mix.version(['/css/all.css','/css/app.css','/js/all.js']);
 
 });

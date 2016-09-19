@@ -37,12 +37,18 @@ Route::get('/test', function () {
 Route::group(['middleware' => 'web'], function () {
     Route::auth();
     Route::get('/index','MainController@Index');
+    // Admin
     Route::get('/admin','AdminController@Index');
     Route::get('/admin/users','AdminController@ManageUser');
     Route::get('/admin/user/{id}','AdminController@GetUser');
     Route::get('/admin/edit/{id}','AdminController@EditUser');
     Route::post('/admin/PostEdit/{id}','AdminController@PostEdit');
     Route::get('/admin/delete/{id}','AdminController@DeleteUser');
+    Route::get('/admin/activities','AdminController@Activities');
+    Route::get('/admin/NewActivity','AdminController@NewActivity');
+    Route::post('/admin/NewActivity','AdminController@PostNewActivity');
+    // User
     Route::get('/reserve/{q_id}','MainController@Reserve');
+    Route::get('/profile','MainController@Profile');
     Route::post('/reserve/{q_id}','MainController@PostReserve');
 });

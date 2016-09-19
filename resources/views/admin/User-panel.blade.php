@@ -7,8 +7,15 @@
 			<div class="card-panel">
 				<div class="card-content">
 					<span class="card-title flow-text">Manage Users</span><br/><br/>
-					<a href="{{ url('/admin') }}" title="Back"><button type="button" class="left btn-floating btn waves-effect waves-light red"><i class="fa fa-chevron-circle-left"></i></button></a>
-					<button type="button" class="right btn-floating btn waves-effect waves-light green"><i class="fa fa-plus"></i></button>
+					<a href="{{ url('/admin') }}" title="Back">
+						<button type="button" class="left btn-floating btn waves-effect waves-light red"><i class="fa fa-chevron-circle-left"></i>
+						</button>
+					</a>
+					<a href="{{ url('/admin/AddUser') }}" title="Add new user">
+						<button type="button" class="right btn-floating btn waves-effect waves-light green">
+							<i class="fa fa-plus"></i>
+						</button>
+					</a>
 					<div class="row">
 						<div class="content">
 							<table class="centered bordered highlight responsive-table">

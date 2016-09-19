@@ -16,7 +16,8 @@
 	    <!-- Styles -->
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
 		<link rel="stylesheet" type="text/css" href="{{ url('/')}}{{ elixir('css/all.css') }}">
-
+		<link rel="stylesheet" type="text/css" href="{{ url('/')}}{{ elixir('css/app.css') }}">
+		
 </head>
 <body>
 	<!-- NAV BAR -->
@@ -35,6 +36,7 @@
 <!-- JavaScripts -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+    <script src="{{ url('js/materialize.clockpicker.js') }}"></script>
     <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
     <script src="{{ asset('js/jquery.countdown.min.js')}}"></script>
     <script src="{{ url('/')}}{{ elixir('js/all.js')}}"></script>

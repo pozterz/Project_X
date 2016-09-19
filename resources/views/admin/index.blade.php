@@ -38,3 +38,10 @@
 </div>
 
 @endsection
+@section('js')
+	@if(Session::has('success'))
+		<script>
+			Materialize.toast('{{ Session::get('success') }}',3000,'rounded');
+		</script>
+	@endif
+@endsection

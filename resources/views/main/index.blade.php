@@ -56,6 +56,7 @@
 										<th>Start</th>
 										<th>End</th>
 										<th>Ramaining</th>
+										<th>Count</th>
 										<th>Status</th>
 										@if(!Auth::guest())
 											<th>จอง</th>
@@ -73,6 +74,7 @@
 										<td id="{{ $mq->start }}">{{ $mq->start->format("j M H:i") }}</td>
 										<td id="{{ $mq->end }}">{{ $mq->end->format("j M H:i") }}</td>
 										<td id="remaining"></td>
+										<td>{{ $mq->current_count}}/{{$mq->max_count}}</td>
 										<td id="status">
 										@if($mq->start > Carbon\Carbon::now())
 											<p class="blue-text">Ready</p>
