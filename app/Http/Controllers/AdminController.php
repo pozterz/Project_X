@@ -88,6 +88,11 @@ class AdminController extends Controller
         return Redirect('/admin');
     }
 
+    public function DeleteActivity($id){
+        $Queue = MainQueue::find($id);
+        $Queue->delete();
+        return Redirect('/admin/activities');
+    }
     public function ConvertDate($date,$time){
         $split = explode(':',$time);
         if(count($split) != 2){

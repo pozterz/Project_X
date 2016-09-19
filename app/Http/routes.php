@@ -47,6 +47,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/admin/activities','AdminController@Activities');
     Route::get('/admin/NewActivity','AdminController@NewActivity');
     Route::post('/admin/NewActivity','AdminController@PostNewActivity');
+    Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
     // User
     Route::get('/reserve/{q_id}','MainController@Reserve');
     Route::get('/profile','MainController@Profile');
