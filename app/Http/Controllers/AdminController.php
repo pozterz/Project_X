@@ -9,20 +9,22 @@ use Validator;
 use App\Http\Requests;
 use App\User;
 use App\MainQueue;
+use App\UserInformation;
 use Illuminate\Support\Facades\Input;
 use Auth;
+use Gate;
+use Session;
 
 class AdminController extends Controller
 {
-	public function UserCheck(){
-		if(Auth::guest()) return false;
-		if(Auth::user()->level != 'admin') return false;
-		return true;
-	}
+	
+    public function __construct(){
+        if(Gate::denies('isAdmin',Auth::user())){
+            abort(404);
+        }
+    }
+
     public function Index(){
-    	if(!$this->UserCheck()){
-			return Redirect('/index');
-    	}
     	return view('admin.index');
     }
     public function ManageUser(){
@@ -33,13 +35,67 @@ class AdminController extends Controller
         $user = User::find($id);
         return view('admin.user',compact('user'));
     }
+    public function NewUser(){
+        return view('admin.newUser');
+    }
+    public function PostNewUser(Request $request){
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|max:255|min:6|unique:users',
+            'password' => 'required|confirmed|min:6',
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'gender' => 'required',
+            'card_id' => 'required|min:13|max:13|unique:user_informations',
+            'address' => 'required|max:255|min:25',
+            'tel' => 'required|min:10|max:10',
+            'birthday' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return view('admin.newUser')->withErrors($validator);
+        }
+
+        $user = User::create([
+            'username' => $request->get('username'),
+            'password' => $request->get('password'),
+            'email' => $request->get('email'),
+            'level' => 'user',
+            'ip' => $request->get('ip'),
+        ]);
+        
+        $user_info = new UserInformation;
+        $user_info->user_id = $user->id;
+        $user_info->name = $request->get('name');
+        $user_info->gender = $request->get('gender');
+        $user_info->card_id = $request->get('card_id');
+        $user_info->address = $request->get('address');
+        $user_info->tel = $request->get('tel');
+        $user_info->birthday = $this->ConvertDate($request->get('birthday'),'00:00');
+        $user_info->save();
+
+        $request->session()->flash('success', 'Add User Completed!');
+        return Redirect('/admin');
+    }
+
     public function EditUser($id){
         $user = User::find($id);
         return view('admin.edituser',compact('user'));
     }
     public function PostEdit(Request $req,$id){
         $user = User::find($id);
-        echo $user;
+        $user->username = $req->get('username');
+        $info = UserInformation::where('user_id',$id)->firstOrFail();
+        $info->name = $req->get('name');
+        $info->gender = $req->get('gender');
+        $info->card_id = $req->get('card_id');
+        $info->address = $req->get('address');
+        $info->tel = $req->get('tel');
+        $info->birthday = $this->ConvertDate($req->get('birthday'),'00:00');
+        $user->save();
+        $info->save();
+
+        $req->session()->flash('success', 'Edit Completed!');
+        return Redirect('/admin');
     }
     public function DeleteUser($id){
         $user = User::find($id);
@@ -48,7 +104,7 @@ class AdminController extends Controller
     }
 
     public function Activities(){
-        $mainqueues = MainQueue::all();
+        $mainqueues = MainQueue::paginate(20);
         return view('admin.Activity-panel',compact('mainqueues'));
     }
 
@@ -57,7 +113,7 @@ class AdminController extends Controller
     }
 
     public function PostNewActivity(Request $request){
-         $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(),[
             'queue_name' => 'required|string|max:150',
             'counter' => 'required|string|max:100',
             'opentime' => 'required',

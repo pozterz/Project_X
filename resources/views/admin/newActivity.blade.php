@@ -9,7 +9,7 @@
 					<div class="card-content">
 						<span class="card-title flow-text">New Activities</span><br/><br/>
 						<div class="row">
-							<form class="col s12" method="POST" action="{{ url('/admin/NewActivity') }}">
+							<form class="col s12" method="POST" action="{{ url('/admin/newActivity') }}">
 								{!! csrf_field() !!}
 								<div class="row">
 									<div class="input-field col s12">

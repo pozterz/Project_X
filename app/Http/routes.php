@@ -38,15 +38,19 @@ Route::group(['middleware' => 'web'], function () {
     Route::auth();
     Route::get('/index','MainController@Index');
     // Admin
+        // user
     Route::get('/admin','AdminController@Index');
     Route::get('/admin/users','AdminController@ManageUser');
     Route::get('/admin/user/{id}','AdminController@GetUser');
+    Route::get('/admin/AddUser','AdminController@NewUser');
+    Route::post('/admin/AddUser','AdminController@PostNewUser');
     Route::get('/admin/edit/{id}','AdminController@EditUser');
     Route::post('/admin/PostEdit/{id}','AdminController@PostEdit');
     Route::get('/admin/delete/{id}','AdminController@DeleteUser');
+        // activity
     Route::get('/admin/activities','AdminController@Activities');
-    Route::get('/admin/NewActivity','AdminController@NewActivity');
-    Route::post('/admin/NewActivity','AdminController@PostNewActivity');
+    Route::get('/admin/newActivity','AdminController@NewActivity');
+    Route::post('/admin/newActivity','AdminController@PostNewActivity');
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
     // User
     Route::get('/reserve/{q_id}','MainController@Reserve');

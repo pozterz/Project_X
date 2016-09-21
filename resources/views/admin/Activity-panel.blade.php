@@ -13,7 +13,7 @@
 							<i class="fa fa-chevron-circle-left"></i>
 						</button>
 					</a>
-					<a href="{{ url('admin/NewActivity') }}" title="New Activity">
+					<a href="{{ url('/admin/newActivity') }}" title="New Activity">
 						<button type="button" class="right btn-floating btn waves-effect waves-light green">
 							<i class="fa fa-plus"></i>
 						</button>
@@ -64,6 +64,10 @@
 									@endforeach
 								</tbody>
 							</table>
+							<br/>
+							<div align="center">
+								{!! $mainqueues->links() !!}
+							</div>
 							@endif
 						</div>
 					</div>

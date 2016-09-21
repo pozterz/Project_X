@@ -8,7 +8,8 @@
 				<div class="card-content">
 					<span class="card-title flow-text">Manage Users</span><br/><br/>
 					<a href="{{ url('/admin') }}" title="Back">
-						<button type="button" class="left btn-floating btn waves-effect waves-light red"><i class="fa fa-chevron-circle-left"></i>
+						<button type="button" class="left btn-floating btn waves-effect waves-light red">
+							<i class="fa fa-chevron-circle-left"></i>
 						</button>
 					</a>
 					<a href="{{ url('/admin/AddUser') }}" title="Add new user">

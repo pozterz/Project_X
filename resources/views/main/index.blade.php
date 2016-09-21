@@ -41,6 +41,7 @@
 						</div>
 					</div>
 				@endif
+				@if(count($mainqueue))
 					<div class="card-panel z-depth-2">
 						<div class="card-content">
 							<h4 class="card-title">All Activity</h4>
@@ -76,11 +77,13 @@
 										<td id="remaining"></td>
 										<td>{{ $mq->current_count}}/{{$mq->max_count}}</td>
 										<td id="status">
-										@if($mq->start > Carbon\Carbon::now())
+										@if($mq->current_count == $mq->max_count)
+											<p class="red-text">Full</p>
+										@elseif($mq->start > Carbon\Carbon::now())
 											<p class="blue-text">Ready</p>
 										@elseif($mq->end >= Carbon\Carbon::now() && $mq->start <= Carbon\Carbon::now())
 											<p class="green-text">Begin</p>
-										@elseif($mq->end->addMinutes(5) > Carbon\Carbon::now())
+										@elseif($mq->end < Carbon\Carbon::now())
 											<p class="red-text">Closed</p>
 										@endif
 										</td>
@@ -102,6 +105,76 @@
 						</div>
 					</div>
 				</div>
+				@else
+					<div class="card-panel">
+						<div class="card-content">
+							<h4 class="card-title">No Avaiable Activity</h4>
+							</div>
+						</div>
+					</div>
+				@endif
+				@if(count($passedqueue))
+				<div class="card-panel z-depth-2">
+						<div class="card-content">
+							<h4 class="card-title">Passed Activity</h4>
+							<div class="divider"></div>
+							<table class="bordered highlight responsive-table centered">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Queue Name</th>
+										<th>Counter</th>
+										<th>Service time</th>
+										<th>Service/Mins</th>
+										<th>Start</th>
+										<th>End</th>
+										<th>Ramaining</th>
+										<th>Count</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody id="PassedQueue">
+									@foreach($passedqueue as $key => $passed)
+									<tr>
+										<td>{{ $key+1 }}</td>
+										<td>{{ $passed->queue_name }}</td>
+										<td>{{ $passed->counter }}</td>
+										<td>{{ $passed->opentime->format("j M H:i") }}</td>
+										<td>{{ $passed->service_time }}</td>
+										<td id="{{ $passed->start }}">{{ $passed->start->format("j M H:i") }}</td>
+										<td id="{{ $passed->end }}">{{ $passed->end->format("j M H:i") }}</td>
+										<td id="remaining"></td>
+										<td>{{ $passed->current_count}}/{{$passed->max_count}}</td>
+										<td id="status">
+										@if($passed->end < Carbon\Carbon::now())
+											<p class="red-text">Closed</p>
+										@endif
+										</td>
+										@if(!Auth::guest())
+											<td>
+												<a href="{{ url('reserve') }}/{{ $passed->id }}">
+													<button class="btn waves-effect waves-light blue" type="button"><i class="fa fa-check"></i> จอง</button>
+												</a>
+											</td>
+										@endif
+									</tr>
+									@endforeach
+								</tbody>
+							</table>
+							<br/>
+							<div align="center">
+								{!! $passedqueue->render() !!}
+							</div>
+						</div>
+					</div>
+				@else
+					<div class="card-panel">
+						<div class="card-content">
+							<h4 class="card-title">No Passed Activity</h4>
+							</div>
+						</div>
+					</div>
+				@endif
 			</div>
 		</div>
 	</div>

@@ -26,9 +26,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies($gate);
 
-        $gate->define('show_userqueue', function($user,$userqueue) {            
-            return $user->owns($user,$userqueue);   // and define owns method in User model     
-        }); 
+        $gate->define('isAdmin',function($user){
+            if($user->hasRole('administrator')){
+                return true;
+            }
+        });
         
     }
 }

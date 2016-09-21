@@ -9,53 +9,63 @@
 				<div class="card-panel white z-depth-1">
 					@if($mainqueue)
 					 <ul class="collection with-header">
-						<li class="collection-header">
+						<li class="collection-header red-border">
 							<h5 class="flow-text"><i class="fa fa-hashtag"></i> Activity name : {{$mainqueue->queue_name}} 
 							<br>
 						</li>
 						<form action="" method="POST">
 							{{ csrf_field() }}
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Counter : {{ $mainqueue->counter }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Remaining : <span id="remaining"></span>
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Service time : {{ $mainqueue->opentime->format("j F Y | H:i") }}  | {{ $mainqueue->service_time }} Minutes/User
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Open : {{ $mainqueue->start->format("j F Y | H:i") }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								<p id="{{$mainqueue->end}}">End : {{ $mainqueue->end->format("j F Y | H:i") }}</p>
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Status : 
-								@if($mainqueue->status == 'ready')
-									<u class="blue-text">Ready</u>
-								@elseif($mainqueue->status == 'begin')
-									<u class="green-text">Begin</u>
+								@if($mainqueue->current_count == $mainqueue->max_count)
+									<span class="red-text">Full</span>
+								@elseif($mainqueue->start > Carbon\Carbon::now())
+									<span class="blue-text">Ready</span>
+								@elseif($mainqueue->end >= Carbon\Carbon::now() && $mainqueue->start <= Carbon\Carbon::now())
+									<span class="green-text">Begin</span>
+								@elseif($mainqueue->end->addMinutes(5) > Carbon\Carbon::now())
+									<span class="red-text">Closed</span>
 								@endif
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Count : {{ $mainqueue->current_count }}/{{ $mainqueue->max_count }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								By :  {{ $owner->user_info->name }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								Created : {{ $mainqueue->created_at->format("j F Y | H:i") }}
 							</li>
-							<li class="collection-item">
+							<li class="collection-item blue-border">
 								{!! app('captcha')->display()!!}
 
 							</li>
 							<li class="collection-item center">
 								<input type="hidden" name="id" value="{{ $mainqueue->id }}">
+								@if($mainqueue->current_count == $mainqueue->max_count || $mainqueue->end < Carbon\Carbon::now())
+								<button type="button" class="btn waves-effect waves-light blue disabled">
+									<i class="fa fa-btn fa-plus-circle"></i> Reserve
+								</button>
+								@else
 								<button type="submit" class="btn waves-effect waves-light blue">
 									<i class="fa fa-btn fa-plus-circle"></i> Reserve
-								</button> 
+								</button>
+								@endif
 							</li>
 						</form>
 					  </ul>

@@ -18,6 +18,7 @@ use App\Http\Requests;
 class MainController extends Controller
 {
 	public function Index(){
+		//dd(Auth::user()->userqueue);
 		if(Auth::check()){
 			$user_queue = Auth::user()->userqueue()->where('queue_time','>',Carbon::now()->toDateTimeString())->get();
 		}
@@ -30,9 +31,10 @@ class MainController extends Controller
 			}
 		}
 		
-		$mainqueue = MainQueue::where('end','>',Carbon::now()->toDateTimeString())->where(function($q){$q->where('status','ready')->orWhere('status','begin');})->orderBy('end','asc')->paginate(10);
+		$mainqueue = MainQueue::where('end','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
 
-		return view('main.index',compact('user_queue','queue_detail','mainqueue'));
+		return view('main.index',compact('user_queue','queue_detail','mainqueue','passedqueue'));
 	}
 
 	public function Profile(){
@@ -61,20 +63,41 @@ class MainController extends Controller
 			$qt = Carbon::parse($MainQueueData->opentime)->addMinutes($MainQueueData->service_time);
 		}
 		if(!$userq){
-			$cap = str_shuffle('acvobihzk');
-			UserQueue::create([
-				"queue_id" => $id,
-				"user_id" => $userid,
-				"queue_captcha" => $cap,
-				"queue_time" => $qt,
-				]);
-			$request->session()->flash('success','Reserved Success.');
-			return redirect('/index');
+			if(!$this->isFull($id)){
+				$cap = str_shuffle('acvobihzk');
+				UserQueue::create([
+					"queue_id" => $id,
+					"user_id" => $userid,
+					"queue_captcha" => $cap,
+					"queue_time" => $qt,
+					]);
+				$tmp = MainQueue::find($id);
+				$tmp->current_count+=1;
+				$tmp->save();
+				$request->session()->flash('success','Reserved Success.');
+				return redirect('/index');
+			}else{
+				$request->session()->flash('success','This service is full.');
+				return back();
+			}
 		}else{
 			$request->session()->flash('success','Already reserved this service.');
 			return back();
 		}
 
+	}
+	private function isFull($Qid){
+		$count = UserQueue::where('queue_id',$Qid)->count();
+		$mcount = MainQueue::where('id',$Qid)->first();
+		if($mcount->current_count != $count && $mcount->current_count+$count <= $mcount->max_count){
+			$tmp = MainQueue::find($Qid);
+			$tmp->current_count = $count;
+			$tmp->save();
+		}
+		if($mcount->current_count < $mcount->max_count && $count < $mcount->max_count){
+			return false;
+		}
+		return true;
 	}
 
 }

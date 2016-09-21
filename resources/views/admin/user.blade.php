@@ -18,28 +18,28 @@
 							<li class="collection-item blue-border">
 								Name : {{ $user->user_info->name }}
 							</li>
-							<li class="collection-item yellow-border">
+							<li class="collection-item blue-border">
 								Gender : {{ $user->user_info->gender }}
 							</li>
-							<li class="collection-item orange-border">
+							<li class="collection-item blue-border">
 								Username : {{ $user->username }}
 							</li>
-							<li class="collection-item green-border">
+							<li class="collection-item blue-border">
 								Level : {{ $user->level }}
 							</li>
-							<li class="collection-item purple-border">
+							<li class="collection-item blue-border">
 								E-mail : {{ $user->email }}
 							</li>
-							<li class="collection-item red-border">
+							<li class="collection-item blue-border">
 								Card ID : {{ $user->user_info->card_id }}
 							</li>
-							<li class="collection-item lime-border">
+							<li class="collection-item blue-border">
 								Address : {{ $user->user_info->address }}
 							</li>
-							<li class="collection-item indigo-border">
+							<li class="collection-item blue-border">
 								Tel. : {{ $user->user_info->tel }}
 							</li>
-							<li class="collection-item amber-border">
+							<li class="collection-item blue-border">
 								Birthday : {{ $user->user_info->birthday->format('j F Y') }}
 							</li>
 						</ul>
