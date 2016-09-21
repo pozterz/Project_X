@@ -13,7 +13,6 @@ use App\UserInformation;
 use Illuminate\Support\Facades\Input;
 use Auth;
 use Gate;
-use Session;
 
 class AdminController extends Controller
 {
