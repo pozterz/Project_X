@@ -56,8 +56,14 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/admin/newActivity','AdminController@PostNewActivity');
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
     Route::get('/admin/userList/{id}','AdminController@QueueUserList');
+
+        //check
+    Route::get('/admin/check','AdminController@QueueCheck');
+
     // User
     Route::get('/reserve/{q_id}','MainController@Reserve');
     Route::get('/profile','MainController@Profile');
+    Route::get('/editprofile','MainController@EditProfile');
+    Route::post('/editprofile','MainController@UpdateProfile');
     Route::post('/reserve/{q_id}','MainController@PostReserve');
 });

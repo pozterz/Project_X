@@ -194,10 +194,18 @@ class AdminController extends Controller
     }
 
     //----------------------------------
+    //-         Queue Check Section
+    //----------------------------------
+
+    public function QueueCheck(){
+        return view('admin.check');
+    }
+
+    //----------------------------------
     //-         Function Section
     //----------------------------------
 
-    public function ConvertDate($date,$time){
+    private function ConvertDate($date,$time){
         $split = explode(':',$time);
         if(count($split) != 2){
             $split = array();

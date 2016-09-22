@@ -45,7 +45,7 @@
 						</ul>
 						<div class="center">
 							<a href="{{ url('/index') }}" title="Back"><button type="button" class="btn waves-effect waves-light red"><i class="fa fa-arrow-left"></i>  Back</button></a>
-							<a href="{{ url('user/edit') }}/{{ Auth::user()->id }}"><button type="button" class="btn waves-effect waves-light blue"><i class="fa fa-edit"></i> Edit</button></a>
+							<a href="{{ url('/editprofile') }}""><button type="button" class="btn waves-effect waves-light blue"><i class="fa fa-edit"></i> Edit</button></a>
 						</div>
 					</div>
 				@endif

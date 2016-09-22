@@ -33,8 +33,29 @@ class MainController extends Controller
 	}
 
 	public function Profile(){
-		$this->isFull(24);
 		return view('main.profile');
+	}
+
+	public function EditProfile(){
+		$user = Auth::user();
+		return view('main.edit',compact('user'));
+	}
+	public function UpdateProfile(Request $req){
+		$id = Auth::user()->id;
+		$user = User::find($id);
+        $user->username = $req->get('username');
+        $info = UserInformation::where('user_id',$id)->firstOrFail();
+        $info->name = $req->get('name');
+        $info->gender = $req->get('gender');
+        $info->card_id = $req->get('card_id');
+        $info->address = $req->get('address');
+        $info->tel = $req->get('tel');
+        $info->birthday = $this->ConvertDate($req->get('birthday'),'00:00');
+        $user->save();
+        $info->save();
+
+        $req->session()->flash('success', 'Update Completed!');
+        return Redirect('/profile');
 	}
 
 	public function Reserve($q_id){
@@ -64,6 +85,7 @@ class MainController extends Controller
 						"user_id" => $userid,
 						"queue_captcha" => $cap,
 						"queue_time" => $qt,
+						"ip" => $request->get('ip'),
 						]);
 					$mainqueue = MainQueue::find($id);
 					$mainqueue->current_count+=1;
@@ -85,6 +107,7 @@ class MainController extends Controller
 		}
 
 	}
+
 	private function isFull($Qid){
 		$mainqueue = MainQueue::find($Qid);
 		$count = $mainqueue->userqueue->count();
@@ -97,5 +120,20 @@ class MainController extends Controller
 		}
 		return true;
 	}
+
+	private function ConvertDate($date,$time){
+        $split = explode(':',$time);
+        if(count($split) != 2){
+            $split = array();
+            $split[0] = 0;
+            $split[1] = 0;
+        }
+        $end_time = Carbon::parse($date)
+            ->startOfDay()
+            ->addHours($split[0])
+            ->addMinutes($split[1])
+            ->toDateTimeString();
+        return $end_time;
+    }
 
 }
