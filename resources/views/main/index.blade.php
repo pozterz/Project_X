@@ -7,7 +7,7 @@
 			<div id="clock"></div><br/>
 				<div class="col s12 m12 l12">
 				@if(count($user_queue))
-					<div class="card-panel">
+					<div class="card-panel z-depth-2">
 						<div class="card-content">
 							<h4 class="card-title">Reserved Queue</h4>
 							<div class="divider"></div>
@@ -23,14 +23,13 @@
 										<th>Verify Key</th>
 									</tr>
 								</thead>
-
 								<tbody id="UserQueue">
 									@foreach($user_queue as $key => $uq)
 									<tr>
 										<td>{{ $key+1 }}</td>
-										<td>{{ $queue_detail[$key][0]->queue_name }}</td>
-										<td>{{ $queue_detail[$key][0]->opentime->format('j M H:i') }}</td>
-										<td>{{ $queue_detail[$key][0]->service_time }}</td>
+										<td>{{ $uq->mainqueue->first()->queue_name }}</td>
+										<td>{{ $uq->mainqueue->first()->opentime->format("j M H:i") }}</td>
+										<td>{{ $uq->mainqueue->first()->service_time }}</td>
 										<td id="{{ $uq->queue_time }}">{{ $uq->queue_time->format("j M H:i") }}</td>
 										<td id="within"></td>
 										<td><button type="button" class="btn tooltipped waves-effect waves-light red lighten-2" data-position="right" data-delay="50" data-tooltip="{{ $uq->queue_captcha }}" >Show</button></td>
@@ -128,7 +127,6 @@
 										<th>Service/Mins</th>
 										<th>Start</th>
 										<th>End</th>
-										<th>Ramaining</th>
 										<th>Count</th>
 										<th>Status</th>
 									</tr>
@@ -143,20 +141,12 @@
 										<td>{{ $passed->service_time }}</td>
 										<td id="{{ $passed->start }}">{{ $passed->start->format("j M H:i") }}</td>
 										<td id="{{ $passed->end }}">{{ $passed->end->format("j M H:i") }}</td>
-										<td id="remaining"></td>
 										<td>{{ $passed->current_count}}/{{$passed->max_count}}</td>
 										<td id="status">
 										@if($passed->end < Carbon\Carbon::now())
 											<p class="red-text">Closed</p>
 										@endif
 										</td>
-										@if(!Auth::guest())
-											<td>
-												<a href="{{ url('reserve') }}/{{ $passed->id }}">
-													<button class="btn waves-effect waves-light blue" type="button"><i class="fa fa-check"></i> จอง</button>
-												</a>
-											</td>
-										@endif
 									</tr>
 									@endforeach
 								</tbody>

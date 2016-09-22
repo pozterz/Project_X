@@ -26,18 +26,27 @@ class AdminController extends Controller
     public function Index(){
     	return view('admin.index');
     }
+
+    //-------------------------
+    //     User Section
+    //-------------------------
+    
     public function ManageUser(){
         $users = User::paginate(20);
         return view('admin.User-panel',compact('users'));   
     }
+
     public function GetUser($id){
         $user = User::find($id);
         return view('admin.user',compact('user'));
     }
+
     public function NewUser(){
         return view('admin.newUser');
     }
+
     public function PostNewUser(Request $request){
+
         $validator = Validator::make($request->all(), [
             'username' => 'required|max:255|min:6|unique:users',
             'password' => 'required|confirmed|min:6',
@@ -80,6 +89,7 @@ class AdminController extends Controller
         $user = User::find($id);
         return view('admin.edituser',compact('user'));
     }
+
     public function PostEdit(Request $req,$id){
         $user = User::find($id);
         $user->username = $req->get('username');
@@ -96,12 +106,23 @@ class AdminController extends Controller
         $req->session()->flash('success', 'Edit Completed!');
         return Redirect('/admin');
     }
+
+    public function DeleteUserQueue($uq_id){
+        $Queue = MainQueue::find($id);
+        $Queue->delete();
+        return Redirect('/admin/activities');
+    }
+
     public function DeleteUser($id){
         $user = User::find($id);
         $user->delete();
         return Redirect('/admin/users');
     }
 
+    //-------------------------
+    //     Activity Section
+    //-------------------------
+    
     public function Activities(){
         $mainqueues = MainQueue::paginate(20);
         return view('admin.Activity-panel',compact('mainqueues'));
@@ -148,6 +169,10 @@ class AdminController extends Controller
         $Queue->delete();
         return Redirect('/admin/activities');
     }
+
+    //-------------------------
+    //     Function Section
+    //-------------------------
     public function ConvertDate($date,$time){
         $split = explode(':',$time);
         if(count($split) != 2){

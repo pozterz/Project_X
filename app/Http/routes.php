@@ -47,6 +47,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/admin/edit/{id}','AdminController@EditUser');
     Route::post('/admin/PostEdit/{id}','AdminController@PostEdit');
     Route::get('/admin/delete/{id}','AdminController@DeleteUser');
+    Route::get('/admin/deleteUserQueue/{uq_id}','AdminController@DeleteUserQueue');
         // activity
     Route::get('/admin/activities','AdminController@Activities');
     Route::get('/admin/newActivity','AdminController@NewActivity');
