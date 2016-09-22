@@ -56,7 +56,7 @@ class MainController extends Controller
 		}else{
 			$qt = Carbon::parse($last->queue_time)->addMinutes($mainqueue->service_time);
 		}
-		if($mainqueue->end >= Carbon\Carbon::now() && $mainqueue->start <= Carbon\Carbon::now()){
+		if($mainqueue->end >= Carbon::now() && $mainqueue->start <= Carbon::now()){
 			if(!$userq){
 				if(!$this->isFull($id)){
 					$cap = str_shuffle('acvkPb4c187b6');

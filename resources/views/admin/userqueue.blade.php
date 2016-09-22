@@ -21,7 +21,7 @@
 					</a>
 					<div class="row">
 						<div class="content">
-							@if(isset($userqueues))
+							@if(count($userqueues))
 							<table class="centered highlight bordered">
 								<thead>
 									<tr>
@@ -60,7 +60,7 @@
 											<a class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-check-circle"></i></a>
 										</td>
 										<td>
-											<a href="{{ url('admin/deleteActivities') }}/{{$userqueue->mainqueue->first()->id}}" class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')">
+											<a href="{{ url('admin/deleteUserQueue') }}/{{$userqueue->id}}" class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')">
 												<i class="fa fa-close"></i>
 											</a>
 										</td>
@@ -72,11 +72,13 @@
 							<div align="center">
 								{!! $userqueues->render() !!}
 							</div>
+							@else
+								<br/><br/><span class="card-title flow-text">No Reserved Queue</span>
 							@endif
 						</div>
 					</div>
 					@else
-						<span class="card-title flow-text">No Reserved Queue</span>
+						<span class="card-title flow-text">User not found.</span>
 					@endif
 				</div>
 			</div>
