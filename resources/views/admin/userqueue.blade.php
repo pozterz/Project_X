@@ -9,7 +9,7 @@
 				<div class="card-content">
 					@if(count($user))
 					<span class="card-title flow-text">Reserved Queue : {{$user->user_info->name}}</span><br/><br/>
-					<a href="{{ url('/admin') }}" title="Back">
+					<a href="{{ url('/admin/users') }}" title="Back">
 						<button type="button" class="left btn-floating btn waves-effect waves-light red">
 							<i class="fa fa-chevron-circle-left"></i>
 						</button>
