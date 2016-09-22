@@ -22,6 +22,7 @@
 					<div class="row">
 						<div class="content">
 							@if(count($userqueues))
+
 							<table class="centered highlight bordered">
 								<thead>
 									<tr>
@@ -72,13 +73,20 @@
 							<div align="center">
 								{!! $userqueues->render() !!}
 							</div>
+<<<<<<< HEAD
 							@else
 								<br/><br/><span class="card-title flow-text">No Reserved Queue</span>
+=======
+>>>>>>> master
 							@endif
 						</div>
 					</div>
 					@else
+<<<<<<< HEAD
 						<span class="card-title flow-text">User not found.</span>
+=======
+						<span class="card-title flow-text">No Reserved Queue</span>
+>>>>>>> master
 					@endif
 				</div>
 			</div>

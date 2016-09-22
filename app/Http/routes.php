@@ -48,8 +48,12 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/admin/PostEdit/{id}','AdminController@PostEdit');
     Route::get('/admin/userqueue/{id}','AdminController@ViewUserQueue');
     Route::get('/admin/delete/{id}','AdminController@DeleteUser');
+<<<<<<< HEAD
     Route::get('/admin/deleteUserQueue/{id}','AdminController@DeleteUserQueue');
     
+=======
+    Route::get('/admin/deleteUserQueue/{uq_id}','AdminController@DeleteUserQueue');
+>>>>>>> master
         // activity
     Route::get('/admin/activities','AdminController@Activities');
     Route::get('/admin/newActivity','AdminController@NewActivity');

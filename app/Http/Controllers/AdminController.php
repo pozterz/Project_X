@@ -28,9 +28,15 @@ class AdminController extends Controller
     	return view('admin.index');
     }
 
+<<<<<<< HEAD
     //----------------------------------
     //-         User Section
     //----------------------------------
+=======
+    //-------------------------
+    //     User Section
+    //-------------------------
+>>>>>>> master
     
     public function ManageUser(){
         $users = User::paginate(20);
@@ -47,6 +53,7 @@ class AdminController extends Controller
     }
 
     public function PostNewUser(Request $request){
+
         $validator = Validator::make($request->all(), [
             'username' => 'required|max:255|min:6|unique:users',
             'password' => 'required|confirmed|min:6',
@@ -107,10 +114,17 @@ class AdminController extends Controller
         return Redirect('/admin');
     }
 
+<<<<<<< HEAD
     public function ViewUserQueue($id){
         $user = User::find($id);
         $userqueues = UserQueue::where('user_id',$id)->paginate(20);
         return view('admin.userqueue',compact('user','userqueues'));
+=======
+    public function DeleteUserQueue($uq_id){
+        $Queue = MainQueue::find($id);
+        $Queue->delete();
+        return Redirect('/admin/activities');
+>>>>>>> master
     }
 
     public function DeleteUser($id){
@@ -119,6 +133,7 @@ class AdminController extends Controller
         return Redirect('/admin/users');
     }
 
+<<<<<<< HEAD
     public function DeleteUserQueue($id){
         $user = UserQueue::find($id);
         $user->mainqueue->first()->userqueue()->detach($user->id);
@@ -131,6 +146,11 @@ class AdminController extends Controller
     //----------------------------------
     //-         Activities Section
     //----------------------------------
+=======
+    //-------------------------
+    //     Activity Section
+    //-------------------------
+>>>>>>> master
     
     public function Activities(){
         $mainqueues = MainQueue::orderBy('created_at')->paginate(20);
@@ -182,10 +202,16 @@ class AdminController extends Controller
         return Redirect('/admin/activities');
     }
 
+<<<<<<< HEAD
     //----------------------------------
     //-         Function Section
     //----------------------------------
     
+=======
+    //-------------------------
+    //     Function Section
+    //-------------------------
+>>>>>>> master
     public function ConvertDate($date,$time){
         $split = explode(':',$time);
         if(count($split) != 2){
