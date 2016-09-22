@@ -73,7 +73,7 @@
 								{!! $userqueues->render() !!}
 							</div>
 							@else
-								<br/><br/><span class="card-title flow-text">No Reserved Queue</span>
+								<br/><br/><span class="card-title flow-text">No Reserved Queue.</span>
 							@endif
 						</div>
 					</div>
