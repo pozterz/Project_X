@@ -54,7 +54,7 @@ class MainController extends Controller
         $user->save();
         $info->save();
 
-        $req->session()->flash('success', 'Update Completed!');
+        $req->session()->flash('success', 'Update Complete.');
         return Redirect('/profile');
 	}
 
