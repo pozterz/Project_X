@@ -9,6 +9,7 @@ use Validator;
 use App\Http\Requests;
 use App\User;
 use App\MainQueue;
+use App\UserQueue;
 use App\UserInformation;
 use Illuminate\Support\Facades\Input;
 use Auth;
@@ -96,6 +97,13 @@ class AdminController extends Controller
         $req->session()->flash('success', 'Edit Completed!');
         return Redirect('/admin');
     }
+
+    public function ViewUserQueue($id){
+        $user = User::find($id);
+        $userqueues = UserQueue::where('user_id',$id)->paginate(20);
+        return view('admin.userqueue',compact('user','userqueues'));
+    }
+
     public function DeleteUser($id){
         $user = User::find($id);
         $user->delete();
@@ -103,7 +111,7 @@ class AdminController extends Controller
     }
 
     public function Activities(){
-        $mainqueues = MainQueue::paginate(20);
+        $mainqueues = MainQueue::orderBy('created_at')->paginate(20);
         return view('admin.Activity-panel',compact('mainqueues'));
     }
 
@@ -134,7 +142,7 @@ class AdminController extends Controller
         $Queue->end = $this->ConvertDate($request->get('end'),$request->get('end_time'));
         $Queue->current_count = 0;
         $Queue->max_count = $request->get('max_count');
-        $Queue->owner = Auth::user()->id;
+        $Queue->user_id = Auth::user()->id;
         $Queue->status = 'ready';
 
         $Queue->save();
@@ -145,6 +153,9 @@ class AdminController extends Controller
 
     public function DeleteActivity($id){
         $Queue = MainQueue::find($id);
+        foreach($Queue->userqueue as $userqueue){
+            $userqueue->delete();
+        }
         $Queue->delete();
         return Redirect('/admin/activities');
     }

@@ -14,14 +14,14 @@ class MainQueue extends Model
 		'updated_at',
 	];
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
     public function userqueue()
     {
-        return $this->hasMany(UserQueue::class);
+        return $this->belongsToMany(UserQueue::class);
     }
 
 }

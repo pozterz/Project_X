@@ -20,31 +20,26 @@ class MainController extends Controller
 	public function Index(){
 		//dd(Auth::user()->userqueue);
 		if(Auth::check()){
-			$user_queue = Auth::user()->userqueue()->where('queue_time','>',Carbon::now()->toDateTimeString())->get();
+			$user_queue = Auth::user()->userqueue()->orderBy('queue_time')->get();
 		}
 		else
 			$user_queue = null;
 
-		if(count($user_queue)){
-			foreach ($user_queue as $key => $value) {
-				$queue_detail[] = MainQueue::where('id',$value->queue_id)->get();
-			}
-		}
-		
 		$mainqueue = MainQueue::where('end','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		
 		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
 
-		return view('main.index',compact('user_queue','queue_detail','mainqueue','passedqueue'));
+		return view('main.index',compact('user_queue','mainqueue','passedqueue'));
 	}
 
 	public function Profile(){
+		$this->isFull(24);
 		return view('main.profile');
 	}
 
 	public function Reserve($q_id){
 		$mainqueue = MainQueue::find($q_id);
-		$owner = User::find($mainqueue->owner);
-		return view('main.reserve',compact('mainqueue','owner'));
+		return view('main.reserve',compact('mainqueue'));
 	}
 
 	public function PostReserve($id,Request $request){
@@ -52,28 +47,27 @@ class MainController extends Controller
 			'id' => 'required',
 			'g-recaptcha-response'=>'required|captcha',
 		]);
-
 		$userid = Auth::user()->id;
-		$userq = UserQueue::where('user_id',$userid)->where('queue_id',$id)->count();
-		$last = UserQueue::where('queue_id',$id)->orderBy('id', 'desc')->first();
+		$mainqueue = MainQueue::find($id);
+		$userq = $mainqueue->userqueue->contains('user_id',$userid);
+		$last = $mainqueue->userqueue->last();
 		if($last == null){
-			$qt = MainQueue::find($id)->opentime;
+			$qt = $mainqueue->opentime;
 		}else{
-			$MainQueueData = MainQueue::find($id);
-			$qt = Carbon::parse($MainQueueData->opentime)->addMinutes($MainQueueData->service_time);
+			$qt = Carbon::parse($last->queue_time)->addMinutes($mainqueue->service_time);
 		}
 		if(!$userq){
 			if(!$this->isFull($id)){
-				$cap = str_shuffle('acvobihzk');
-				UserQueue::create([
-					"queue_id" => $id,
+				$cap = str_shuffle('acvkPb4c187b6');
+				$createduq = UserQueue::create([
 					"user_id" => $userid,
 					"queue_captcha" => $cap,
 					"queue_time" => $qt,
 					]);
-				$tmp = MainQueue::find($id);
-				$tmp->current_count+=1;
-				$tmp->save();
+				$mainqueue = MainQueue::find($id);
+				$mainqueue->current_count+=1;
+				$mainqueue->save();
+				$mainqueue->userqueue()->attach($createduq->id);
 				$request->session()->flash('success','Reserved Success.');
 				return redirect('/index');
 			}else{
@@ -87,14 +81,13 @@ class MainController extends Controller
 
 	}
 	private function isFull($Qid){
-		$count = UserQueue::where('queue_id',$Qid)->count();
-		$mcount = MainQueue::where('id',$Qid)->first();
-		if($mcount->current_count != $count && $mcount->current_count+$count <= $mcount->max_count){
-			$tmp = MainQueue::find($Qid);
-			$tmp->current_count = $count;
-			$tmp->save();
+		$mainqueue = MainQueue::find($Qid);
+		$count = $mainqueue->userqueue->count();
+		if($mainqueue->current_count != $count && $mainqueue->current_count+$count <= $mainqueue->max_count){
+			$mainqueue->current_count = $count;
+			$mainqueue->save();
 		}
-		if($mcount->current_count < $mcount->max_count && $count < $mcount->max_count){
+		if($mainqueue->current_count < $mainqueue->max_count && $count < $mainqueue->max_count){
 			return false;
 		}
 		return true;

@@ -21,6 +21,6 @@ class UserQueue extends Model
     
     public function mainqueue()
     {
-        return $this->belongsTo(MainQueue::class);
+        return $this->belongsToMany(MainQueue::class);
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 class AuthController extends Controller
 {
     /*
@@ -80,8 +81,9 @@ class AuthController extends Controller
                 $request, $validator
             );
         }
-
+        
         $user = $this->create($request->all());
+
         $user_info = new UserInformation;
         $user_info->user_id = $user->id;
         $user_info->name = $request->get('name');
@@ -89,7 +91,7 @@ class AuthController extends Controller
         $user_info->card_id = $request->get('card_id');
         $user_info->address = $request->get('address');
         $user_info->tel = $request->get('tel');
-        $user_info->birthday = $request->get('birthday');
+        $user_info->birthday = $this->ConvertDate($request->get('birthday'),'00:00');
         $user_info->save();
 
         Auth::guard($this->getGuard())->login($user);
@@ -104,6 +106,7 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
+
         return User::create([
             'username' => $data['username'],
             'email' => $data['email'],
@@ -127,5 +130,19 @@ class AuthController extends Controller
         Auth::guard($this->getGuard())->logout();
         Session::flash('success', 'You have been successfully logged out!');
         return redirect($this->redirectAfterLogout);
+    }
+    public function ConvertDate($date,$time){
+        $split = explode(':',$time);
+        if(count($split) != 2){
+            $split = array();
+            $split[0] = 0;
+            $split[1] = 0;
+        }
+        $end_time = Carbon::parse($date)
+            ->startOfDay()
+            ->addHours($split[0])
+            ->addMinutes($split[1])
+            ->toDateTimeString();
+        return $end_time;
     }
 }

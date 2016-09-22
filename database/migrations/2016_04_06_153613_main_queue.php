@@ -23,11 +23,11 @@ class MainQueue extends Migration
             $table->enum('status',['ready','begin','ended'])->default('ready');
             $table->integer('current_count')->unsigned();
             $table->integer('max_count')->unsigned();
-            $table->integer('owner')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->timestamps();
         });
         Schema::table('main_queues',function(Blueprint $table){
-            $table->foreign('owner')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

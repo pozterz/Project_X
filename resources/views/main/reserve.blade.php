@@ -46,7 +46,7 @@
 								Count : {{ $mainqueue->current_count }}/{{ $mainqueue->max_count }}
 							</li>
 							<li class="collection-item blue-border">
-								By :  {{ $owner->user_info->name }}
+								By :  {{ $mainqueue->user->user_info->name }}
 							</li>
 							<li class="collection-item blue-border">
 								Created : {{ $mainqueue->created_at->format("j F Y | H:i") }}

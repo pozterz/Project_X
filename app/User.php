@@ -34,7 +34,7 @@ class User extends Authenticatable
 
     public function userqueue()
     {
-        return $this->hasMany(UserQueue::class)->orderBy('queue_time');
+        return $this->hasMany(UserQueue::class);
     }
 
     public function isAdmin($user) {

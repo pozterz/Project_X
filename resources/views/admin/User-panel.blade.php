@@ -6,7 +6,9 @@
 		<div class="col s12 m12 l12">
 			<div class="card-panel">
 				<div class="card-content">
-					<span class="card-title flow-text">Manage Users</span><br/><br/>
+					<span class="card-title flow-text">Manage Users </span>
+					<div class="chip amber lighten-3 right">{{ $users->total() }} Users</div><br/><br/>
+					
 					<a href="{{ url('/admin') }}" title="Back">
 						<button type="button" class="left btn-floating btn waves-effect waves-light red">
 							<i class="fa fa-chevron-circle-left"></i>
@@ -43,13 +45,15 @@
 											<a href="{{ url('admin/user') }}/{{$user->id}}" class="btn-floating waves-effect waves-light btn"><i class="fa fa-user"></i></a>
 										</td>
 										<td>
-											<a class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-calendar-check-o"></i></a>
+											<a href="{{ url('admin/userqueue') }}/{{$user->id}}" class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-calendar-check-o"></i></a>
 										</td>
 										<td>
 											<a  class="btn-floating waves-effect waves-light blue btn"><i class="fa fa-history"></i></a>
 										</td>
 										<td>
-											<a href="{{ url('admin/delete') }}/{{$user->id}}" class="btn-floating waves-effect waves-light red btn"><i class="fa fa-close"></i></a>
+											<a href="{{ url('admin/delete') }}/{{$user->id}}" class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')">
+												<i class="fa fa-close"></i>
+											</a>
 										</td>
 									</tr>
 									@endforeach
