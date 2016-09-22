@@ -188,6 +188,10 @@ class AdminController extends Controller
         return Redirect('/admin/activities');
     }
 
+    public function QueueUserList($id){
+        $mainqueue = MainQueue::find($id)->userqueue()->paginate(20);
+        return view('admin.userlist',compact('mainqueue'));
+    }
 
     //----------------------------------
     //-         Function Section

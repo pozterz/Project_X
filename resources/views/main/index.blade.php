@@ -41,6 +41,7 @@
 					</div>
 				@endif
 				@if(count($mainqueue))
+				
 					<div class="card-panel z-depth-2">
 						<div class="card-content">
 							<h4 class="card-title">All Activity</h4>

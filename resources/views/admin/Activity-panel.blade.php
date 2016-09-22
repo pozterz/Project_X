@@ -57,7 +57,7 @@
 											<a href="{{ url('admin/activities') }}/{{$mainqueue->id}}" class="btn-floating waves-effect waves-light btn"><i class="fa fa-info"></i></a>
 										</td>
 										<td>
-											<a class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-check-circle"></i></a>
+											<a href="{{ url('admin/userList') }}/{{$mainqueue->id}}" class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-check-circle"></i></a>
 										</td>
 										<td>
 											<a href="{{ url('admin/deleteActivities') }}/{{$mainqueue->id}}" class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')">

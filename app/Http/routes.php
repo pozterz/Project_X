@@ -48,7 +48,6 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/admin/PostEdit/{id}','AdminController@PostEdit');
     Route::get('/admin/userqueue/{id}','AdminController@ViewUserQueue');
     Route::get('/admin/delete/{id}','AdminController@DeleteUser');
-
     Route::get('/admin/deleteUserQueue/{id}','AdminController@DeleteUserQueue');
 
         // activity
@@ -56,6 +55,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/admin/newActivity','AdminController@NewActivity');
     Route::post('/admin/newActivity','AdminController@PostNewActivity');
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
+    Route::get('/admin/userList/{id}','AdminController@QueueUserList');
     // User
     Route::get('/reserve/{q_id}','MainController@Reserve');
     Route::get('/profile','MainController@Profile');
