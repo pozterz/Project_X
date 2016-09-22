@@ -49,7 +49,6 @@ class AdminController extends Controller
     }
 
     public function PostNewUser(Request $request){
-
         $validator = Validator::make($request->all(), [
             'username' => 'required|max:255|min:6|unique:users',
             'password' => 'required|confirmed|min:6',
@@ -115,6 +114,8 @@ class AdminController extends Controller
         $user = User::find($id);
         $userqueues = UserQueue::where('user_id',$id)->paginate(20);
         return view('admin.userqueue',compact('user','userqueues'));
+
+    }
 
     public function DeleteUser($id){
         $user = User::find($id);

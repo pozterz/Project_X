@@ -22,7 +22,6 @@
 					<div class="row">
 						<div class="content">
 							@if(count($userqueues))
-
 							<table class="centered highlight bordered">
 								<thead>
 									<tr>
