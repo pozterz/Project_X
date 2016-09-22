@@ -24,10 +24,10 @@
 					</a>
 				</div>
 				<div class="col s12 m4 l4">
-					<a href="{{ url('admin/log') }}">
+					<a href="{{ url('admin/check') }}">
 						<div class="grow card-panel z-depth-2 blue lighten-1">
 							<div class="card-content white-text">
-								<p class="flow-text"><i class="fa fa-bar-chart"></i>  View Queue History.</p>
+								<p class="flow-text"><i class="fa fa-bar-chart"></i>  Queue Check.</p>
 							</div>
 						</div>
 					</a>
