@@ -59,7 +59,7 @@
 						</div>
 					</div>
 					@else
-						<span class="card-title flow-text">User not found.</span>
+						<span class="card-title flow-text">No reserved user.</span>
 					@endif
 				</div>
 			</div>
