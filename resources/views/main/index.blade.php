@@ -56,8 +56,8 @@
 										<th>Service/Mins</th>
 										<th>Start</th>
 										<th>End</th>
-										<th>Ramaining</th>
 										<th>Count</th>
+										<th>Ramaining</th>
 										<th>Status</th>
 										@if(!Auth::guest())
 											<th>จอง</th>
@@ -74,25 +74,39 @@
 										<td>{{ $mq->service_time }}</td>
 										<td id="{{ $mq->start }}">{{ $mq->start->format("j M H:i") }}</td>
 										<td id="{{ $mq->end }}">{{ $mq->end->format("j M H:i") }}</td>
-										<td id="remaining"></td>
 										<td>{{ $mq->current_count}}/{{$mq->max_count}}</td>
+										<td id="remaining"></td>
 										<td id="status">
-										@if($mq->current_count == $mq->max_count)
-											<p class="red-text">Full</p>
-										@elseif($mq->start > Carbon\Carbon::now())
+										@if($mq->start > Carbon\Carbon::now())
 											<p class="blue-text">Ready</p>
 										@elseif($mq->end >= Carbon\Carbon::now() && $mq->start <= Carbon\Carbon::now())
-											<p class="green-text">Begin</p>
-										@elseif($mq->end < Carbon\Carbon::now())
+											@if($mq->current_count == $mq->max_count)
+												<p class="red-text">Full</p>
+											@else
+												<p class="green-text">Begin</p>
+											@endif
+										@elseif($mq->end < Carbon\Carbon::now() && $mq->opentime > Carbon\Carbon::now())
 											<p class="red-text">Closed</p>
+										@elseif($mq->end < Carbon\Carbon::now() && $mq->opentime < Carbon\Carbon::now())
+											<p class="blue-text">Ended</p>
 										@endif
 										</td>
 										@if(!Auth::guest())
 											<td>
+											@if(Auth::user()->role_id == 1)
+												<a href="{{ url('admin/userList') }}/{{ $mq->id }}">
+													<button class="btn waves-effect waves-light orange" type="button"><i class="fa fa-check-circle"></i> List</button>
+												</a>
+											@elseif($mq->end > Carbon\Carbon::now() && !$mq->userqueue->contains('user_id',Auth::user()->id))
 												<a href="{{ url('reserve') }}/{{ $mq->id }}">
 													<button class="btn waves-effect waves-light blue" type="button"><i class="fa fa-check"></i> จอง</button>
 												</a>
+											@elseif($mq->userqueue->contains('user_id',Auth::user()->id))
+												<a href="#">
+													<button class="btn waves-effect waves-light green" type="button"> จองแล้ว</button>
+												</a>
 											</td>
+											@endif
 										@endif
 									</tr>
 									@endforeach
@@ -108,7 +122,7 @@
 				@else
 					<div class="card-panel">
 						<div class="card-content">
-							<h4 class="card-title">No Avaiable Activity</h4>
+							<h4 class="card-title">No Available Activity</h4>
 							</div>
 						</div>
 					</div>
@@ -144,8 +158,10 @@
 										<td id="{{ $passed->end }}">{{ $passed->end->format("j M H:i") }}</td>
 										<td>{{ $passed->current_count}}/{{$passed->max_count}}</td>
 										<td id="status">
-										@if($passed->end < Carbon\Carbon::now())
+										@if($passed->end < Carbon\Carbon::now() && $passed->opentime > Carbon\Carbon::now())
 											<p class="red-text">Closed</p>
+										@elseif($passed->end < Carbon\Carbon::now() && $passed->opentime < Carbon\Carbon::now())
+											<p class="blue-text">Ended</p>
 										@endif
 										</td>
 									</tr>

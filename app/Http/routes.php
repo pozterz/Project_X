@@ -52,6 +52,7 @@ Route::group(['middleware' => 'web'], function () {
 
         // activity
     Route::get('/admin/activities','AdminController@Activities');
+    Route::get('/admin/activity/{id}','AdminController@Activity');
     Route::get('/admin/newActivity','AdminController@NewActivity');
     Route::post('/admin/newActivity','AdminController@PostNewActivity');
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');

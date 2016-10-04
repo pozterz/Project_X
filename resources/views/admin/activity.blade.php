@@ -55,23 +55,6 @@
 							<li class="collection-item blue-border">
 								Created : {{ $mainqueue->created_at->format("j F Y | H:i") }}
 							</li>
-							<li class="collection-item blue-border">
-								{!! app('captcha')->display()!!}
-
-							</li>
-							<li class="collection-item center">
-								<input type="hidden" name="id" value="{{ $mainqueue->id }}">
-								<input type="hidden" name="ip" value="{{Request::getClientIp()}}">
-								@if($mainqueue->current_count == $mainqueue->max_count || $mainqueue->end < Carbon\Carbon::now() || $mainqueue->userqueue->contains('user_id',Auth::user()->id))
-								<button type="button" class="btn waves-effect waves-light blue disabled">
-									<i class="fa fa-btn fa-plus-circle"></i> Reserve
-								</button>
-								@else
-								<button type="submit" class="btn waves-effect waves-light blue">
-									<i class="fa fa-btn fa-plus-circle"></i> Reserve
-								</button>
-								@endif
-							</li>
 						</form>
 					  </ul>
 					@else

@@ -1,29 +1,4 @@
 function updateClock (){
- 		/*var THmonth = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-	 	var currentTime = new Date();
-	 	var currentDate = currentTime.getDate();
-	 	var currentMonth = currentTime.getMonth();
-	 	var currentYear = currentTime.getFullYear();
-	  	var currentHours = currentTime.getHours();
-	  	var currentMinutes = currentTime.getMinutes();
-	  	var currentSeconds = currentTime.getSeconds();
-
-	  	// Pad the minutes and seconds with leading zeros, if required
-	  	currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
-	  	currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
-
-	  	// Choose either "AM" or "PM" as appropriate
-	  	var timeOfDay = ( currentHours < 12 ) ? "AM" : "PM";
-
-	  	// Convert the hours component to 12-hour format if needed
-	  	currentHours = ( currentHours > 12 ) ? currentHours - 12 : currentHours;
-
-	  	// Convert an hours component of "0" to "12"
-	  	currentHours = ( currentHours == 0 ) ? 12 : currentHours;
-
-	  	// Compose the string for display
-	  	var currentTimeString = currentDate + " " + THmonth[currentMonth]+ " " + (currentYear+543) +"  เวลาปัจจุบัน : "+ currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
-*/
 		var now = moment().locale('th').format('D MMMM YYYY HH:mm:ss');
 	   	$("#clock").html(now);
 }
@@ -80,7 +55,7 @@ function remaining(){
         $(this).html(event.strftime(format));
       })
       .on('finish.countdown', function(event) {
-        $(this).html('หมดเวลา').parent().addClass('color red lighten-2');
+        $(this).html('หมดเวลา').parent().addClass('color orange lighten-4');
       });
    })
    $.each($('#AllQueue tr'),function(i,row){
@@ -102,7 +77,7 @@ function remaining(){
       	if(flag){
       		var status = $(this).closest('td').next();
       		status.html("<p class='red-text'>Closed</p>");
-      		$(this).html('หมดเวลา').parent().addClass('color red lighten-2');
+      		$(this).html('หมดเวลา').parent().addClass('color orange lighten-4');
       	}else{
       		var status = $(this).closest('td').next();
       		status.html("<p class='green-text'>Begin</p>");

@@ -139,8 +139,13 @@ class AdminController extends Controller
 
     
     public function Activities(){
-        $mainqueues = MainQueue::orderBy('created_at')->paginate(20);
+        $mainqueues = MainQueue::orderBy('created_at','desc')->paginate(20);
         return view('admin.Activity-panel',compact('mainqueues'));
+    }
+
+    public function Activity($id){
+        $mainqueue = MainQueue::find($id);
+        return view('admin.activity',compact('mainqueue'));
     }
 
     public function NewActivity(){

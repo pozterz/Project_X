@@ -25,9 +25,9 @@ class MainController extends Controller
 		else
 			$user_queue = null;
 
-		$mainqueue = MainQueue::where('end','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		$mainqueue = MainQueue::where('opentime','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
 		
-		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->where('opentime','<',Carbon::now()->toDateTimeString())->orderBy('end','desc')->paginate(10);
 
 		return view('main.index',compact('user_queue','mainqueue','passedqueue'));
 	}
