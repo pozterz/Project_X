@@ -44,7 +44,7 @@
 							</li>
 						</ul>
 						<div class="center">
-							<a onclick="history.go(-1);return true;" title="Back"><button type="button" class="btn waves-effect waves-light red"><i class="fa fa-arrow-left"></i>  Back</button></a>
+							<a onclick="history.go(-1);return true;" title="Back"><button type="button" class="btn waves-effect waves-light red"><i class="fa fa-arrow-left"></i>  Bac</button></a>
 							<a href="{{ url('admin/edit') }}/{{ $user->id }}"><button type="button" class="btn waves-effect waves-light blue"><i class="fa fa-edit"></i> Edit</button></a>
 						</div>
 					</div>
