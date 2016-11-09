@@ -36,25 +36,29 @@
 								</thead>
 							
 								<tbody>
-									@foreach($mainqueues as $mainqueue)
+									@foreach($mainqueues as $key => $mainqueue)
 									<tr>
-										<td>{{ $mainqueue->id }}</td>
+										<td>{{ $key+1 }}</td>
 										<td>{{ $mainqueue->queue_name }}</td>
 										<td>{{ $mainqueue->start->format('j M H:i') }} - {{ $mainqueue->end->format('j M H:i') }}</td>
 										<td id="status">
-											@if($mainqueue->current_count == $mainqueue->max_count)
-												<span class="red-text">Full</span>
-											@elseif($mainqueue->start > Carbon\Carbon::now())
+											@if($mainqueue->start > Carbon\Carbon::now())
 												<span class="blue-text">Ready</span>
 											@elseif($mainqueue->end >= Carbon\Carbon::now() && $mainqueue->start <= Carbon\Carbon::now())
+												@if($mainqueue->current_count == $mainqueue->max_count)
+													<span class="red-text">Full</span>
+												@else
 												<span class="green-text">Begin</span>
-											@elseif($mainqueue->end < Carbon\Carbon::now())
+												@endif
+											@elseif($mainqueue->end < Carbon\Carbon::now() && $mainqueue->opentime > Carbon\Carbon::now())
 												<span class="red-text">Closed</span>
+											@elseif($mainqueue->end < Carbon\Carbon::now() && $mainqueue->opentime < Carbon\Carbon::now())
+												<span class="blue-text">Ended</span>
 											@endif
 										</td>
 										<td>{{ $mainqueue->current_count }}/{{$mainqueue->max_count}}</td>
 										<td>
-											<a href="{{ url('admin/activities') }}/{{$mainqueue->id}}" class="btn-floating waves-effect waves-light btn"><i class="fa fa-info"></i></a>
+											<a href="{{ url('admin/activity') }}/{{$mainqueue->id}}" class="btn-floating waves-effect waves-light btn"><i class="fa fa-info"></i></a>
 										</td>
 										<td>
 											<a href="{{ url('admin/userList') }}/{{$mainqueue->id}}" class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-check-circle"></i></a>

@@ -14,15 +14,14 @@ class UserQueue extends Migration
     {
         Schema::create('user_queues', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('main_queue_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
             $table->string('queue_captcha',40);
             $table->dateTime('queue_time');
+            $table->enum('isAccept',['yes','no'])->default('no');
             $table->string('ip',20);
             $table->timestamps();
         });
          Schema::table('user_queues',function(Blueprint $table){
-            $table->foreign('main_queue_id')->references('id')->on('main_queues')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
          });
     }

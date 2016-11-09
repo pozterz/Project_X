@@ -38,7 +38,7 @@ class User extends Authenticatable
     }
 
     public function isAdmin($user) {
-        return ( $user->level == 'admin' );
+        return ( $user->getUserRole()->name == 'Administrator' );
     }
 
     public function role(){

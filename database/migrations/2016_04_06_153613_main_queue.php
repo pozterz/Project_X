@@ -13,7 +13,7 @@ class MainQueue extends Migration
     public function up()
     {
         Schema::create('main_queues', function (Blueprint $table) {
-            $table->integer('queue_id')->unsigned()->index();
+            $table->integer('id')->unsigned()->index();
             $table->string('queue_name',150);
             $table->string('counter',100);
             $table->dateTime('opentime');

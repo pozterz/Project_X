@@ -37,7 +37,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
     <script src="{{ url('js/materialize.clockpicker.js') }}"></script>
-    <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
+    <script src="{{ url('js/moments-with-locale.js') }}"></script>
     <script src="{{ asset('js/jquery.countdown.min.js')}}"></script>
     <script src="{{ url('/')}}{{ elixir('js/all.js')}}"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>

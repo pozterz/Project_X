@@ -84,6 +84,7 @@ class AdminController extends Controller
         $user_info->save();
 
         $request->session()->flash('success', 'Add User Completed!');
+        
         return Redirect('/admin');
     }
 
@@ -139,8 +140,19 @@ class AdminController extends Controller
 
     
     public function Activities(){
-        $mainqueues = MainQueue::orderBy('created_at')->paginate(20);
+        //$mainqueues = MainQueue::orderBy('created_at','desc')->paginate(20);
+        $mainqueues = MainQueue::where('opentime','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(20);
         return view('admin.Activity-panel',compact('mainqueues'));
+    }
+
+    public function AllActivities(){
+        $mainqueues = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->where('opentime','<',Carbon::now()->toDateTimeString())->orderBy('end','desc')->paginate(10);
+        return view('admin.Activity-panel',compact('mainqueues'));
+    }
+
+    public function Activity($id){
+        $mainqueue = MainQueue::find($id);
+        return view('admin.activity',compact('mainqueue'));
     }
 
     public function NewActivity(){
@@ -190,14 +202,27 @@ class AdminController extends Controller
 
     public function QueueUserList($id){
         $mainqueue = MainQueue::find($id)->userqueue()->paginate(20);
-        return view('admin.userlist',compact('mainqueue'));
+        return view('admin.userlist',compact('mainqueue','id'));
+    }
+
+    //----------------------------------
+    //-         Queue Check Section
+    //----------------------------------
+
+    public function AcceptUser($id,$userqueue_id){
+        UserQueue::find($userqueue_id)->update(['isAccept' => 'yes']);
+        return Redirect('/admin/userList/'.$id);
+    }
+    public function removeAccepted($id,$userqueue_id){
+        UserQueue::find($userqueue_id)->update(['isAccept' => 'no']);
+        return Redirect('/admin/userList/'.$id);
     }
 
     //----------------------------------
     //-         Function Section
     //----------------------------------
 
-    public function ConvertDate($date,$time){
+    private function ConvertDate($date,$time){
         $split = explode(':',$time);
         if(count($split) != 2){
             $split = array();

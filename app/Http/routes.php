@@ -52,12 +52,21 @@ Route::group(['middleware' => 'web'], function () {
 
         // activity
     Route::get('/admin/activities','AdminController@Activities');
+    Route::get('/admin/activity/{id}','AdminController@Activity');
     Route::get('/admin/newActivity','AdminController@NewActivity');
     Route::post('/admin/newActivity','AdminController@PostNewActivity');
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
     Route::get('/admin/userList/{id}','AdminController@QueueUserList');
+    Route::get('/admin/allActivities','AdminController@AllActivities');
+
+        //check
+    Route::get('/admin/userList/{id}/user/{userqueue_id}','AdminController@AcceptUser');
+    Route::get('/admin/removeAccepted/{id}/user/{userqueue_id}','AdminController@removeAccepted');
+
     // User
     Route::get('/reserve/{q_id}','MainController@Reserve');
     Route::get('/profile','MainController@Profile');
+    Route::get('/editprofile','MainController@EditProfile');
+    Route::post('/editprofile','MainController@UpdateProfile');
     Route::post('/reserve/{q_id}','MainController@PostReserve');
 });

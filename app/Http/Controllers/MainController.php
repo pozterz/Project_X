@@ -25,16 +25,37 @@ class MainController extends Controller
 		else
 			$user_queue = null;
 
-		$mainqueue = MainQueue::where('end','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		$mainqueue = MainQueue::where('opentime','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
 		
-		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->where('opentime','<',Carbon::now()->toDateTimeString())->orderBy('end','desc')->paginate(10);
 
 		return view('main.index',compact('user_queue','mainqueue','passedqueue'));
 	}
 
 	public function Profile(){
-		$this->isFull(24);
 		return view('main.profile');
+	}
+
+	public function EditProfile(){
+		$user = Auth::user();
+		return view('main.edit',compact('user'));
+	}
+	public function UpdateProfile(Request $req){
+		$id = Auth::user()->id;
+		$user = User::find($id);
+        $user->username = $req->get('username');
+        $info = UserInformation::where('user_id',$id)->firstOrFail();
+        $info->name = $req->get('name');
+        $info->gender = $req->get('gender');
+        $info->card_id = $req->get('card_id');
+        $info->address = $req->get('address');
+        $info->tel = $req->get('tel');
+        $info->birthday = $this->ConvertDate($req->get('birthday'),'00:00');
+        $user->save();
+        $info->save();
+
+        $req->session()->flash('success', 'Update Complete.');
+        return Redirect('/profile');
 	}
 
 	public function Reserve($q_id){
@@ -59,11 +80,12 @@ class MainController extends Controller
 		if($mainqueue->end >= Carbon::now() && $mainqueue->start <= Carbon::now()){
 			if(!$userq){
 				if(!$this->isFull($id)){
-					$cap = str_shuffle('acvkPb4c187b6');
+					$cap = $this->captcha_gen(10);
 					$createduq = UserQueue::create([
 						"user_id" => $userid,
 						"queue_captcha" => $cap,
 						"queue_time" => $qt,
+						"ip" => $request->get('ip'),
 						]);
 					$mainqueue = MainQueue::find($id);
 					$mainqueue->current_count+=1;
@@ -85,6 +107,7 @@ class MainController extends Controller
 		}
 
 	}
+
 	private function isFull($Qid){
 		$mainqueue = MainQueue::find($Qid);
 		$count = $mainqueue->userqueue->count();
@@ -97,5 +120,30 @@ class MainController extends Controller
 		}
 		return true;
 	}
+
+	private function captcha_gen($len = 10){
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+	    $randomString = '';
+	    for ($i = 0; $i < $len; $i++) {
+	        $randomString .= $characters[rand(0, $charactersLength - 1)];
+	    }
+	    return $randomString;
+	}
+
+	private function ConvertDate($date,$time){
+        $split = explode(':',$time);
+        if(count($split) != 2){
+            $split = array();
+            $split[0] = 0;
+            $split[1] = 0;
+        }
+        $end_time = Carbon::parse($date)
+            ->startOfDay()
+            ->addHours($split[0])
+            ->addMinutes($split[1])
+            ->toDateTimeString();
+        return $end_time;
+    }
 
 }
