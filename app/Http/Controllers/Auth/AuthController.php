@@ -122,6 +122,7 @@ class AuthController extends Controller
     public function authenticated($request, $user)
     {
         $request->session()->flash('success', 'Logged in as ' . $user->username);
+        $request->session()->reflash();
         return redirect($this->redirectPath());
     }
 

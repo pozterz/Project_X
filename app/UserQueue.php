@@ -12,7 +12,7 @@ class UserQueue extends Model
 		'updated_at',
 	];
 
-    protected $fillable = array('queue_id', 'user_id', 'queue_captcha','queue_time');
+    protected $fillable = array('queue_id', 'user_id', 'queue_captcha','queue_time','isAccept');
 
     public function user()
     {
