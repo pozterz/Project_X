@@ -45,7 +45,7 @@
 						</ul>
 						<div class="center">
 							<a href="{{ url('admin/users') }}" title="Back"><button type="button" class="btn waves-effect waves-light red"><i class="fa fa-arrow-left"></i>  Back</button></a>
-							<a href="{{ url('admin/edit') }}/{{ $user->id }}"><button type="button" class="bn waves-effect waves-light blue"><i class="fa fa-edit"></i> Edit</button></a>
+							<a href="{{ url('admin/edit') }}/{{ $user->id }}"><button type="button" class="btn waves-effect waves-light blue"><i class="fa fa-edit"></i> Edit</button></a>
 						</div>
 					</div>
 				@endif
