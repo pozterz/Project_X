@@ -12,6 +12,7 @@
             <li><a class="dropdown-button" data-beloworigin="true" data-constrainwidth="false" data-hover="true" href="#!" data-activates="nav_dropdown">{{ Auth::user()->username }}  <i class="fa fa-caret-down"></i></a></li>
             <ul id="nav_dropdown" class="dropdown-content">
                 @if(Auth::user()->level == 'admin')
+                <li><a href="{{ url('admin/activities') }}"><i class="fa fa-check"></i> Check User</a></li>
                 <li><a href="{{ url('admin') }}"><i class="fa fa-gear"></i> Admin Panel</a></li>
                 @endif
                 <li><a href="{{ url('profile') }}"><i class="fa fa-user"></i> Profile</a></li>

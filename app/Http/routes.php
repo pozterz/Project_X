@@ -57,9 +57,11 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/admin/newActivity','AdminController@PostNewActivity');
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
     Route::get('/admin/userList/{id}','AdminController@QueueUserList');
+    Route::get('/admin/allActivities','AdminController@AllActivities');
 
         //check
-    Route::get('/admin/check','AdminController@QueueCheck');
+    Route::get('/admin/userList/{id}/user/{userqueue_id}','AdminController@AcceptUser');
+    Route::get('/admin/removeAccepted/{id}/user/{userqueue_id}','AdminController@removeAccepted');
 
     // User
     Route::get('/reserve/{q_id}','MainController@Reserve');

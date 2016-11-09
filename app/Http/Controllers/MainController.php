@@ -80,7 +80,7 @@ class MainController extends Controller
 		if($mainqueue->end >= Carbon::now() && $mainqueue->start <= Carbon::now()){
 			if(!$userq){
 				if(!$this->isFull($id)){
-					$cap = str_shuffle('acvkPb4c187b6');
+					$cap = $this->captcha_gen(10);
 					$createduq = UserQueue::create([
 						"user_id" => $userid,
 						"queue_captcha" => $cap,
@@ -119,6 +119,16 @@ class MainController extends Controller
 			return false;
 		}
 		return true;
+	}
+
+	private function captcha_gen($len = 10){
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+	    $randomString = '';
+	    for ($i = 0; $i < $len; $i++) {
+	        $randomString .= $characters[rand(0, $charactersLength - 1)];
+	    }
+	    return $randomString;
 	}
 
 	private function ConvertDate($date,$time){
