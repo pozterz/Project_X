@@ -1,6 +1,6 @@
 # Queue Management
 
-Queue Management is a online reserve queue for any avtivity at the bank.
+Queue Management is a online reserve queue for any activity at the bank.
 
 ### Features
   - Authentication & Authorization.
