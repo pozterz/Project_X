@@ -55,7 +55,7 @@ function remaining(){
         $(this).html(event.strftime(format));
       })
       .on('finish.countdown', function(event) {
-        $(this).html('หมดเวลา').parent().addClass('color orange lighten-4');
+        $(this).html('Ended').parent().addClass('color orange lighten-4');
       });
    })
    $.each($('#AllQueue tr'),function(i,row){
@@ -77,7 +77,7 @@ function remaining(){
       	if(flag){
       		var status = $(this).closest('td').next();
       		status.html("<p class='red-text'>Closed</p>");
-      		$(this).html('หมดเวลา').parent().addClass('color orange lighten-4');
+      		$(this).html('Ended').parent().addClass('color orange lighten-4');
       	}else{
       		var status = $(this).closest('td').next();
       		status.html("<p class='green-text'>Begin</p>");

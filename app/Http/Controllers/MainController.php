@@ -8,6 +8,8 @@ use Auth;
 use Mail;
 use Redirect;
 use Session;
+use Validator;
+use Gate;
 use App\User;
 use App\UserInformation;
 use App\UserQueue;
@@ -80,7 +82,7 @@ class MainController extends Controller
 		if($mainqueue->end >= Carbon::now() && $mainqueue->start <= Carbon::now()){
 			if(!$userq){
 				if(!$this->isFull($id)){
-					$cap = $this->captcha_gen(10);
+					$cap = str_random(12);
 					$createduq = UserQueue::create([
 						"user_id" => $userid,
 						"queue_captcha" => $cap,

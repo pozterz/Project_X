@@ -1,4 +1,3 @@
-
 <nav class="blue lighten-1 z-depth-2">
     <div class="navbar-fixed container nav-wrapper">
         <a href="{{ url('index') }}" class="brand-logo">Queue System</a>
@@ -28,7 +27,7 @@
                 <div style="background: rgba(0,0,0,0.3);">
                     <div class="userView">
                         <img class="background" src="http://static1.squarespace.com/static/524d09ece4b05018590c5c59/t/5260e196e4b055fef802e254/1382080921506/sea-sanctuaries-siteimage01.jpg"></img>
-                        <a href="{{ url('profile') }}"> <img src="http://110.77.148.80:8080/eqanavy/image/icon2/User03589.png" width="54px" class="circle responsive-img" > </a>
+                        <a href="{{ url('profile') }}"> <img src="" width="54px" class="circle responsive-img" > </a>
                         <a href="#!"><p class="flow-text white-text"> Guest </p> </a>
                     </div>
                 </div>

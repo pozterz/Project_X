@@ -58,6 +58,8 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/admin/deleteActivities/{id}','AdminController@DeleteActivity');
     Route::get('/admin/userList/{id}','AdminController@QueueUserList');
     Route::get('/admin/allActivities','AdminController@AllActivities');
+    Route::get('/admin/editActivity/{id}','AdminController@editActivity');
+    Route::post('/admin/editActivity','AdminController@UpdateActivity');
 
         //check
     Route::get('/admin/userList/{id}/user/{userqueue_id}','AdminController@AcceptUser');
@@ -69,4 +71,30 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/editprofile','MainController@EditProfile');
     Route::post('/editprofile','MainController@UpdateProfile');
     Route::post('/reserve/{q_id}','MainController@PostReserve');
+
+    /**** NEW APIs FOR ANGULAR ****/
+
+    /**** View ****/
+    
+    Route::get('index2','ViewController@index');
+
+    /***** User [Authenticated] *****/
+    Route::get('/User/getQueues','UserController@getQueues');
+    Route::get('/User/getAcceptedQueues','UserController@getAcceptedQueues');
+    Route::get('/User/getProfile','UserController@getProfile');
+    Route::post('/User/updateProfile','UserController@updateProfile');
+    Route::post('/User/Reserve','UserController@Reserve');
+
+    /***** App [guest APIs] *****/
+    Route::get('/App/getQueues','AppController@getQueues');
+    Route::get('/App/getQueue/{id}','AppController@getQueue');
+    Route::get('/App/getPassedQueues','AppController@getPassedQueues');
+    Route::get('/App/getActiveQueues','AppController@getActiveQueues');
+
+    /***** Admin *****/
+    Route::get('/Admin/getUsers','AdminController@getUsers');
+    Route::get('/Admin/getUser/{id}','AdminController@getUser');
+    Route::post('/Admin/deleteUser','AdminController@deleteUser');
+
+
 });

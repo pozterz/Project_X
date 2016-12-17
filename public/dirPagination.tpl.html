@@ -1,0 +1,26 @@
+<ul class="pagination" ng-if="1 < pages.length || !autoHide">
+    <li ng-if="directionLinks" ng-class="{ 'disabled' : pagination.current == 1 }" >
+        <a class="button" ng-if="boundaryLinks" ng-click="setCurrent(1)" href="#">
+            <i class="material-icons">first_page</i>
+        </a>
+    </li>
+    <li ng-if="directionLinks" ng-class="{ 'disabled' : pagination.current == 1 }">
+        <a class="button" ng-click="setCurrent(pagination.current - 1)" href="#">
+            <i class="material-icons">chevron_left</i>
+        </a>
+    </li>
+    <li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ 'active' : pagination.current == pageNumber }" ng-class="{'active' : pageNumber == '...'}">
+        <a class="button" ng-click="setCurrent(pageNumber)" href="#">{{ pageNumber }}
+        </a>
+    </li>
+    <li ng-if="directionLinks" ng-class="{ 'disabled' : pagination.current == pagination.last }">
+        <a class="button" ng-click="setCurrent(pagination.current + 1)" href="#">
+            <i class="material-icons">chevron_right</i>
+        </a>
+    </li>
+    <li ng-if="directionLinks" ng-class="{ 'disabled' : pagination.current == pagination.last }">
+        <a class="button" ng-if="boundaryLinks" ng-click="setCurrent(pagination.last)" href="#">
+            <i class="material-icons">last_page</i>
+        </a>
+    </li>
+</ul>

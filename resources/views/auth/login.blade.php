@@ -12,7 +12,7 @@
 					  </div>
 					  <div class="row">
 						<div class="input-field col s12">
-							<input id="username" type="text" name="username" class="validate{{ $errors->has('username') ? ' invalid' : '' }}">
+							<input id="username" type="text" name="username" class="validate{{ $errors->has('username') ? ' invalid' : '' }}" value="{{ old('username')}}">
 							@if ($errors->has('username'))
 								<label for="username" data-error="{{ $errors->first('username') }}">Username</label>
 							@else

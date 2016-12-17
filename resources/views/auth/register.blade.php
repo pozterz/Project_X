@@ -32,7 +32,7 @@
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
-									<input id="password_confirmation" type="password" name="password_confirmation" class="validate{{ $errors->has('password_confirmation') ? ' invalid' : '' }}" value="{{ old('password_confirmation') }}" pattern=".{6,}">
+									<input id="password_confirmation" type="password" name="password_confirmation" class="validate{{ $errors->has('password_confirmation') ? ' invalid' : '' }}" pattern=".{6,}">
 									@if ($errors->has('password_confirmation'))
 										<label for="password_confirmation" data-error="{{ $errors->first('password_confirmation') }}">Confirm Password</label>
 									@else

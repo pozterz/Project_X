@@ -1,5 +1,6 @@
 html,
 body {
+    background-color: #E8E8E8;
     height: 100%;
 }
 
@@ -156,6 +157,11 @@ label:not(.active):after {
 }
 .white-border{
     border-left: 3px solid #fff;
+}
+
+.white-div{
+    background-color: white;
+    padding: 20px;
 }
 
 

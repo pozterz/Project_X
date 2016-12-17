@@ -13,7 +13,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username','password','name', 'email','level', 'ip'
+        'username','password', 'email','level', 'ip'
     ];
 
     /**
@@ -22,8 +22,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token'
+        'password', 'remember_token','role_id','have_role'
     ];
+
 
     public function user_info(){
         return $this->hasOne(UserInformation::class);

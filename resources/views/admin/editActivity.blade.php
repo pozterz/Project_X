@@ -7,13 +7,13 @@
 			<div class="col s12 m8 l8">
 				<div class="content card z-depth-2">
 					<div class="card-content">
-						<span class="card-title flow-text">New Activities</span><br/><br/>
+						<span class="card-title flow-text">Edit Activity</span><br/><br/>
 						<div class="row">
-							<form class="col s12" method="POST" action="{{ url('/admin/newActivity') }}">
+							<form class="col s12" method="POST" action="{{ url('/admin/editActivity') }}">
 								{!! csrf_field() !!}
 								<div class="row">
 									<div class="input-field col s12">
-										<input id="queue_name" type="text" name="queue_name" class="validate{{ $errors->has('queue_name') ? ' invalid' : '' }}" value="{{ old('queue_name') }}" length="150">
+										<input id="queue_name" type="text" name="queue_name" class="validate{{ $errors->has('queue_name') ? ' invalid' : '' }}" value="{{ $Activity->queue_name }}" length="150">
 										@if ($errors->has('queue_name'))
 											<label for="queue_name" data-error="{{ $errors->first('queue_name') }}">Activity name</label>
 										@else
@@ -23,7 +23,7 @@
 								</div>
 								<div class="row">
 									<div class="input-field col s12">
-										<input id="counter" type="text" name="counter" class="validate{{ $errors->has('counter') ? ' invalid' : '' }}" length="100">
+										<input id="counter" type="text" name="counter" class="validate{{ $errors->has('counter') ? ' invalid' : '' }}" length="100" value="{{ $Activity->counter }}">
 										@if ($errors->has('counter'))
 											<label for="counter" data-error="{{ $errors->first('counter') }}">Counter</label>
 										@else
@@ -33,7 +33,7 @@
 								</div>
 								<div class="row">
 									<div class="input-field col s6">
-										<input id="service_time" type="number" name="service_time" class="validate{{ $errors->has('service_time') ? ' invalid' : '' }}">
+										<input id="service_time" type="number" name="service_time" class="validate{{ $errors->has('service_time') ? ' invalid' : '' }}" value="{{ $Activity->service_time }}">
 										@if ($errors->has('service_time'))
 											<label for="service_time" data-error="{{ $errors->first('service_time') }}">Service Time (minute)</label>
 										@else
@@ -41,7 +41,7 @@
 										@endif
 									</div>
 									<div class="input-field col s6">
-										<input id="max_count" type="number" name="max_count" class="validate{{ $errors->has('max_count') ? ' invalid' : '' }}">
+										<input id="max_count" type="number" name="max_count" class="validate{{ $errors->has('max_count') ? ' invalid' : '' }}" value="{{ $Activity->max_count }}">
 										@if ($errors->has('max_count'))
 											<label for="max_count" data-error="{{ $errors->first('max_count') }}">Limit</label>
 										@else
@@ -51,7 +51,7 @@
 								</div>
 								<div class="row">
 									<div class="input-field col s6">
-										<input id="opentime" type="date" name="opentime" class="datepicker">
+										<input id="opentime" type="date" name="opentime" class="datepicker" >
 										@if ($errors->has('opentime'))
 											<label for="opentime" data-error="{{ $errors->first('opentime') }}">Open Date</label>
 										@else
@@ -105,8 +105,9 @@
 										@endif
 									</div>
 								</div>
+								<input type="hidden" name="id" value="{{ $Activity->id }}">
 								<div class="row center">
-									<button type="submit" class="btn waves-effect waves-light blue"><i class="fa fa-check-circle"></i> Add</button>
+									<button type="submit" class="btn waves-effect waves-light green"><i class="fa fa-check-circle"></i> Save</button>
 								</div>
 							</form>
 						</div>

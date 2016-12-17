@@ -3,24 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use Carbon\Carbon;
-use Validator;
 use App\Http\Requests;
+use Carbon\Carbon;
+use Auth;
+use Gate;
+use Validator;
 use App\User;
 use App\MainQueue;
 use App\UserQueue;
 use App\UserInformation;
 use Illuminate\Support\Facades\Input;
-use Auth;
-use Gate;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 
 class AdminController extends Controller
 {
 	
     public function __construct(){
         if(Gate::denies('isAdmin',Auth::user())){
-            abort(404);
+            abort(403);
         }
     }
 
@@ -39,11 +40,11 @@ class AdminController extends Controller
         return view('admin.User-panel',compact('users'));   
     }
 
-    public function GetUser($id){
+    /*public function GetUser($id){
         $user = User::find($id);
         return view('admin.user',compact('user'));
     }
-
+*/
     public function NewUser(){
         return view('admin.newUser');
     }
@@ -205,6 +206,27 @@ class AdminController extends Controller
         return view('admin.userlist',compact('mainqueue','id'));
     }
 
+    public function editActivity($id){
+        $Activity = MainQueue::find($id);
+        return view('admin.editActivity',compact('Activity'));
+    }
+
+     public function UpdateActivity(Request $request){
+        
+        $queue = MainQueue::find($request->get('id'));
+        $queue->queue_name = $request->get('queue_name');
+        $queue->counter = $request->get('counter');
+        $queue->service_time = $request->get('service_time');
+        $queue->max_count = $request->get('max_count');
+        $queue->opentime = $this->ConvertDate($request->get('opentime'),$request->get('opentime_time'));
+        $queue->start = $this->ConvertDate($request->get('start'),$request->get('start_time'));
+        $queue->end = $this->ConvertDate($request->get('end'),$request->get('end_time'));
+        $queue->save();
+
+        $request->session()->flash('success', 'Edit Completed!');
+        return Redirect('/admin');
+     }
+
     //----------------------------------
     //-         Queue Check Section
     //----------------------------------
@@ -216,6 +238,44 @@ class AdminController extends Controller
     public function removeAccepted($id,$userqueue_id){
         UserQueue::find($userqueue_id)->update(['isAccept' => 'no']);
         return Redirect('/admin/userList/'.$id);
+    }
+
+    //------------------------------------
+    //-         New APIs
+    //------------------------------------
+
+    public function getUsers()
+    {
+        $Users = User::all();
+        return response()->json([
+            'status' => 'Success',
+            'result' => $Users,
+            ]);
+    }
+
+    public function getUser($id)
+    {
+
+        $result = 'Failed';
+
+        try
+        {
+            $User = User::find($id);
+            $User->user_info;
+            $result = 'Success';
+        }
+        catch(ModelNotFoundException $ex)
+        {
+            return response()->json([
+                'status' => $result,
+                'result' => null,
+            ]);
+        }
+
+        return response()->json([
+            'status' => $result,
+            'result' => $User,
+            ]);
     }
 
     //----------------------------------

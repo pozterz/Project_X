@@ -1,7 +1,7 @@
 @extends('main.template')
 
 @section('content')
-<div class="ctn"
+<div class="ctn">
 	<div class="row">
 		<div class="content">
 			<div id="clock"></div><br/>
@@ -60,7 +60,7 @@
 										<th>Ramaining</th>
 										<th>Status</th>
 										@if(!Auth::guest())
-											<th>จอง</th>
+											<th>Reserve</th>
 										@endif
 									</tr>
 								</thead>
@@ -97,13 +97,13 @@
 												<a href="{{ url('admin/userList') }}/{{ $mq->id }}">
 													<button class="btn waves-effect waves-light orange" type="button"><i class="fa fa-check-circle"></i> List</button>
 												</a>
-											@elseif($mq->end > Carbon\Carbon::now() && !$mq->userqueue->contains('user_id',Auth::user()->id))
+											@elseif($mq->end > Carbon\Carbon::now() && !$mq->userqueue->contains('user_id',Auth::user()->id) && $mq->start < Carbon\Carbon::now())
 												<a href="{{ url('reserve') }}/{{ $mq->id }}">
-													<button class="btn waves-effect waves-light blue" type="button"><i class="fa fa-check"></i> จอง</button>
+													<button class="btn waves-effect waves-light blue" type="button"><i class="fa fa-check"></i> Reserve</button>
 												</a>
 											@elseif($mq->userqueue->contains('user_id',Auth::user()->id))
 												<a href="#">
-													<button class="btn waves-effect waves-light green" type="button"> จองแล้ว</button>
+													<button class="btn waves-effect waves-light green" type="button"> Reserved</button>
 												</a>
 											</td>
 											@endif
@@ -118,17 +118,16 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				
 				@else
 					<div class="card-panel">
 						<div class="card-content">
 							<h4 class="card-title">No Available Activity</h4>
 							</div>
 						</div>
-					</div>
 				@endif
 				@if(count($passedqueue))
-				<div class="card-panel z-depth-2">
+					<div class="card-panel z-depth-2">
 						<div class="card-content">
 							<h4 class="card-title">Passed Activity</h4>
 							<div class="divider"></div>
@@ -174,10 +173,11 @@
 							</div>
 						</div>
 					</div>
+				</div>
 				@else
-					<div class="card-panel">
-						<div class="card-content">
-							<h4 class="card-title">No Passed Activity</h4>
+						<div class="card-panel">
+							<div class="card-content">
+								<h4 class="card-title">No Passed Activity</h4>
 							</div>
 						</div>
 					</div>

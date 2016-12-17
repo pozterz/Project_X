@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => 'pozterz3@gmail.com', 'name' => '[No-Reply]Queue Menagement Administrator'],
 
     /*
     |--------------------------------------------------------------------------

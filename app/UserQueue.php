@@ -12,7 +12,9 @@ class UserQueue extends Model
 		'updated_at',
 	];
 
-    protected $fillable = array('queue_id', 'user_id', 'queue_captcha','queue_time','isAccept');
+    protected $fillable = ['queue_id', 'user_id', 'queue_captcha','queue_time','isAccept'];
+
+    protected $hidden = ['queue_captcha','created_at','updated_at','pivot'];
 
     public function user()
     {
@@ -23,4 +25,15 @@ class UserQueue extends Model
     {
         return $this->belongsToMany(MainQueue::class);
     }
+
+    public function getQueue_captcha()
+    {
+        return $this->queue_captcha;
+    }
+
+    public function getPivot()
+    {
+        return $this->pivot;
+    }
+
 }

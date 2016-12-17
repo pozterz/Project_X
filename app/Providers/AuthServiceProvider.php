@@ -31,6 +31,12 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        $gate->define('isUser',function($user){
+            if($user->hasRole('user')){
+                return true;
+            }
+        });
         
     }
 }
