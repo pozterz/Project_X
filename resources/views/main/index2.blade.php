@@ -1,10 +1,32 @@
 @extends('main.template')
 
 @section('content')
+<style type="text/css" media="screen">
+	nav .nav-wrapper form, nav .nav-wrapper form .input-field{
+height: 100%;
+}
+</style>
 <div class="ctn">
 		<div class="row">
 			<div class="content">
 				<div ng-app="QueueApp" ng-controller="QueueCtrl as Queue">
+					<div class="row">
+						<div class="col s12">
+							<div class="col s12 m6 l4 right">
+								<nav>
+									<div class="nav-wrapper blue">
+							      <form>
+							        <div class="input-field">
+							          <input id="search" type="search" ng-model="search">
+							          <label for="search"><i class="material-icons">search</i></label>
+							          <i class="material-icons">close</i>
+							        </div>
+							      </form>
+							    </div>
+								</nav>
+							</div>
+						</div>
+					</div>
 					<div class="row">
 					    <div class="col s12">
 					        <ul tabs reload="allTabContentLoaded">
@@ -28,10 +50,9 @@
 						    				<p class="flow-text center-align">NO AVAILABLE QUEUE.</p>
 							    	</div>
 						    		<div ng-show="ActiveQueues.length && !loading">
-						    			<table class="highlight centered">
+						    			<table class="highlight centered responsive-table">
 								        <thead>
 								          <tr>
-							              <th>#</th>
 														<th>Queue Name</th>
 														<th>Counter</th>
 														<th>Service time</th>
@@ -40,18 +61,20 @@
 														<th>Count</th>
 														<th>Ramaining</th>
 														<th>Status</th>
+														@if(!Auth::guest())
+															<th>Reserve</th>
+								    				@endif
 								          </tr>
 								        </thead>
 								        <tbody>
 						    					<tr dir-paginate="Active in ActiveQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="ActiveQueues">
-						    						<td> <% Active.id %> </td>
 								    				<td> <% Active.queue_name %> </td>
 								    				<td> <% Active.counter %> </td>
 								    				<td> <% Queue.convertTime(Active.opentime) | date:'d MMM y HH:mm น.' %> </td>
 								    				<td> <% Active.service_time %> </td>
 								    				<td>
-								    					<% Queue.convertTime(Active.start) | date:'d MMM y HH:mm น.' %> -
-								    					<% Queue.convertTime(Active.end) | date:'d MMM y HH:mm น.' %>
+								    					<p>เริ่ม : <% Queue.convertTime(Active.start) | date:'d MMM y HH:mm น.' %></p>
+								    					<p>ถึง : <% Queue.convertTime(Active.end) | date:'d MMM y HH:mm น.' %></p>
 								    				</td>
 								    				<td> <% Active.current_count %>/<% Active.max_count %> </td>
 								    				<td>
@@ -60,6 +83,9 @@
 															</timer>
 								    				</td>
 								    				<td> <% Active.status %> </td>
+								    				@if(!Auth::guest())
+								    				<td> <a type="button" class="btn blue wave-effect" href="{{ url('/reserve') }}/<%Active.id %>">Reserve</a> </td>
+								    				@endif
 						    					</tr>
 						    				</tbody>
 						    			</table>
@@ -81,10 +107,9 @@
 						    				<p class="flow-text center-align">NO RESERVED QUEUE.</p>
 							    		</div>
 							    		<div ng-show="UserQueues.length && !loading">
-							    			<table class="highlight centered">
+							    			<table class="highlight centered responsive-table">
 									        <thead>
 									          <tr>
-									              <th>#</th>
 																<th>Queue Name</th>
 																<th>Service Time</th>
 																<th>Service/Mins</th>
@@ -95,7 +120,6 @@
 									        </thead>
 									        <tbody>
 									    			<tr dir-paginate="UserQueue in UserQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="UserQueues">
-									    				<td> <% UserQueue.id %> </td>
 									    				<td> <% UserQueue.mainqueue[0].queue_name %> </td>
 									    				<td> <% Queue.convertTime(UserQueue.mainqueue[0].opentime) | date:'d MMM y HH:mm น.' %> </td>
 									    				<td> <% UserQueue.mainqueue[0].service_time %> </td>
@@ -129,10 +153,9 @@
 						    			<p class="flow-text center-align">NO PASSED QUEUE.</p>
 							    	</div>
 						    		<div ng-show="PassedQueues.length && !loading" class="center-align">
-						    			<table class="highlight centered">
+						    			<table class="highlight centered responsive-table">
 								        <thead>
 								          <tr>
-								              <th>#</th>
 															<th>Queue Name</th>
 															<th>Service Time</th>
 															<th>Service/Mins</th>
@@ -143,7 +166,6 @@
 								        </thead>
 								        <tbody>
 								    			<tr dir-paginate="Passed in PassedQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="PassedQueues">
-								    				<td> <% Passed.id %> </td>
 								    				<td> <% Passed.queue_name %> </td>
 								    				<td> <% Queue.convertTime(Passed.opentime) | date:'d MMM y HH:mm น.' %> </td>
 								    				<td> <% Passed.service_time %> </td>
@@ -192,7 +214,7 @@
 	      return {
 	        restrict: 'E',
 	        replace:true,
-	        template: '<div class="loading has-text-centered"><img src="{{url("/spinner.gif")}}" width="30%" /></div>',
+	        template: '<div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>',
 	        link: function (scope, element, attr) {
 	              scope.$watch('loading', function (val) {
 	                  if (val)
@@ -226,31 +248,34 @@
 
 				// Service
 				// 
-				this.selectedTab = function(tab){
+				this.selectedTab = function(tab)
+				{
 					$scope.tab = tab;
-					switch (tab){
+					switch (tab)
+					{
 						case 1: this.getActiveQueues(); break;
 						case 2: this.getUserQueues(); break;
 						case 3: this.getPassedQueues(); break;
 					}
 				}
 
-				this.isSelected = function(tab){
+				this.isSelected = function(tab)
+				{
 					return $scope.tab === tab;
 				}
 
-				this.getUserQueues = function(){
-					$scope.UserQueues = {};
+				this.getUserQueues = function()
+				{
 					$scope.loading = true;
-					mainService.getUserQueues()
+					userService.getUserQueues()
 					.then(function(data){
 						$scope.UserQueues = data.result;
 						$scope.loading = false;
 					})
 				}
 				
-				this.getActiveQueues = function(){
-					$scope.ActiveQueues = {};
+				this.getActiveQueues = function()
+				{
 					$scope.loading = true;
 					mainService.getActiveQueues()
 						.then(function(data){
@@ -259,14 +284,19 @@
 						})
 				}
 
-				this.getPassedQueues = function(){
-					$scope.PassedQueues = {};
+				this.getPassedQueues = function()
+				{
 					$scope.loading = true;
 					mainService.getPassedQueues()
 						.then(function(data){
 							$scope.PassedQueues = data.result;
 							$scope.loading = false;
 						})
+				}
+
+				this.reserveQueue = function(id)
+				{
+					console.log(id);
 				}
 
 				// First declaration
@@ -297,10 +327,12 @@
 			}
 
 			function rangeFilter(){
-				return function(input, total) {
+				return function(input, total) 
+				{
 					total = parseInt(total);
 
-					for (var i = 0; i < total; i++) {
+					for (var i = 0; i < total; i++) 
+					{
 							input.push(i);
 					}
 
@@ -317,28 +349,25 @@
 			function MainService($http,$q)
 			{
 
-				var getActiveQueues = function(){
+				var getActiveQueues = function()
+				{
 
 					var request = $http.get("App/getActiveQueues");
 					return( request.then( handleSuccess, handleError ) );
 				}
 
-				var getPassedQueues = function(){
+				var getPassedQueues = function()
+				{
 
 					var request = $http.get("App/getPassedQueues");
 					return( request.then( handleSuccess, handleError ) );
 				}
 
-				var getUserQueues = function(){
 
-					var request = $http.get("User/getQueues");
-					return( request.then( handleSuccess, handleError ) );
-				}
 
 				return {
 					getActiveQueues : getActiveQueues,
 					getPassedQueues : getPassedQueues,
-					getUserQueues : getUserQueues,
 				}
 
 				function handleError( response ) 
@@ -356,13 +385,31 @@
 
 		angular
 			.module('User', [])
-			.factory('userService', ['$http', UserService]);
+			.factory('userService', ['$http','$q', UserService]);
 
 			function UserService($http)
 			{
-				return {
+				var getUserQueues = function()
+				{
 
+					var request = $http.get("User/getQueues");
+					return( request.then( handleSuccess, handleError ) );
 				}
+
+				return {
+					getUserQueues : getUserQueues,
+				}
+
+				function handleError( response ) 
+				{
+					return( $q.reject( response.data.status ) );
+				}
+
+				function handleSuccess( response ) 
+				{
+        	return( response.data );
+        }
+
 			}
 
 	})();

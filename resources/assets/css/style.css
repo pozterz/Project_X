@@ -170,12 +170,12 @@ label:not(.active):after {
     }
 @media only screen and (min-width: 600px) and (max-width: 992px){
     .ctn{
-        margin: 0 100px;
+        margin: 0 20px;
     }
 }
 
 @media only screen and (min-width : 993px){
     .ctn{
-        margin: 0 100px;
+        margin: 0 40px;
     }
 }
