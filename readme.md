@@ -8,27 +8,34 @@ Queue Management is a online reserve queue for any activity at the bank.
 
 #### Database ####
 
-* roles
- * id AI PK
- * name string (40)
- * description string (255)
- * timestamp
+[x] **roles**
 
-* users
- * id AI PK
- * username string (30) unique
- * password string (200)
- * name string (100)
- * email string (100)
- * phone string (10)
- * ip string (20)
- * remember_token string (100)
- * timestamp
+```sh
+id AI PK
+name string (40)
+description string (255)
+timestamp
+```
+
+[x] **users**
+
+```sh
+id AI PK
+username string (30) unique
+password string (200)
+name string (100)
+email string (100)
+phone string (10)
+ip string (20)
+remember_token string (100)
+timestamp
+```
 
 #### View ####
 
-**index**
+[ ] **index**
 
+```
 * 3 Tabs
  * 1 active queues
   * queue name
@@ -49,17 +56,18 @@ Queue Management is a online reserve queue for any activity at the bank.
   * opentime
   * remaining time
   * <button> show info
+```
 
-**Login & Register**
+[ ] **Login & Register**
 
-* Login with username & password
- * Register requirement
-  * username
-  * password
-  * email
-  * name , surname
-  * phone
-
+```
+**Register requirement**
+username
+password
+email
+name , surname
+phone
+```
 
 - - - -
 
@@ -69,6 +77,8 @@ Queue Management is a online reserve queue for any activity at the bank.
   - Reserve the queue
   - Admin can manage users,queues
   - Check user for receiver service system
+
+- - - -
 
 ### Tech
 
