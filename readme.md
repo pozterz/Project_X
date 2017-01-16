@@ -8,65 +8,65 @@ Queue Management is a online reserve queue for any activity at the bank.
 
 #### Database ####
 
-[x] **roles**
+- [x] **roles**
 
-```sh
-id AI PK
-name string (40)
-description string (255)
-timestamp
+```
+- id AI PK
+- name string (40)
+- description string (255)
+- timestamp
 ```
 
-[x] **users**
+- [x] **users**
 
-```sh
-id AI PK
-username string (30) unique
-password string (200)
-name string (100)
-email string (100)
-phone string (10)
-ip string (20)
-remember_token string (100)
-timestamp
+```
+- id AI PK
+- username string (30) unique
+- password string (200)
+- name string (100)
+- email string (100)
+- phone string (10)
+- ip string (20)
+- remember_token string (100)
+- timestamp
 ```
 
 #### View ####
 
-[ ] **index**
+- [ ] **index**
 
 ```
-* 3 Tabs
- * 1 active queues
-  * queue name
-  * opentime
-  * count
-  * remaining time
-  * <button> show info
+- 3 Tabs
+ - 1 active queues
+  - queue name
+  - opentime
+  - count
+  - remaining time
+  - <button> show info
 
- * 2 user's reserved queues
-  * queue name
-  * queue time
-  * remaining time to get service
-  * captcha code
-  * <button> show info
+ - 2 user's reserved queues
+  - queue name
+  - queue time
+  - remaining time to get service
+  - captcha code
+  - <button> show info
 
- * 3 future queues
-  * queue name
-  * opentime
-  * remaining time
-  * <button> show info
+ - 3 future queues
+  - queue name
+  - opentime
+  - remaining time
+  - <button> show info
 ```
 
-[ ] **Login & Register**
+- [ ] **Login & Register**
 
 ```
 **Register requirement**
-username
-password
-email
-name , surname
-phone
+- username
+- password
+- email
+- name , surname
+- phone
 ```
 
 - - - -
