@@ -2,6 +2,67 @@
 
 Queue Management is a online reserve queue for any activity at the bank.
 
+- - - -
+
+### Design  ###
+
+#### Database ####
+
+* roles
+ * id AI PK
+ * name string (40)
+ * description string (255)
+ * timestamp
+
+* users
+ * id AI PK
+ * username string (30) unique
+ * password string (200)
+ * name string (100)
+ * email string (100)
+ * phone string (10)
+ * ip string (20)
+ * remember_token string (100)
+ * timestamp
+
+#### View ####
+
+**index**
+
+* 3 Tabs
+ * 1 active queues
+  * queue name
+  * opentime
+  * count
+  * remaining time
+  * <button> show info
+
+ * 2 user's reserved queues
+  * queue name
+  * queue time
+  * remaining time to get service
+  * captcha code
+  * <button> show info
+
+ * 3 future queues
+  * queue name
+  * opentime
+  * remaining time
+  * <button> show info
+
+**Login & Register**
+
+* Login with username & password
+ * Register requirement
+  * username
+  * password
+  * email
+  * name , surname
+  * phone
+
+
+- - - -
+
 ### Features
   - Authentication & Authorization.
   - Create the queue
@@ -21,6 +82,7 @@ Queue Management uses a number of open source projects to work properly.
 And of course Queue Managerment itself is open source with a [public repository][projectx]
  on GitHub.
 
+- - - -
 
 ### Installation
 

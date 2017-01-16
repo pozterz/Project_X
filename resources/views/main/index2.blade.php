@@ -14,7 +14,7 @@ height: 100%;
 						<div class="col s12">
 							<div class="col s12 m6 l4 right">
 								<nav>
-									<div class="nav-wrapper blue">
+									<div class="nav-wrapper pink lighten-2">
 							      <form>
 							        <div class="input-field">
 							          <input id="search" type="search" ng-model="search">
