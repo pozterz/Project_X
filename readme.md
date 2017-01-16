@@ -31,6 +31,40 @@ Queue Management is a online reserve queue for any activity at the bank.
 - timestamp
 ```
 
+- [x] **main_queues**
+
+```
+- id AI PK INDEX
+- name string (150)
+- description string (500)
+- counter string (100)
+- workingtime dateTime
+- workmin integer unsigned
+- open dateTime
+- close dateTime
+- user_id integer unsigned FK ref:id [users]
+- timestamp
+```
+
+- [x] **main_queues**
+
+```
+- id AI PK INDEX
+- user_id integer unsigned FK ref:id [users]
+- captcha string (40)
+- time dateTime
+- isAccepted enum['yes','no'] default ['no']
+- ip string (20)
+- timestamp
+```
+
+- [x] **main_queue_user_queue (pivot)**
+
+```
+- main_queue_id integer unsigned FK:id [main_queues]
+- user_queue_id integer unsigned FK:id [user_queues]
+```
+
 #### View ####
 
 - [ ] **index**

@@ -15,12 +15,12 @@ class MainQueue extends Migration
         Schema::create('main_queues', function (Blueprint $table) {
             $table->integer('id')->unsigned()->index();
             $table->string('name',150);
+            $table->string('description',500);
             $table->string('counter',100);
             $table->dateTime('workingtime');
             $table->integer('workmin')->unsigned();
-            $table->dateTime('start');
-            $table->dateTime('end');
-            $table->string('description',500);
+            $table->dateTime('open ');
+            $table->dateTime('close');
             $table->integer('max')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->timestamps();
