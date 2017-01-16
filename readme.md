@@ -46,7 +46,7 @@ Queue Management is a online reserve queue for any activity at the bank.
 - timestamp
 ```
 
-- [x] **main_queues**
+- [x] **user_queues**
 
 ```
 - id AI PK INDEX
@@ -95,12 +95,12 @@ Queue Management is a online reserve queue for any activity at the bank.
 - [ ] **Login & Register**
 
 ```
-**Register requirement**
-- username
-- password
-- email
-- name , surname
-- phone
+- Register requirement
+  - username
+  - password
+  - email
+  - name , surname
+  - phone
 ```
 
 - - - -

@@ -19,7 +19,7 @@ class MainQueue extends Migration
             $table->string('counter',100);
             $table->dateTime('workingtime');
             $table->integer('workmin')->unsigned();
-            $table->dateTime('open ');
+            $table->dateTime('open');
             $table->dateTime('close');
             $table->integer('max')->unsigned();
             $table->integer('user_id')->unsigned();
