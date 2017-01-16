@@ -42,6 +42,7 @@ Queue Management is a online reserve queue for any activity at the bank.
 - workmin integer unsigned
 - open dateTime
 - close dateTime
+- max integer
 - user_id integer unsigned FK ref:id [users]
 - timestamp
 ```
@@ -99,8 +100,22 @@ Queue Management is a online reserve queue for any activity at the bank.
   - username
   - password
   - email
-  - name , surname
+  - name
   - phone
+```
+
+- [ ] **Reserve**
+
+```
+- name
+- description
+- counter 
+- workingtime 
+- workmin
+- open - close
+- reserved count/max count
+- officer's name
+
 ```
 
 - - - -
