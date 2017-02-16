@@ -268,11 +268,16 @@ height: 100%;
 				this.getUserQueues = function()
 				{
 					$scope.loading = true;
-					userService.getUserQueues()
-					.then(function(data){
-						$scope.UserQueues = data.result;
+					@if(!Auth::guest())
+						userService.getUserQueues()
+						.then(function(data){
+							$scope.UserQueues = data.result;
+							$scope.loading = false;
+						})
+					@else
+						$scope.UserQueues = [];
 						$scope.loading = false;
-					})
+					@endif
 				}
 
 				this.getQueue = function(id)
