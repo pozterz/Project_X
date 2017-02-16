@@ -27,7 +27,7 @@ class MainQueue extends Migration
         });
         Schema::table('main_queues',function(Blueprint $table){
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('queue_type_id')->references('id')->on('queue_types')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('queuetype_id')->references('id')->on('queue_types')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
