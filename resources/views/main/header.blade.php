@@ -10,7 +10,7 @@
             @else
             <li><a class="dropdown-button" data-beloworigin="true" data-constrainwidth="false" data-hover="true" href="#!" data-activates="nav_dropdown">{{ Auth::user()->username }}  <i class="fa fa-caret-down"></i></a></li>
             <ul id="nav_dropdown" class="dropdown-content">
-                @if(Auth::user()->level == 'admin')
+                @if(Auth::user()->isAdmin(Auth::user()))
                 <li><a href="{{ url('admin/activities') }}"><i class="fa fa-check"></i> Check User</a></li>
                 <li><a href="{{ url('admin') }}"><i class="fa fa-gear"></i> Admin Panel</a></li>
                 @endif
@@ -43,7 +43,7 @@
                     <img class="background" src="http://static1.squarespace.com/static/524d09ece4b05018590c5c59/t/5260e196e4b055fef802e254/1382080921506/sea-sanctuaries-siteimage01.jpg"></img>
                    
                     <a href="{{ url('profile') }}"> <img src="https://graph.facebook.com/100005406396686/picture?width=800" width="54px" class="circle responsive-img" > </a>
-                    <a href="{{ url('profile') }}"><p class="flow-text white-text"> {{ Auth::user()->user_info->name }} </p></a>
+                    <a href="{{ url('profile') }}"><p class="flow-text white-text"> {{ Auth::user()->name }} </p></a>
 
                     </div>
                 </div>

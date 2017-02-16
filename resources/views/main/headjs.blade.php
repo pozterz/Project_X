@@ -11,4 +11,3 @@
 <script src="{{ url('js/moments-with-locale.js') }}"></script>
 <script src="{{ asset('js/jquery.countdown.min.js')}}"></script>
 <script src="{{ url('/')}}{{ elixir('js/all.js')}}"></script>
-<script src='https://www.google.com/recaptcha/api.js'></script>

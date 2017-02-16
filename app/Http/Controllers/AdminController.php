@@ -55,11 +55,7 @@ class AdminController extends Controller
             'password' => 'required|confirmed|min:6',
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'gender' => 'required',
-            'card_id' => 'required|min:13|max:13|unique:user_informations',
-            'address' => 'required|max:255|min:25',
-            'tel' => 'required|min:10|max:10',
-            'birthday' => 'required',
+            'phone' => 'required|min:10|max:10',
         ]);
 
         if($validator->fails()){
@@ -67,23 +63,15 @@ class AdminController extends Controller
         }
 
         $user = User::create([
-            'username' => $request->get('username'),
-            'password' => $request->get('password'),
-            'email' => $request->get('email'),
-            'level' => 'user',
-            'ip' => $request->get('ip'),
+            'username' => $data['username'],
+            'password' => bcrypt($data['password']),
+            'name'  => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'role_id' => 2,
+            'ip' => $data['ip'],
         ]);
         
-        $user_info = new UserInformation;
-        $user_info->user_id = $user->id;
-        $user_info->name = $request->get('name');
-        $user_info->gender = $request->get('gender');
-        $user_info->card_id = $request->get('card_id');
-        $user_info->address = $request->get('address');
-        $user_info->tel = $request->get('tel');
-        $user_info->birthday = $this->ConvertDate($request->get('birthday'),'00:00');
-        $user_info->save();
-
         $request->session()->flash('success', 'Add User Completed!');
         
         return Redirect('/admin');
@@ -97,15 +85,12 @@ class AdminController extends Controller
     public function PostEdit(Request $req,$id){
         $user = User::find($id);
         $user->username = $req->get('username');
-        $info = UserInformation::where('user_id',$id)->firstOrFail();
-        $info->name = $req->get('name');
-        $info->gender = $req->get('gender');
-        $info->card_id = $req->get('card_id');
-        $info->address = $req->get('address');
-        $info->tel = $req->get('tel');
-        $info->birthday = $this->ConvertDate($req->get('birthday'),'00:00');
+        $user->password = bcrypt($req->get('password'));
+        $user->email = $req->get('email');
+        $user->name = $req->get('name');
+        $user->tel = $req->get('phone');
+        $user->role_id = $req->get('role_id');
         $user->save();
-        $info->save();
 
         $req->session()->flash('success', 'Edit Completed!');
         return Redirect('/admin');
@@ -142,12 +127,12 @@ class AdminController extends Controller
     
     public function Activities(){
         //$mainqueues = MainQueue::orderBy('created_at','desc')->paginate(20);
-        $mainqueues = MainQueue::where('opentime','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(20);
+        $mainqueues = MainQueue::where('workingtime','>',Carbon::now()->toDateTimeString())->orderBy('close','asc')->paginate(20);
         return view('admin.Activity-panel',compact('mainqueues'));
     }
 
     public function AllActivities(){
-        $mainqueues = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->where('opentime','<',Carbon::now()->toDateTimeString())->orderBy('end','desc')->paginate(10);
+        $mainqueues = MainQueue::where('close','<',Carbon::now()->toDateTimeString())->where('workingtime','<',Carbon::now()->toDateTimeString())->orderBy('close','desc')->paginate(10);
         return view('admin.Activity-panel',compact('mainqueues'));
     }
 
@@ -162,30 +147,30 @@ class AdminController extends Controller
 
     public function PostNewActivity(Request $request){
         $validator = Validator::make($request->all(),[
-            'queue_name' => 'required|string|max:150',
+            'name' => 'required|string|max:150',
+            'description' => 'required|string|max:500',
             'counter' => 'required|string|max:100',
-            'opentime' => 'required',
-            'service_time' => 'required|integer',
-            'start' => 'required',
-            'end' => 'required',
-            'max_count' => 'required|integer',
+            'workingtime' => 'required',
+            'workmin' => 'required|integer',
+            'open' => 'required',
+            'close' => 'required',
+            'max' => 'required|integer',
         ]);
 
         if($validator->fails()){
             return view('admin.newActivity')->withErrors($validator);
         }
         $Queue = new MainQueue;
-        $Queue->queue_name = $request->get('queue_name');
+        $Queue->name = $request->get('name');
+        $Queue->description = $request->get('description');
         $Queue->counter = $request->get('counter');
-        $Queue->opentime = $this->ConvertDate($request->get('opentime'),$request->get('opentime_time'));
-        $Queue->service_time = $request->get('service_time');
-        $Queue->start = $this->ConvertDate($request->get('start'),$request->get('start_time'));
-        $Queue->end = $this->ConvertDate($request->get('end'),$request->get('end_time'));
-        $Queue->current_count = 0;
-        $Queue->max_count = $request->get('max_count');
+        $Queue->workingtime = $this->ConvertDate($request->get('workingtime'),$request->get('working_time'));
+        $Queue->workmin = $request->get('workmin');
+        $Queue->open = $this->ConvertDate($request->get('open'),$request->get('open_time'));
+        $Queue->close = $this->ConvertDate($request->get('close'),$request->get('close_time'));
+        $Queue->current = 0;
+        $Queue->max = $request->get('max');
         $Queue->user_id = Auth::user()->id;
-        $Queue->status = 'ready';
-
         $Queue->save();
         
         $request->session()->flash('success', 'Added new activity!');
@@ -261,7 +246,7 @@ class AdminController extends Controller
         try
         {
             $User = User::find($id);
-            $User->user_info;
+            $User['Phone'] = $User->getPhone();
             $result = 'Success';
         }
         catch(ModelNotFoundException $ex)
@@ -275,6 +260,66 @@ class AdminController extends Controller
         return response()->json([
             'status' => $result,
             'result' => $User,
+            ]);
+    }
+
+    public function getUserReserved($id)
+    {
+        $result = 'Success';
+        try
+        {
+            $UserQueue = UserQueue::where('user_id',$id)->where('isAccept','no')->where('time','>',Carbon::now()->toDateTimeString())->get();
+            foreach ($UserQueue as $key => $Queue) {
+                $Queue->mainqueue;
+                $Queue['captcha_key'] = $Queue->getQueue_captcha();
+            }
+            $result = 'Success';
+        }
+        catch(ModelNotFoundException $ex)
+        {
+            return response()->json([
+                'status' => $result,
+                'result' => null,
+            ]);
+        }
+        return response()->json([
+            'status' => $result,
+            'result' => $UserQueue,
+            ]);
+    }
+
+    public function getUserHistory($id)
+    {
+        $result = 'Success';
+        try
+        {
+            $UserQueue = UserQueue::where('user_id',$id)->where('time','<',Carbon::now()->toDateTimeString())->get();
+            foreach ($UserQueue as $key => $Queue) {
+                $Queue->mainqueue;
+                $Queue['captcha_key'] = $Queue->getQueue_captcha();
+            }
+            $result = 'Success';
+        }
+        catch(ModelNotFoundException $ex)
+        {
+            return response()->json([
+                'status' => $result,
+                'result' => null,
+            ]);
+        }
+        return response()->json([
+            'status' => $result,
+            'result' => $UserQueue,
+            ]);
+    }
+
+    public function getQueues(){
+        
+        $Queues = MainQueue::all();
+
+        return response()->json([
+                'status' => $result,
+                'result' => $Queues,
             ]);
     }
 

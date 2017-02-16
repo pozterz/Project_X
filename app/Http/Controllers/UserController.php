@@ -24,8 +24,9 @@ class UserController extends Controller
 	public function getQueues(){
 		$Queues = Auth::user()->userqueue;
 		foreach ($Queues as $key => $Queue) {
-			$Queue['captcha'] = $Queue->getQueue_captcha();
+			$Queue['captcha_key'] = $Queue->getQueue_captcha();
 			$Queue->mainqueue;
+			$Queue->mainqueue[0]->Queuetype;
 		}
 		return response()->json([
 				'status' => 'Success',
@@ -40,12 +41,26 @@ class UserController extends Controller
 	public function getAcceptedQueues(){
 		$AcceptedQueues = Auth::user()->userqueue()->where('isAccept','yes')->get();
 		foreach ($AcceptedQueues as $key => $Queue) {
-			$Queue['captcha'] = $Queue->getQueue_captcha();
+			$Queue['captcha_key'] = $Queue->getQueue_captcha();
 		}
 		return response()->json([
 				'status' => 'Success',
 				'result' => $AcceptedQueues,
 			]);
+	}
+
+	public function getReserve($id){
+		return view('main.reserve',compact('id'));
+	}
+
+	public function Reserve(Request $request){
+		$this->validate($request, [
+			'id' => 'required',
+			'g-recaptcha-response'=>'required|captcha',
+		]);
+
+		return "KUY";
+		
 	}
 
 	/**
@@ -68,15 +83,9 @@ class UserController extends Controller
 		try{
 			$user = User::find($id);
 			$user->username = $request->get('username');
-	    $info = UserInformation::where('user_id',$id)->firstOrFail();
-	    $info->name = $request->get('name');
-	    $info->gender = $request->get('gender');
-	    $info->card_id = $request->get('card_id');
-	    $info->address = $request->get('address');
-	    $info->tel = $request->get('tel');
-	    $info->birthday = $this->ConvertDate($request->get('birthday'),'00:00');
+	    $user->name = $request->get('name');
+	    $user->tel = $request->get('tel');
 	    $user->save();
-	    $info->save();
 	    $result = 'Success';
 		}catch(ModelNotFoundException $ex) {
 
@@ -92,11 +101,11 @@ class UserController extends Controller
 	private function isFull($Qid){
 		$mainqueue = MainQueue::find($Qid);
 		$count = $mainqueue->userqueue->count();
-		if($mainqueue->current_count != $count && $mainqueue->current_count+$count <= $mainqueue->max_count){
+		if($mainqueue->current_count != $count && $mainqueue->current_count+$count <= $mainqueue->max){
 			$mainqueue->current_count = $count;
 			$mainqueue->save();
 		}
-		if($mainqueue->current_count < $mainqueue->max_count && $count < $mainqueue->max_count){
+		if($mainqueue->current_count < $mainqueue->max && $count < $mainqueue->max){
 			return false;
 		}
 		return true;

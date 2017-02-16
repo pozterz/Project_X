@@ -16,31 +16,19 @@
 								</h4>
 							</li>
 							<li class="collection-item blue-border">
-								Name : {{ Auth::user()->user_info->name }}
-							</li>
-							<li class="collection-item blue-border">
-								Gender : {{ Auth::user()->user_info->gender }}
+								Name : {{ Auth::user()->name }}
 							</li>
 							<li class="collection-item blue-border">
 								Username : {{ Auth::user()->username }}
 							</li>
 							<li class="collection-item blue-border">
-								Level : {{ Auth::user()->level }}
+								Level : {{ ucfirst(trans(Auth::user()->getUserRole()->name)) }}
 							</li>
 							<li class="collection-item blue-border">
 								E-mail : {{ Auth::user()->email }}
 							</li>
 							<li class="collection-item blue-border">
-								Card ID : {{ Auth::user()->user_info->card_id }}
-							</li>
-							<li class="collection-item blue-border">
-								Address : {{ Auth::user()->user_info->address }}
-							</li>
-							<li class="collection-item blue-border">
-								Tel. : {{ Auth::user()->user_info->tel }}
-							</li>
-							<li class="collection-item blue-border">
-								Birthday : {{ Auth::user()->user_info->birthday->format('j F Y') }}
+								Phone. : {{ Auth::user()->phone }}
 							</li>
 						</ul>
 						<div class="center">

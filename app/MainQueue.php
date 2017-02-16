@@ -7,30 +7,36 @@ use Illuminate\Database\Eloquent\Model;
 class MainQueue extends Model
 {
 	protected $dates = [
-        'opentime',
-		'start',
-		'end',
+        'workingtime',
+		'open',
+		'close',
 		'created_at',
 		'updated_at',
 	];
 
      protected $fillable = [
-        'queue_name',
+        'name',
+        'description',
         'counter',
-        'opentime',
-        'service_time',
-        'start',
-        'end',
-        'status',
-        'max_count',
+        'workingtime',
+        'workmin',
+        'open',
+        'close',
+        'max',
         'created_at',
-        'updated_at'];
+        'updated_at'
+        ];
 
-     protected $hidden = ['updated_at'];
+     protected $hidden = ['updated_at','pivot','created_at'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function Queuetype()
+    {
+        return $this->belongsTo(QueueType::class);
     }
 
     public function userqueue()

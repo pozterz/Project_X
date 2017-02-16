@@ -36,7 +36,6 @@ Route::get('/test', function () {
 
 Route::group(['middleware' => 'web'], function () {
     Route::auth();
-    Route::get('/index','MainController@Index');
     // Admin
         // user
     Route::get('/admin','AdminController@Index');
@@ -76,25 +75,32 @@ Route::group(['middleware' => 'web'], function () {
 
     /**** View ****/
     
-    Route::get('index2','ViewController@index');
+    Route::get('index','ViewController@index');
 
     /***** User [Authenticated] *****/
     Route::get('/User/getQueues','UserController@getQueues');
     Route::get('/User/getAcceptedQueues','UserController@getAcceptedQueues');
     Route::get('/User/getProfile','UserController@getProfile');
     Route::post('/User/updateProfile','UserController@updateProfile');
+    Route::get('/User/Reserve/{id}','UserController@getReserve');
     Route::post('/User/Reserve','UserController@Reserve');
 
     /***** App [guest APIs] *****/
     Route::get('/App/getQueues','AppController@getQueues');
+    Route::get('/App/getQueueType','AppController@getQueueType');
     Route::get('/App/getQueue/{id}','AppController@getQueue');
     Route::get('/App/getPassedQueues','AppController@getPassedQueues');
+    Route::get('/App/getRunningQueues','AppController@getRunningQueues');
     Route::get('/App/getActiveQueues','AppController@getActiveQueues');
 
     /***** Admin *****/
     Route::get('/Admin/getUsers','AdminController@getUsers');
     Route::get('/Admin/getUser/{id}','AdminController@getUser');
+    Route::get('/Admin/getUserReserved/{id}','AdminController@getUserReserved');
+    Route::get('/Admin/getUserHistory/{id}','AdminController@getUserHistory');
     Route::post('/Admin/deleteUser','AdminController@deleteUser');
+
+    Route::get('/Admin/getQueues','AdminController@getQueues');
 
 
 });

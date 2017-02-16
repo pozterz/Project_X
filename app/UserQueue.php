@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class UserQueue extends Model
 {
 	protected $dates = [
-		'queue_time',
+		'time',
 		'created_at',
 		'updated_at',
 	];
 
-    protected $fillable = ['queue_id', 'user_id', 'queue_captcha','queue_time','isAccept'];
+    protected $fillable = ['queue_id','user_id', 'captcha','time','isAccept'];
 
-    protected $hidden = ['queue_captcha','created_at','updated_at','pivot'];
+    protected $hidden = ['created_at','updated_at','pivot','captcha'];
 
     public function user()
     {
@@ -28,7 +28,7 @@ class UserQueue extends Model
 
     public function getQueue_captcha()
     {
-        return $this->queue_captcha;
+        return $this->captcha;
     }
 
     public function getPivot()

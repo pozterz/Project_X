@@ -62,52 +62,11 @@
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
-									<input id="card_id" type="text" name="card_id" class="validate{{ $errors->has('card_id') ? ' invalid' : '' }}" value="{{ old('card_id') }}" pattern="[0-9].{12}"  length="13">
-									@if ($errors->has('card_id'))
-										<label for="card_id" data-error="{{ $errors->first('card_id') }}">Card ID</label>
+									<input id="phone" type="text" name="phone" class="validate{{ $errors->has('phone') ? ' invalid' : '' }}" value="{{ old('phone') }}" pattern="[0-9].{9}" length="10">
+									@if ($errors->has('phone'))
+										<label for="phone" data-error="{{ $errors->first('phone') }}">Phone</label>
 									@else
-										<label for="card_id" data-error="Card ID had 13 digits and number only" data-success="Validated">Card ID</label>
-									@endif
-								</div>
-							</div>
-							<div class="row">
-								<div class="col s12">
-									<p style="color:#9e9e9e;">
-										Gender : 
-										<input class="with-gap" name="gender" type="radio" id="genderm" value="male" checked/>
-										<label for="genderm">Male</label> &nbsp;
-										<input class="with-gap" name="gender" type="radio" id="genderf" value="female"/>
-										<label for="genderf">Female</label>
-									</p>
-								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<textarea id="address" type="text" name="address" class="materialize-textarea validate{{ $errors->has('address') ? ' invalid' : '' }}" rows="4" cols="45">{{ old('address') }}</textarea> 
-									@if ($errors->has('address'))
-										<label for="address" data-error="{{ $errors->first('address') }}">Address</label>
-									@else
-										<label for="address">Address</label>
-									@endif
-								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="tel" type="text" name="tel" class="validate{{ $errors->has('tel') ? ' invalid' : '' }}" value="{{ old('tel') }}" pattern="[0-9].{9}" length="10">
-									@if ($errors->has('tel'))
-										<label for="tel" data-error="{{ $errors->first('tel') }}">Phone</label>
-									@else
-										<label for="tel" data-error="Phone number had 10 digits and number only" data-success="Validated">Phone</label>
-									@endif
-								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="birthday" type="date" name="birthday" class="datepicker" value="{{ old('birthday') }}">
-									@if ($errors->has('birthday'))
-										<label for="birthday" data-error="{{ $errors->first('birthday') }}">Birthday</label>
-									@else
-										<label for="birthday">Birthday</label>
+										<label for="phone" data-error="Phone number had 10 digits and number only" data-success="Validated">Phone</label>
 									@endif
 								</div>
 							</div>

@@ -11,10 +11,9 @@ use Session;
 use Validator;
 use Gate;
 use App\User;
-use App\UserInformation;
 use App\UserQueue;
 use App\MainQueue;
-use App\QueueLog;
+use App\QueueType;
 use App\Http\Requests;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -29,7 +28,8 @@ class AppController extends Controller
 
 		foreach ($Queues as $key => $Queue)
 		{
-			$Queue['current_count'] = $Queue->userqueue()->count();
+			$Queue->QueueType;
+			$Queue['current'] = $Queue->userqueue()->count();
 		}
 
 		return response()->json([
@@ -49,7 +49,8 @@ class AppController extends Controller
 		try
 		{
 			$Queue = MainQueue::findOrfail($id);
-			$Queue['current_count'] = $Queue->userqueue()->count();
+			$Queue['current'] = $Queue->userqueue()->count();
+			$Queue->QueueType;
 			$Queue->userqueue;
 			$result = 'Success';
 		}catch(ModelNotFoundException $ex) {
@@ -61,7 +62,7 @@ class AppController extends Controller
 
 		return response()->json([
 				'status' => $result,
-				'result' => $Queue,
+				'result' => array($Queue),
 			]);
 
 	}
@@ -72,10 +73,11 @@ class AppController extends Controller
 	 */
 	public function getActiveQueues(){
 
-		$Queues = MainQueue::where('end','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->get();
+		$Queues = MainQueue::where('close','>',Carbon::now()->toDateTimeString())->orderBy('close','asc')->get();
 
 		foreach ($Queues as $key => $Queue) {
-			$Queue['current_count'] = $Queue->userqueue()->count();
+			$Queue->QueueType;
+			$Queue['current'] = $Queue->userqueue()->count();
 			$Queue->userqueue;
 		}
 		
@@ -93,10 +95,11 @@ class AppController extends Controller
 	 */
 	public function getPassedQueues(){
 
-		$Queues = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->where('opentime','<',Carbon::now()->toDateTimeString())->orderBy('end','desc')->get();
+		$Queues = MainQueue::where('close','<',Carbon::now()->toDateTimeString())->where('workingtime','<',Carbon::now()->toDateTimeString())->orderBy('close','desc')->get();
 
 		foreach ($Queues as $key => $Queue) {
-			$Queue['current_count'] = $Queue->userqueue()->count();
+			$Queue->QueueType;
+			$Queue['current'] = $Queue->userqueue()->count();
 			$Queue->userqueue;
 		}
 		
@@ -108,5 +111,34 @@ class AppController extends Controller
 			]);
 	}
 
+	/**
+	 * [Running Queue | end < now]
+	 * @return [json] [Running queue]
+	 */
+	public function getRunningQueues(){
+		$Queues = MainQueue::where('workingtime','<=',Carbon::now()->toDateTimeString())->where('workingtime','<=',Carbon::now()->endOfDay()->toDateTimeString())->where('workingtime','>=',Carbon::now()->startOfDay()->toDateTimeString())->where('close','<',Carbon::now()->toDateTimeString())->orderBy('workingtime','desc')->get();
 
+		foreach ($Queues as $key => $Queue) {
+			$Queue->QueueType;
+			$Queue['current'] = $Queue->userqueue()->count();
+			foreach ($Queue->userqueue as $key => $user) {
+				$user->user->name;
+			}
+		}
+		
+		$result = 'Success';
+		
+		return response()->json([
+				'status' => $result,
+				'result' => $Queues,
+			]);
+	}
+
+	public function getQueueType(){
+		$result = 'Success';
+		return response()->json([
+				'status' => $result,
+				'result' => QueueType::all(),
+			]);
+	}
 }

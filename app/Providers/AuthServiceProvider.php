@@ -30,12 +30,14 @@ class AuthServiceProvider extends ServiceProvider
             if($user->hasRole('administrator')){
                 return true;
             }
+            return false;
         });
 
         $gate->define('isUser',function($user){
             if($user->hasRole('user')){
                 return true;
             }
+            return false;
         });
         
     }

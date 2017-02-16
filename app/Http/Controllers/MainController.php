@@ -27,9 +27,9 @@ class MainController extends Controller
 		else
 			$user_queue = null;
 
-		$mainqueue = MainQueue::where('opentime','>',Carbon::now()->toDateTimeString())->orderBy('end','asc')->paginate(10);
+		$mainqueue = MainQueue::where('workingtime','>',Carbon::now()->toDateTimeString())->orderBy('close','asc')->paginate(10);
 		
-		$passedqueue = MainQueue::where('end','<',Carbon::now()->toDateTimeString())->where('opentime','<',Carbon::now()->toDateTimeString())->orderBy('end','desc')->paginate(10);
+		$passedqueue = MainQueue::where('close','<',Carbon::now()->toDateTimeString())->where('workingtime','<',Carbon::now()->toDateTimeString())->orderBy('close','desc')->paginate(10);
 
 		return view('main.index',compact('user_queue','mainqueue','passedqueue'));
 	}
@@ -45,19 +45,13 @@ class MainController extends Controller
 	public function UpdateProfile(Request $req){
 		$id = Auth::user()->id;
 		$user = User::find($id);
-        $user->username = $req->get('username');
-        $info = UserInformation::where('user_id',$id)->firstOrFail();
-        $info->name = $req->get('name');
-        $info->gender = $req->get('gender');
-        $info->card_id = $req->get('card_id');
-        $info->address = $req->get('address');
-        $info->tel = $req->get('tel');
-        $info->birthday = $this->ConvertDate($req->get('birthday'),'00:00');
-        $user->save();
-        $info->save();
+    $user->username = $req->get('username');
+    $user->name = $req->get('name');
+    $user->tel = $req->get('tel');
+    $user->save();
 
-        $req->session()->flash('success', 'Update Complete.');
-        return Redirect('/profile');
+    $req->session()->flash('success', 'Update Complete.');
+    return Redirect('/profile');
 	}
 
 	public function Reserve($q_id){

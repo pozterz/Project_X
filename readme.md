@@ -115,7 +115,6 @@ Queue Management is a online reserve queue for any activity at the bank.
 - open - close
 - reserved count/max count
 - officer's name
-
 ```
 
 - - - -

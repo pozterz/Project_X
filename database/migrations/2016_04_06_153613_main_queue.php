@@ -13,9 +13,9 @@ class MainQueue extends Migration
     public function up()
     {
         Schema::create('main_queues', function (Blueprint $table) {
-            $table->integer('id')->unsigned()->index();
+            $table->increments('id');
             $table->string('name',150);
-            $table->string('description',500);
+            $table->integer('queuetype_id')->unsigned()->index();
             $table->string('counter',100);
             $table->dateTime('workingtime');
             $table->integer('workmin')->unsigned();
@@ -27,6 +27,7 @@ class MainQueue extends Migration
         });
         Schema::table('main_queues',function(Blueprint $table){
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('queue_type_id')->references('id')->on('queue_types')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -9,6 +9,6 @@ use App\Http\Requests;
 class ViewController extends Controller
 {
 	public function index(){
-		return view('main.index2');
+		return view('main.index');
 	}
 }

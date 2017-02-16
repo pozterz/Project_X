@@ -1,82 +1,78 @@
 @extends('main.template')
 
 @section('content')
+<style type="text/css" media="screen">
+.white-space-pre-line {
+    white-space: pre-line;
+}
+</style>
+@if(Request::is('User/Reserve/'.$id))
 
-<div class="container">
+<div class="container" ng-app="ReserveApp" ng-controller="ReserveCtrl as Reserve">
 	<div class="row">
 		<div class="col s12 m12 l8 offset-l2">
 			<div class="card">
-				<div class="card-panel white z-depth-1">
-					@if($mainqueue)
+				<div ng-show="loading" class="center-align"><br/><br/><loading></loading><br/><br/><br/><br/></div>
+				<div ng-show="!QueueData.length && !loading">
+					<br/><br/><br/>
+    			<p class="flow-text center-align">QUEUE NOT FOUND.</p>
+    			<br/><br/><br/>
+	    	</div>
+				<div class="card-panel white z-depth-1" ng-repeat="Queue in QueueData" ng-show="QueueData.length && !loading">
 					 <ul class="collection with-header">
-						<li class="collection-header red-border">
-							<h5 class="flow-text"><i class="fa fa-hashtag"></i> Activity name : {{$mainqueue->queue_name}} 
+						<li class="collection-header red-border">				
+							<h5 class="flow-text"><i class="fa fa-hashtag"></i> <strong>Queue name</strong> : <% Queue.name %>
 							<br>
 						</li>
-						<form action="" method="POST">
+						<form action="{{ url('/User/Reserve')}}" method="POST">
 							{{ csrf_field() }}
 							<li class="collection-item blue-border">
-								Counter : {{ $mainqueue->counter }}
+								<strong>Type</strong> : <% Queue.queue_type.name %>
+							</li>
+							<li class="collection-item blue-border white-space-pre-line">
+								<strong>Requirement</strong> : <% Queue.queue_type.requirement %>
+							</li>
+							<li class="collection-item blue-border white-space-pre-line">
+								<strong>Document</strong> : <% Queue.queue_type.document %>
+							</li>
+							<li class="collection-item blue-border white-space-pre-line">
+								<strong>Description</strong> : <% Queue.queue_type.description %>
 							</li>
 							<li class="collection-item blue-border">
-								Remaining : <span id="remaining"></span>
+								<strong>Counter</strong> : <% Queue.counter %>
 							</li>
 							<li class="collection-item blue-border">
-								Service time : {{ $mainqueue->opentime->format("j F Y | H:i") }}  | {{ $mainqueue->service_time }} Minutes/User
+								<strong>Working time</strong> :  <% Reserve.convertTime(Queue.workingtime) | date:'d MMM y HH:mm น.' %>
 							</li>
 							<li class="collection-item blue-border">
-								Open : {{ $mainqueue->start->format("j F Y | H:i") }}
+								<strong>Service time per user</strong> :  <% Queue.workmin %>
 							</li>
 							<li class="collection-item blue-border">
-								<p id="{{$mainqueue->end}}">End : {{ $mainqueue->end->format("j F Y | H:i") }}</p>
+								<strong>Start</strong> : <% Reserve.convertTime(Queue.open) | date:'d MMM y HH:mm น.' %>
 							</li>
 							<li class="collection-item blue-border">
-								Status : 
-								@if($mainqueue->start > Carbon\Carbon::now())
-									<span class="blue-text">Ready</span>
-								@elseif($mainqueue->end >= Carbon\Carbon::now() && $mainqueue->start <= Carbon\Carbon::now())
-									@if($mainqueue->current_count == $mainqueue->max_count)
-										<span class="red-text">Full</span>
-									@else
-										<span class="green-text">Begin</span>
-									@endif
-								@elseif($mainqueue->end < Carbon\Carbon::now() && $mainqueue->opentime > Carbon\Carbon::now())
-									<span class="red-text">Closed</span>
-								@elseif($mainqueue->end < Carbon\Carbon::now() && $mainqueue->opentime < Carbon\Carbon::now())
-									<span class="blue-text">Passed</span>
-								@endif
+								<strong>Close</strong> : <% Reserve.convertTime(Queue.close) | date:'d MMM y HH:mm น.' %>
 							</li>
 							<li class="collection-item blue-border">
-								Count : {{ $mainqueue->current_count }}/{{ $mainqueue->max_count }}
+								<strong>Remaining : <timer countdown="Reserve.countd(Queue.close)"  max-time-unit="'day'" interval="1000">
+															<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
+														</timer>
 							</li>
 							<li class="collection-item blue-border">
-								By :  {{ $mainqueue->user->user_info->name }}
-							</li>
-							<li class="collection-item blue-border">
-								Created : {{ $mainqueue->created_at->format("j F Y | H:i") }}
+								<strong>Reserved count</strong> : <% Queue.current %>/<% Queue.max %>
 							</li>
 							<li class="collection-item blue-border">
 								{!! app('captcha')->display()!!}
-
 							</li>
 							<li class="collection-item center">
-								<input type="hidden" name="id" value="{{ $mainqueue->id }}">
+								<input type="hidden" name="id" value="$id">
 								<input type="hidden" name="ip" value="{{Request::getClientIp()}}">
-								@if($mainqueue->current_count == $mainqueue->max_count || $mainqueue->end < Carbon\Carbon::now() || $mainqueue->userqueue->contains('user_id',Auth::user()->id))
-								<button type="button" class="btn waves-effect waves-light blue disabled">
-									<i class="fa fa-btn fa-plus-circle"></i> Reserve
-								</button>
-								@else
 								<button type="submit" class="btn waves-effect waves-light blue">
 									<i class="fa fa-btn fa-plus-circle"></i> Reserve
 								</button>
-								@endif
 							</li>
 						</form>
-					  </ul>
-					@else
-						<span class="card-title">Activity not found.</span>
-					@endif
+					  </ul>  		
 				</div>
 			</div>
 		</div>
@@ -87,29 +83,102 @@
 
 @section('js')
 	<script>
-		$(document).ready(function(){
-			var end = $('.collection-item p').attr('id');
+	(function()
+	{
 
-			$('#remaining').countdown(end)
-		      .on('update.countdown', function(event) {
-		        var format = '%H:%M:%S';
-		        if(event.offset.totalDays > 0) {
-		          format = '%-d day%!d ' + format;
-		        }
-		        if(event.offset.weeks > 0) {
-		          format = '%-w week%!w ' + format;
-		        }
-		        $(this).html(event.strftime(format));
-		      })
-		      .on('finish.countdown', function(event) {
-		        $(this).html('หมดเวลา').parent().addClass('color orange lighten-4');
-		      });
-		})
-		@if($errors->has('g-recaptcha-response'))
-			Materialize.toast('{{ $errors->first('g-recaptcha-response') }}',3000,'rounded');
-		@endif
-		@if(Session::has('success'))
-			Materialize.toast('{{ Session::get('success') }}',3000,'rounded');
-		@endif
-	</script>
+		angular
+			.module('ReserveApp', ['ui.materialize', 'Reserve', 'ngLocale', 'timer'],setInterpolate)
+			.controller('ReserveCtrl', ['$scope', 'reserveService' , ReserveCtrl])
+			.constant("CSRF_TOKEN", '{{ csrf_token() }}')
+			.directive('loading', LoadingDirective)
+
+			function LoadingDirective() {
+	      return {
+	        restrict: 'E',
+	        replace:true,
+	        template: '<div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div>',
+	        link: function (scope, element, attr) {
+	              scope.$watch('loading', function (val) {
+	                  if (val)
+	                      $(element).show();
+	                  else
+	                      $(element).hide();
+	              });
+	        }
+	      }
+			 }
+
+			function setInterpolate($interpolateProvider)
+			{
+				$interpolateProvider.startSymbol('<%');
+				$interpolateProvider.endSymbol('%>');
+			}
+
+			function ReserveCtrl($scope,reserveService)
+			{
+				$scope.loading = false;
+
+				this. countd = function(end){
+					var date = new Date();
+					var end = new Date(end);
+					var diff = (end.getTime() / 1000) - (date.getTime() / 1000);
+					return (diff<=0)?0:diff;
+				}
+
+				this.getQueue = function(id)
+				{
+					$scope.loading = true;
+					reserveService.getQueue(id)
+					.then(function(data){
+						$scope.QueueData = data.result;
+						$scope.loading = false;
+					})
+				}
+
+				this.convertTime = function(time)
+				{
+					var date = new Date(time);
+					return date;
+				}
+				
+				this.getQueue({{ $id }});
+				@if($errors->has('g-recaptcha-response'))
+					Materialize.toast('{{ $errors->first('g-recaptcha-response') }}',3000,'rounded');
+				@endif
+				@if(Session::has('success'))
+					Materialize.toast('{{ Session::get('success') }}',3000,'rounded');
+				@endif
+			}
+
+			angular
+			.module('Reserve', [])
+			.factory('reserveService', ['$http','$q', reserveService]);
+				function reserveService($http,$q)
+				{
+					var getQueue = function(id)
+					{
+						var request = $http.get('{{ url("App/getQueue/") }}' +'/'+ id);
+						return( request.then( handleSuccess, handleError ) );
+					}
+
+					return {
+						getQueue : getQueue,
+					}
+
+					function handleError( response ) 
+					{
+						return( $q.reject( response.data.status ) );
+					}
+
+					function handleSuccess( response ) 
+					{
+	        	return( response.data );
+	        }
+				}
+
+		})();
+</script>
+
+@endif
+
 @endsection

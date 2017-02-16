@@ -13,7 +13,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username','password', 'email','level', 'ip'
+        'username','password','email', 'ip','role_id','name','phone'
     ];
 
     /**
@@ -22,13 +22,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','role_id','have_role'
+        'password', 'remember_token','role_id','have_role','phone'
     ];
 
 
-    public function user_info(){
-        return $this->hasOne(UserInformation::class);
-    }
     public function mainqueue(){
         return $this->hasMany(MainQueue::class);
     }
@@ -39,7 +36,7 @@ class User extends Authenticatable
     }
 
     public function isAdmin($user) {
-        return ( $user->getUserRole()->name == 'Administrator' );
+        return ( $user->getUserRole()->name == 'administrator' );
     }
 
     public function role(){
@@ -49,7 +46,7 @@ class User extends Authenticatable
     {
         $this->have_role = $this->getUserRole();
         // Check if the user is a root account
-        if($this->have_role->name == 'Administrator') {
+        if($this->have_role->name == 'administrator') {
             return true;
         }
 
@@ -65,7 +62,7 @@ class User extends Authenticatable
 
         return false;
     }
-    private function getUserRole(){
+    public function getUserRole(){
         return $this->role()->getResults();
     }
     private function getResults(){
@@ -73,5 +70,10 @@ class User extends Authenticatable
     }
     private function checkIfUserHasRole($need_role){
         return (strtolower($need_role)==strtolower($this->have_role->name)) ? true : false;
+    }
+
+    public function getPhone()
+    {
+        return $this->phone;
     }
 }
