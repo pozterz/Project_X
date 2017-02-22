@@ -95,6 +95,7 @@ Route::group(['middleware' => 'web'], function () {
 
     /***** Admin *****/
     Route::get('/Admin/getUsers','AdminController@getUsers');
+    Route::post('/Admin/addNewQueue','AdminController@addNewQueue');
     Route::get('/Admin/getUser/{id}','AdminController@getUser');
     Route::get('/Admin/getUserReserved/{id}','AdminController@getUserReserved');
     Route::get('/Admin/getUserHistory/{id}','AdminController@getUserHistory');

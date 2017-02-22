@@ -42,7 +42,6 @@
                 <div class="userView">
                     <img class="background" src="http://static1.squarespace.com/static/524d09ece4b05018590c5c59/t/5260e196e4b055fef802e254/1382080921506/sea-sanctuaries-siteimage01.jpg"></img>
                    
-                    <a href="{{ url('profile') }}"> <img src="https://graph.facebook.com/100005406396686/picture?width=800" width="54px" class="circle responsive-img" > </a>
                     <a href="{{ url('profile') }}"><p class="flow-text white-text"> {{ Auth::user()->name }} </p></a>
 
                     </div>

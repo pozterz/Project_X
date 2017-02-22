@@ -316,11 +316,52 @@ class AdminController extends Controller
     public function getQueues(){
         
         $Queues = MainQueue::all();
-
+        $result = 'Success';
         return response()->json([
                 'status' => $result,
                 'result' => $Queues,
             ]);
+    }
+
+    public function addNewQueue(Request $request){
+        $result = 'Success';
+
+         $validator = Validator::make($request->all(),[
+            'name' => 'required|string|max:150',
+            'counter' => 'required|string|max:100',
+            'workingtime' => 'required',
+            'workmin' => 'required|integer',
+            'open' => 'required',
+            'close' => 'required',
+            'max' => 'required|integer',
+        ]);
+
+        if($validator->fails()){
+            $result = 'Failed';
+            return response()->json([
+                'status' => $result,
+                'result' => $validator->errors(),
+            ]);
+        }
+
+        $Queue = new MainQueue;
+        $Queue->name = $request->get('name');
+        $Queue->queuetype_id = $request->get('queuetype_id');
+        $Queue->counter = $request->get('counter');
+        $Queue->workingtime = $this->ConvertDate($request->get('workingtime'),$request->get('workingtime_time'));
+        $Queue->workmin = $request->get('workmin');
+        $Queue->open = $this->ConvertDate($request->get('open'),$request->get('open_time'));
+        $Queue->close = $this->ConvertDate($request->get('close'),$request->get('close_time'));
+        $Queue->max = $request->get('max');
+        $Queue->user_id = Auth::user()->id;
+        $Queue->save();
+
+        $request->session()->flash('success', 'Added new queue!');
+
+        return response()->json([
+            'status' => $result,
+            'result' => $Queue,
+        ]);
     }
 
     //----------------------------------

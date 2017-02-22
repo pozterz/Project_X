@@ -101,7 +101,11 @@ height: 100%;
 					    	<div class="white-div ">
 					    		<div ng-if="Queue.isSelected(2)">
 						    		@if(Auth::guest())
-						    			<p class="flow-text center-align">AUTHENTICATION REQUIRED.</p>
+						    			<p class="flow-text center-align">AUTHENTICATION REQUIRED.
+						    			</p><br/>
+						    			<p class="flow-text center-align">
+						    				<a type="button" href="{{ url('login') }}" class="btn waves-effect waves-light blue">Login</a> OR <a type="button" href="{{ url('register') }}" class="btn waves-effect waves-light green lighten-1">Register</a>
+						    			</p>
 						    		@else
 						    			<div ng-show="loading" class="center-align"><loading></loading></div>
 						    			<div ng-show="!UserQueues.length && !loading">
