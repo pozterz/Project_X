@@ -15,7 +15,7 @@
 				<div class="col s12 m4 l4" ng-click="QueueAdmin.selectedTab(2)">
 					<div class="grow card-panel z-depth-2 orange lighten-1">
 						<div class="card-content white-text">
-							<p class="flow-text"><i class="fa fa-calendar"></i>  Manage Activities.</p>
+							<p class="flow-text"><i class="fa fa-calendar"></i>  Manage Queues.</p>
 						</div>
 					</div>
 				</div>
@@ -69,7 +69,7 @@
 							<a class="btn-floating waves-effect waves-light blue btn" data-target='historyModal' modal ready="QueueAdmin.getUserHistory(User.id)" complete="QueueAdmin.completeModal()"><i class="fa fa-history"></i></a>
 						</td>
 						<td>
-							<a class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')">
+							<a class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')" ng-click="QueueAdmin.deleteUser(User.id)">
 								<i class="fa fa-close"></i>
 							</a>
 						</td>
@@ -110,10 +110,10 @@
 							</timer>
     				</td>
     				<td>
-							<a class="btn-floating waves-effect waves-light btn"><i class="fa fa-info"></i></a>
+							<button class="btn-floating waves-effect waves-light btn" data-target='queueModal' modal ready="QueueAdmin.getQueue(Queue.id)" complete="QueueAdmin.completeModal()"><i class="fa fa-info"></i></button>
 						</td>
 						<td>
-							<a class="btn-floating waves-effect waves-light orange btn"><i class="fa fa-check-circle"></i></a>
+							<a class="btn-floating waves-effect waves-light orange btn" data-target='userListModal' modal ready="QueueAdmin.getUserInQueue(Queue.id)" complete="QueueAdmin.completeModal()"><i class="fa fa-check-circle"></i></a>
 						</td>
 						<td>
 							<a class="btn-floating waves-effect waves-light red btn" onclick="return confirm('Confirm delete ?')">
@@ -161,7 +161,12 @@
 	</div>
 	<!-- new queue modal -->
 	<div id="newqueueModal" class="modal">
-    <div class="modal-content">
+		<div class="modal-content" ng-show="addQueueStatus == 'Success'">
+			<div class="flow-text">
+				ADDED NEW QUEUE SUCCESSFULLY.
+    	</div>
+		</div>
+    <div class="modal-content" ng-hide="addQueueStatus == 'Success'">
     	<div class="row">
 				<div class="input-field col s12">
 					<input id="queue_name" type="text" name="queue_name" class="validate" ng-model="newQueue.name" length="150" ng-class="newQueueResult.name.length?'invalid':''">
@@ -170,7 +175,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="input-field col s12">
+				<div class="input-field col s12" ng-show="queuetype.length">
 				  <select ng-model="newQueue.queuetype_id" material-select watch>
 				    <option ng-repeat="type in queuetype" value="<% type.id %>"><% type.name %></option>
 				  </select>
@@ -193,7 +198,7 @@
 				<div class="input-field col s6">
 					<input id="max" type="number" name="max" class="validate" ng-model="newQueue.max" ng-class="newQueueResult.max.length?'invalid':''">
 						<label for="max" ng-if="newQueueResult.max.length" data-error="<% newQueueResult.max[0] %>"">Max Queue</label>
-						<label for="max" ng-if="!newQueueResult.max.length" data-error="Please input 6 charactor or more" data-success="Validated">Limit</label>
+						<label for="max" ng-if="!newQueueResult.max.length" data-error="Please input 6 charactor or more" data-success="Validated">Max Queue</label>
 				</div>
 			</div>
 			<div class="row">
@@ -203,9 +208,8 @@
 						<label for="workingtime" ng-if="!newQueueResult.workingtime.length">Open Date</label>
 				</div>
 				<div class="input-field col s6">
-					<input id="open_timepicker" type="text" name="workingtime_time" ng-model="newQueue.working_time" input-clock data-twelvehour="false">
+					<input id="open_timepicker" type="time" name="workingtime_time" ng-model="newQueue.workingtime_time" input-clock data-twelvehour="false">
 				</div>
-				
 			</div>
 			<div class="row">
 				<div class="input-field col s6">
@@ -214,7 +218,7 @@
 						<label for="open" ng-if="!newQueueResult.open.length">Start Date</label>
 				</div>
 				<div class="input-field col s6">
-					<input id="start_timepicker" type="text" name="open_time" ng-model="newQueue.start_time" input-clock data-twelvehour="false">
+					<input id="start_timepicker" type="time" name="open_time" ng-model="newQueue.open_time" input-clock data-twelvehour="false">
 				</div>
 				
 			</div>
@@ -225,13 +229,103 @@
 						<label for="close" ng-if="!newQueueResult.close.length">Close Date</label>
 				</div>
 				<div class="input-field col s6">
-					<input id="close_timepicker" type="text" name="end_time" ng-model="newQueue.close_time" input-clock data-twelvehour="false">
+					<input id="close_timepicker" type="time" name="end_time" ng-model="newQueue.close_time" input-clock data-twelvehour="false">
+				</div>
+			</div>
+			<div class="row center">
+				<button type="button" ng-click="QueueAdmin.NewQueue(newQueue)" class="btn waves-effect waves-light blue"><i class="fa fa-check-circle"></i> Add</button>
+			</div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+	</div>
+	<!-- queue modal -->
+	<div id="queueModal" class="modal">
+    <div class="modal-content">
+    	<div ng-show="innerloading" class="center-align"><br/><br/><innerloading></innerloading><br/><br/></div>
+    	<div ng-show="!singleQueue.length && !innerloading">
+    		<p class="flow-text center-align">NO THIS QUEUE.</p>
+    	</div>
+    	<div ng-show="singleQueue.length && !innerloading">
+	      <div class="col s12 m12 l12" ng-repeat="q in singleQueue">
+					<div class="card-panel">
+						<ul class="collection with-header">
+							<li class="collection-header red-border">				
+								<h5 class="flow-text"><i class="fa fa-hashtag"></i> <strong>Queue name</strong> : <% q.name %>
+								<br>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Type</strong> : <% q.queue_type.name %>
+							</li>
+							<li class="collection-item blue-border white-space-pre-line">
+								<strong>Requirement</strong> : <% q.queue_type.requirement %>
+							</li>
+							<li class="collection-item blue-border white-space-pre-line">
+								<strong>Document</strong> : <% q.queue_type.document %>
+							</li>
+							<li class="collection-item blue-border white-space-pre-line">
+								<strong>Description</strong> : <% q.queue_type.description %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Counter</strong> : <% q.counter %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Working time</strong> :  <% QueueAdmin.convertTime(q.workingtime) | date:'d MMM y HH:mm น.' %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Service time per user</strong> :  <% q.workmin %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Start</strong> : <% QueueAdmin.convertTime(q.open) | date:'d MMM y HH:mm น.' %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Close</strong> : <% QueueAdmin.convertTime(q.close) | date:'d MMM y HH:mm น.' %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Remaining : <timer countdown="QueueAdmin.countd(q.close)"  max-time-unit="'day'" interval="1000">
+									<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
+								</timer>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Reserved count</strong> : <% q.current %>/<% q.max %>
+							</li>
+							<li class="collection-item center">
+								<button type="button" class="btn waves-effect waves-light blue">
+									<i class="fa fa-btn fa-plus-circle"></i> Close
+								</button>
+							</li>
+					  </ul>  		
+					</div>
 				</div>
 			</div>
     </div>
-    <div class="row center">
-			<button type="button" ng-click="QueueAdmin.NewQueue(newQueue)" class="btn waves-effect waves-light blue"><i class="fa fa-check-circle"></i> Add</button>
-		</div>
+  </div>
+  <!-- user list -->
+	<div id="userListModal" class="modal">
+    <div class="modal-content">
+    	<div ng-show="innerloading" class="center-align"><br/><br/><innerloading></innerloading><br/><br/></div>
+    	<div ng-show="!innerloading">
+	      <table class="table table-striped table-hover responsive-table">
+	      	<thead>
+	      		<tr>
+	      			<th>#</th>
+	      			<th>Name</th>
+	      			<th>Username</th>
+	      			<th>Time</th>
+	      		</tr>
+	      	</thead>
+	      	<tbody>
+	      		<tr ng-repeat="user in userinQueue">
+	      			<td><% $index+1 %></td>
+	      			<td><% user.user.name %></td>
+	      			<td><% user.user.username %></td>
+	      			<td><% QueueAdmin.convertTime(user.time) | date:'d MMM y HH:mm น.' %></td>
+	      		</tr>
+	      	</tbody>
+	      </table>
+			</div>
+    </div>
     <div class="modal-footer">
         <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
     </div>
@@ -249,9 +343,9 @@
 						<div class="card-content white-text">
 							<p class="flow-text">
 								<p>Name : <% reserved.mainqueue[0].name %> </p> <br/>
-								<p>Working time : <% reserved.mainqueue[0].workingtime %></p><br/>
+								<p>Working time : <% QueueAdmin.convertTime(reserved.mainqueue[0].workingtime) | date:'d MMM y HH:mm น.' %></p><br/>
 								<p>Avg. time : <% reserved.mainqueue[0].workmin %></p><br/>
-								<p>Queue time : <% reserved.time %></p><br/>
+								<p>Queue time : <% QueueAdmin.convertTime(reserved.time) | date:'d MMM y HH:mm น.' %></p><br/>
 								<p>Remaining : <timer countdown="QueueAdmin.countd(reserved.time)"  max-time-unit="'day'" interval="1000">
 									<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
 								</timer></p><br/>
@@ -259,6 +353,7 @@
 	    					<p>
 	    						Verify code : <a tooltipped class="btn blue lighten-2" data-position="right" data-delay="50" data-tooltip="<% reserved.captcha_key %>">SHOW</a>
 								</p><br/>
+								<button type="button" class="btn red" ng-click="QueueAdmin.deleteUserQueue('Reserved',reserved.id)" onclick="return confirm('Confirm delete ?')">DELETE</button>
 							</p>
 						</div>
 					</div>
@@ -278,20 +373,22 @@
     	</div>
       <div ng-show="UserHistory.length && !innerloading">
       	<div class="col s12 m12 l12" ng-repeat="history in UserHistory">
-	      	<div class="card-panel lighten-1" ng-class="(history.isAccept == 'yes')?'light-green':'red'">
+	      	<div class="card-panel lighten-2" ng-class="(history.isAccept == 'yes')?'light-green':'red'">
 						<div class="card-content white-text">
 							<p class="flow-text">
 								<p>Name : <% history.mainqueue[0].name %> </p> <br/>
-								<p>Working time : <% history.mainqueue[0].workingtime %></p><br/>
+								<p>Working time : <% QueueAdmin.convertTime(history.mainqueue[0].workingtime) | date:'d MMM y HH:mm น.' %></p><br/>
 								<p>Avg. time : <% history.mainqueue[0].workmin %></p><br/>
-								<p>Queue time : <% history.time %></p><br/>
+								<p>Queue time : <% QueueAdmin.convertTime(history.time) | date:'d MMM y HH:mm น.' %></p><br/>
 								<p>Remaining : <timer countdown="QueueAdmin.countd(history.mainqueue[0].close)"  max-time-unit="'day'" interval="1000">
 									<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
 								</timer></p><br/>
 								<p>Status : <% history.isAccept | uppercase %> </p><br/>
 	    					<p>
-	    						<a tooltipped class="btn blue lighten-2" data-position="right" data-delay="50" data-tooltip="<% history.captcha_key %>">SHOW</a>
+	    						Verify code : <a tooltipped class="btn blue lighten-2" data-position="right" data-delay="50" data-tooltip="<% history.captcha_key %>">SHOW</a>
 								</p><br/>
+								<button type="button" class="btn red" ng-click="QueueAdmin.deleteUserQueue('History',history.id)" onclick="return confirm('Confirm delete ?')">DELETE</button>
+								<br/>
 							</p>
 						</div>
 					</div>
@@ -319,10 +416,13 @@
 		// Main Controller
 		angular
 			.module('AdminApp', ['ui.materialize', 'QueueAdmin', 'UserAdmin', 'ngAnimate', 'angularUtils.directives.dirPagination', 'ngLocale', 'timer'],setInterpolate)
-			.controller('QueueAdminCtrl', ['$scope', 'QueueAdminService', 'userAdminService',QueueAdminCtrl])
+			.controller('QueueAdminCtrl', ['$scope', 'QueueAdminService', 'userAdminService','$http',QueueAdminCtrl])
 			.constant("CSRF_TOKEN", '{{ csrf_token() }}')
 			.directive('loading', LoadingDirective)
 			.directive('innerloading', innerLoadingDirective)
+			.config(function ($httpProvider) {
+			  $httpProvider.useApplyAsync(true);
+			});
 
 			function LoadingDirective() {
 	      return {
@@ -363,7 +463,7 @@
 				$interpolateProvider.endSymbol('%>');
 			}
 
-			function QueueAdminCtrl($scope,QueueAdminService,userAdminService){
+			function QueueAdminCtrl($scope,QueueAdminService,userAdminService,$http){
 				
 				$scope.loading = true;
 				$scope.innerloading = true;
@@ -376,6 +476,12 @@
 				// 
 				$scope.tab = 0;
 				$scope.loading = false;
+				$scope.Queues;
+				$scope.Users;
+				$scope.User;
+				$scope.UserReserved;
+				$scope.queuetype;
+				$scope.openModal = true;
 
 				// Service
 				// 
@@ -396,6 +502,25 @@
 						.then(function(data){
 							$scope.Queues = data.result;
 							$scope.loading = false;
+							console.log($scope.Queues);
+						})
+				}
+
+				this.getQueue = function(id){
+					$scope.innerloading = true;
+					QueueAdminService.getQueue(id)
+						.then(function(data){
+							$scope.singleQueue = data.result;
+							$scope.innerloading = false;
+						})
+				}
+
+				this.getUserInQueue = function(id){
+					$scope.innerloading = true;
+					QueueAdminService.getUserInQueue(id)
+						.then(function(data){
+							$scope.userinQueue = data.result;
+							$scope.innerloading = false;
 						})
 				}
 
@@ -423,6 +548,7 @@
 					$scope.innerloading = true;
 					userAdminService.getUserReserved(id)
 						.then(function(data){
+							console.log(data);
 							$scope.UserReserved = data.result;
 							$scope.innerloading = false;
 						})
@@ -438,8 +564,7 @@
 						})
 				}
 
-				this.newQueueinit = function(){
-					$scope.newQueue = {
+				$scope.newQueue = {
 						'name' : '',
 						'queuetype_id' : 1,
 						'counter' : '',
@@ -453,17 +578,18 @@
 						'max' : ''
 					}
 
+				this.newQueueinit = function(){
 					QueueAdminService.getQueueType()
 						.then(function(data){
 							$scope.queuetype = data.result;
-							$scope.newQueue.queuetype_id = $scope.queuetype[0].id;
 						});
-
 				} 
+				
 
-				this.NewQueue = function(newQueue,newQueueinit){
+				this.NewQueue = function(newQueue){
 					QueueAdminService.addNewQueue(newQueue)
 						.then(function(data){
+							$scope.addQueueStatus = data.status;
 							$scope.newQueueResult = data.result;
 							if(data.status == 'Success'){
 								$scope.newQueue = {
@@ -487,6 +613,38 @@
 									})
 							}
 						});
+				}
+
+				this.deleteUser = function(user){
+					userAdminService.deleteUser(user)
+						.then(function(data){
+							alert(data.result);
+							userAdminService.getUsers()
+							.then(function(data){
+								$scope.Users = data.result;
+								$scope.loading = false;
+							})
+						})
+				}
+
+				this.deleteUserQueue = function(action,queue){
+					userAdminService.deleteUserQueue(queue)
+						.then(function(data){
+							if(action == 'Reserved'){
+								userAdminService.getUserReserved()
+								.then(function(data){
+									$scope.UserReserved = data.result;
+								})
+							}
+							else if(action == 'History'){
+								userAdminService.getUserHistory()
+								.then(function(data){
+									$scope.UserHistory = data.result;
+								})
+							}
+							$scope.openModal = false;
+
+						})
 				}
 
 				this.completeModal = function(){
@@ -558,7 +716,13 @@
 				var getQueue = function(id)
 				{
 
-					var request = $http.get("Admin/getQueue/"+id);
+					var request = $http.get("App/getQueue/"+id);
+					return( request.then( handleSuccess, handleError ) );
+				}
+
+				var getUserInQueue = function(id)
+				{
+					var request = $http.get("Admin/getUserInQueue/"+id);
 					return( request.then( handleSuccess, handleError ) );
 				}
 
@@ -583,6 +747,7 @@
 					getQueues : getQueues,
 					getQueueType : getQueueType,
 					addNewQueue : addNewQueue,
+					getUserInQueue : getUserInQueue,
 				}
 
 				function handleError( response ) 
@@ -632,11 +797,27 @@
 					return( request.then( handleSuccess, handleError ) );
 				}
 
+				var deleteUser = function(id)
+				{
+
+					var request = $http.get("Admin/deleteUser/"+id);
+					return( request.then( handleSuccess, handleError ) );
+				}
+
+				var deleteUserQueue = function(id)
+				{
+
+					var request = $http.get("Admin/deleteUserQueue/"+id);
+					return( request.then( handleSuccess, handleError ) );
+				}
+
 				return {
 					getUserHistory : getUserHistory,
 					getUserReserved : getUserReserved,
 					getUser : getUser,
 					getUsers : getUsers,
+					deleteUser : deleteUser,
+					deleteUserQueue : deleteUserQueue,
 				}
 
 				function handleError( response ) 

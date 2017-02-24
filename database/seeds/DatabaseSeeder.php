@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         //$this->call('RoleSeeder');
         $this->call('QueueTypeSeeder');
+        $this->call('UserQueue');
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
@@ -23,6 +24,20 @@ class RoleSeeder extends Seeder {
         Role::truncate();
         Role::create(['name'=>'administrator','description'=>'full access']);
         Role::create(['name'=>'user','description'=>'basic access']);
+    }
+} 
+class AdminSeeder extends Seeder{
+    public function run() {    
+        Role::truncate();
+        //Role::create(['name'=>'administrator','description'=>'full access']);
+        //Role::create(['name'=>'user','description'=>'basic access']);
+    }
+}
+class UserQueue extends Seeder {
+    public function run() {    
+        Role::truncate();
+        Role::create(['user_id'=>'1','captcha'=>'test']);
+        Role::create(['user_id'=>'2','captcha'=>'test']);
     }
 }  
 class QueueTypeSeeder extends Seeder {

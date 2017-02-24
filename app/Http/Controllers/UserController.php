@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Carbon\Carbon;
 use Auth;
 use Gate;
 use App\Http\Requests;
@@ -95,6 +96,16 @@ class UserController extends Controller
     return response()->json([
     		'status' => $result,
 				'result' => '',
+			]);
+	}
+
+	public function Upload($id,Request $request){
+		$result = 'Success';
+		$filename = Auth::user()->username.'_'.$id.'_'.Carbon::now()->timestamp.'.'.$request->file->extension();
+		$path = $request->file('file')->move('files', $filename);
+		return response()->json([
+    		'status' => $result,
+				'result' => $filename,
 			]);
 	}
 

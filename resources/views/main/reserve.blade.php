@@ -62,6 +62,26 @@
 								<strong>Reserved count</strong> : <% Queue.current %>/<% Queue.max %>
 							</li>
 							<li class="collection-item blue-border">
+								 <button ngf-select="uploadFiles($files, $invalidFiles)" multiple
+          accept="image/*,application/pdf" ngf-max-size="3MB" class="btn waves-effect waves-light pink">
+      							<i class="material-icons">description</i> Upload files
+      						</button>
+      						<p class="red-text">*สามารถอัพโหลดได้ทีละหลายไฟล์ในครั้งเดียว โดยการกด Shift ค้าง แล้วคลิกที่ไฟล์ที่ต้องการอัพโหลด เมื่อเลือกแล้วไฟล์จะถูกอัพโหลดทันที</p>
+      						<li ng-repeat="uploaded in uploadedFiles" class="collection-item blue-border">
+      							<% uploaded %> Uploaded.
+      						</li>
+      						<li ng-repeat="f in files" class="collection-item blue-border"><% f.name %> <% f.$errorParam %>
+							      <span class="progress" ng-show="f.progress >= 0">
+							        <div class="determinate" style="width: <%f.progress%>%" ng-bind="f.progress + '%'">
+							        	<%f.progress%>
+							        </div>
+							      </span>
+							      <span ng-show="f.result">Upload Successful</span>
+							    </li>
+							    <li ng-repeat="f in errFiles"  class="collection-item blue-border"><%f.name%> <%f.$error%> <%f.$errorParam%>
+    							</li> 
+							</li>
+							<li class="collection-item blue-border">
 								{!! app('captcha')->display()!!}
 							</li>
 							<li class="collection-item center">
@@ -87,8 +107,8 @@
 	{
 
 		angular
-			.module('ReserveApp', ['ui.materialize', 'Reserve', 'ngLocale', 'timer'],setInterpolate)
-			.controller('ReserveCtrl', ['$scope', 'reserveService' , ReserveCtrl])
+			.module('ReserveApp', ['ui.materialize', 'Reserve', 'ngLocale', 'timer','ngFileUpload'],setInterpolate)
+			.controller('ReserveCtrl', ['$scope', 'reserveService','Upload','$timeout', ReserveCtrl])
 			.constant("CSRF_TOKEN", '{{ csrf_token() }}')
 			.directive('loading', LoadingDirective)
 
@@ -114,9 +134,34 @@
 				$interpolateProvider.endSymbol('%>');
 			}
 
-			function ReserveCtrl($scope,reserveService)
+			function ReserveCtrl($scope,reserveService,Upload,$timeout)
 			{
 				$scope.loading = false;
+				$scope.uploadedFiles = [];
+
+				$scope.uploadFiles = function(files, errFiles) {
+	        $scope.files = files;
+	        $scope.errFiles = errFiles;
+	        angular.forEach(files, function(file) {
+	            file.upload = Upload.upload({
+	                url: '{{ url("User/Upload")}}/{{$id}}',
+	                data: {file: file}
+	            });
+
+	            file.upload.then(function (response) {
+	        				$scope.uploadedFiles.push(file.name);
+	                $timeout(function () {
+	                    file.result = response.data;
+	                });
+	            }, function (response) {
+	                if (response.status > 0)
+	                    $scope.errorMsg = response.status + ' : ' + response.data;
+	            }, function (evt) {
+	                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+	                //console.log(file.progress);
+	            });
+	        });
+    		}
 
 				this. countd = function(end){
 					var date = new Date();

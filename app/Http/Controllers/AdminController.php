@@ -104,21 +104,7 @@ class AdminController extends Controller
 
     }
 
-    public function DeleteUser($id){
-        $user = User::find($id);
-        $user->delete();
-        return Redirect('/admin/users');
-    }
-
-
-    public function DeleteUserQueue($id){
-        $user = UserQueue::find($id);
-        $user->mainqueue->first()->userqueue()->detach($user->id);
-        $user->mainqueue->first()->current_count -= 1;
-        $user->mainqueue->first()->save();
-        $user->delete();
-        return Back();
-    }
+   
 
     //----------------------------------
     //-         Activities Section
@@ -323,10 +309,34 @@ class AdminController extends Controller
             ]);
     }
 
+    public function getUserInQueue($id){
+       $result = 'Success';
+        try
+        {
+            $Queue = MainQueue::find($id);
+            $userList = $Queue->userqueue;
+            foreach ($userList as $key => $user) {
+               $user->user;
+            }
+            $result = 'Success';
+        }
+        catch(ModelNotFoundException $ex)
+        {
+            return response()->json([
+                'status' => $result,
+                'result' => null,
+            ]);
+        }
+        return response()->json([
+            'status' => $result,
+            'result' => $userList,
+            ]); 
+    }
+
     public function addNewQueue(Request $request){
         $result = 'Success';
 
-         $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(),[
             'name' => 'required|string|max:150',
             'counter' => 'required|string|max:100',
             'workingtime' => 'required',
@@ -362,6 +372,52 @@ class AdminController extends Controller
             'status' => $result,
             'result' => $Queue,
         ]);
+    }
+
+    public function deleteUser($id){
+        $result = 'Failed';
+
+        try
+        {
+            $user = User::find($id);
+            $user->delete();
+        }
+        catch(ModelNotFoundException $ex)
+        {
+            return response()->json([
+                'status' => $result,
+                'result' => null,
+            ]);
+        }
+
+        return response()->json([
+            'status' => $result,
+            'result' => 'Success',
+            ]);
+    }
+
+     public function DeleteUserQueue($id){
+
+        $result = 'Failed';
+
+        try
+        {
+            $user = UserQueue::find($id);
+            $user->mainqueue->first()->userqueue()->detach($user->id);
+            $user->delete();
+        }
+        catch(ModelNotFoundException $ex)
+        {
+            return response()->json([
+                'status' => $result,
+                'result' => null,
+            ]);
+        }
+
+        return response()->json([
+            'status' => $result,
+            'result' => 'Success',
+            ]);
     }
 
     //----------------------------------

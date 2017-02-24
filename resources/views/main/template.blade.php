@@ -2,6 +2,12 @@
 <html>
 <head>
 @include('main.head')
+<style type="text/css" media="screen">
+	.white-space-pre-line {
+    white-space: pre-line;
+	}
+	.modal { max-height: 85% !important }
+</style>
 </head>
 <body>
 	<!-- NAV BAR -->

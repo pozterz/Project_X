@@ -84,6 +84,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/User/updateProfile','UserController@updateProfile');
     Route::get('/User/Reserve/{id}','UserController@getReserve');
     Route::post('/User/Reserve','UserController@Reserve');
+    Route::post('/User/Upload/{id}','UserController@Upload');
 
     /***** App [guest APIs] *****/
     Route::get('/App/getQueues','AppController@getQueues');
@@ -98,8 +99,10 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/Admin/addNewQueue','AdminController@addNewQueue');
     Route::get('/Admin/getUser/{id}','AdminController@getUser');
     Route::get('/Admin/getUserReserved/{id}','AdminController@getUserReserved');
+    Route::get('/Admin/getUserInQueue/{id}','AdminController@getUserInQueue');
     Route::get('/Admin/getUserHistory/{id}','AdminController@getUserHistory');
-    Route::post('/Admin/deleteUser','AdminController@deleteUser');
+    Route::get('/Admin/deleteUser/{id}','AdminController@deleteUser');
+    Route::get('/Admin/deleteUserQueue/{id}','AdminController@DeleteUserQueue');
 
     Route::get('/Admin/getQueues','AdminController@getQueues');
 

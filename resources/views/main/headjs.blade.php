@@ -9,5 +9,7 @@
 <script src="{{ url('js/dirPagination.js') }}" ></script>
 <script src="{{ url('js/materialize.clockpicker.js') }}"></script>
 <script src="{{ url('js/moments-with-locale.js') }}"></script>
+<script src="{{ url('bower_resources/ng-file-upload/ng-file-upload-shim.min.js') }}"></script>
+<script src="{{ url('bower_resources/ng-file-upload/ng-file-upload.min.js') }}"></script>
 <script src="{{ asset('js/jquery.countdown.min.js')}}"></script>
 <script src="{{ url('/')}}{{ elixir('js/all.js')}}"></script>
