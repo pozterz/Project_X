@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class MainQueue extends Model
 {
 	protected $dates = [
-        'workingtime',
+        'service_start',
+        'service_end',
 		'open',
 		'close',
 		'created_at',
@@ -18,8 +19,9 @@ class MainQueue extends Model
         'name',
         'description',
         'counter',
-        'workingtime',
-        'workmin',
+        'service_start',
+        'service_end',
+        'max_minutes',
         'open',
         'close',
         'max',

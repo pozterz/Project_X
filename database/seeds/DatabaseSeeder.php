@@ -1,7 +1,12 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
 use App\Role;
+use App\User;
+use App\MainQueue;
+use App\UserQueue;
+use Carbon\Carbon;
 use App\QueueType;
 class DatabaseSeeder extends Seeder
 {
@@ -13,9 +18,11 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        //$this->call('RoleSeeder');
+        $this->call('RoleSeeder');
         $this->call('QueueTypeSeeder');
-        $this->call('UserQueue');
+        $this->call('AdminSeeder');
+        $this->call('UserQueueSeeder');
+        $this->call('MainQueueSeeder');
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
@@ -28,18 +35,35 @@ class RoleSeeder extends Seeder {
 } 
 class AdminSeeder extends Seeder{
     public function run() {    
-        Role::truncate();
-        //Role::create(['name'=>'administrator','description'=>'full access']);
+        User::truncate();
+        User::create([
+            'name' => 'Admininstrator',
+            'username' => 'admin1',
+            'password' => bcrypt('123456789'),
+            'email' => 'admin@symple.world',
+            'phone' => '0815385925',
+            'role_id' => 1
+            ]);
+        User::create([
+            'name' => 'สมชาย ใจดี',
+            'username' => 'testuser1',
+            'password' => bcrypt('123456789'),
+            'email' => 'somchai@gmail.com',
+            'phone' => '0812345678',
+            'role_id' => 2
+            ]);
+        User::create([
+            'name' => 'สมพร นอนดึก',
+            'username' => 'testuser2',
+            'password' => bcrypt('123456789'),
+            'email' => 'somporn@gmail.com',
+            'phone' => '0819876543',
+            'role_id' => 2
+            ]);
         //Role::create(['name'=>'user','description'=>'basic access']);
     }
 }
-class UserQueue extends Seeder {
-    public function run() {    
-        Role::truncate();
-        Role::create(['user_id'=>'1','captcha'=>'test']);
-        Role::create(['user_id'=>'2','captcha'=>'test']);
-    }
-}  
+  
 class QueueTypeSeeder extends Seeder {
     public function run() {    
         QueueType::truncate();
@@ -489,3 +513,94 @@ class QueueTypeSeeder extends Seeder {
         );*/
     }
 }
+
+class UserQueueSeeder extends Seeder{
+    public function run() {    
+        UserQueue::truncate();
+        $faker = Faker::create();
+        UserQueue::create([
+            'user_id' => 3,
+            'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
+            'time' => Carbon::now()->addMinutes(10),
+            'reserved_min' => $faker->numberBetween($min = 20, $max = 60),
+            'isAccept' => 'no'
+        ]);
+        UserQueue::create([
+            'user_id' => 2,
+            'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
+            'time' => Carbon::now()->subDay(),
+            'reserved_min' => $faker->numberBetween($min = 20, $max = 60),
+            'isAccept' => 'no'
+        ]);
+        UserQueue::create([
+            'user_id' => 3,
+            'captcha' => $faker->regexify('[A-Z0-9._%+-]+[A-Z0-9.-]+'),
+            'time' => Carbon::now()->subMinutes(10),
+            'reserved_min' => $faker->numberBetween($min = 20, $max = 60),
+            'isAccept' => 'yes'
+        ]);
+    }
+}
+
+class MainQueueSeeder extends Seeder{
+    public function run() {    
+        MainQueue::truncate();
+        // opening
+        $faker = Faker::create();
+        MainQueue::create([
+            'name' => 'Test Queue 1[Opening]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now()->addDay(),
+            'service_end' => (Carbon::now()->addDay())->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDays(2),
+            'close' => Carbon::now()->addHour(),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        // waiting
+        MainQueue::create([
+            'name' => 'Test Queue 2[Waiting]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now()->addDays(2),
+            'service_end' => (Carbon::now()->addDays(2))->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->addDays(2),
+            'close' => Carbon::now()->addDay(),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        //closed
+        $closed = MainQueue::create([
+            'name' => 'Test Queue 3[closed]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now()->addDays(2),
+            'service_end' => (Carbon::now()->addDays(2))->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDay(),
+            'close' => Carbon::now()->subDays(2),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        $closed->userqueue()->attach(2);
+        //Running
+        $running = MainQueue::create([
+            'name' => 'Test Queue 4[running]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now(),
+            'service_end' => Carbon::now()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDay(),
+            'close' => Carbon::now()->subDays(2),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        $running->userqueue()->attach(1);
+        $running->userqueue()->attach(3);
+    }
+}
+

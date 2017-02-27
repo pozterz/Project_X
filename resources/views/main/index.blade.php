@@ -58,7 +58,8 @@ height: 100%;
 													<tr>
 														<th>Name</th>
 														<th>Type</th>
-														<th>Working time</th>
+														<th>Service time</th>
+														<th>Max time</th>
 														<th>Reserve time</th>
 														<th>Count</th>
 														<th>Ramaining</th>
@@ -72,7 +73,11 @@ height: 100%;
 													<tr dir-paginate="Active in ActiveQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="ActiveQueues">
 														<td> <% Active.name %> </td>
 														<td> <% Active.queue_type.name %> </td>
-														<td> <% Queue.convertTime(Active.workingtime) | date:'d MMM y HH:mm น.' %> </td>
+														<td> 
+															<p>เริ่ม : <% Queue.convertTime(Active.service_start) | date:'d MMM y HH:mm น.' %></p>
+															<p>ถึง : <% Queue.convertTime(Active.service_end) | date:'d MMM y HH:mm น.' %></p>
+														 </td>
+														<td> <% Active.max_minutes %> </td>
 														<td>
 															<p>เริ่ม : <% Queue.convertTime(Active.open) | date:'d MMM y HH:mm น.' %></p>
 															<p>ถึง : <% Queue.convertTime(Active.close) | date:'d MMM y HH:mm น.' %></p>
@@ -83,9 +88,12 @@ height: 100%;
 																<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
 															</timer>
 														</td>
-														<td> <% Queue.Status(Active.open,Active.close) %> </td>
+														<td> <% Queue.Status(Active.open,Active.close,Active.current,Active.max) %> </td>
 														@if(!Auth::guest())
-														<td> <a type="button" class="btn blue wave-effect" href="{{ url('User/Reserve') }}/<% Active.id %>">Reserve</a> </td>
+														<td>
+															<a type="button" class="btn blue wave-effect" href="{{ url('User/Reserve') }}/<% Active.id %>" ng-show="Active.current < Active.max">Detail</a>
+															<a type="button" class="btn blue wave-effect disabled" ng-show="Active.current >= Active.max" disabled>Full</a>
+														</td>
 														@endif
 													</tr>
 												</tbody>
@@ -116,8 +124,8 @@ height: 100%;
 													<thead>
 														<tr>
 															<th>Name</th>
-															<th>Working time</th>
-															<th>Avg. time</th>
+															<th>Service time</th>
+															<th>Reserved time</th>
 															<th>Queue time</th>
 															<th>Remaining</th>
 															<th>Status</th>
@@ -127,8 +135,8 @@ height: 100%;
 													<tbody>
 														<tr dir-paginate="UserQueue in UserQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="UserQueues">
 															<td> <% UserQueue.mainqueue[0].name %>(<% UserQueue.mainqueue[0].queuetype.name %>) </td>
-															<td> <% Queue.convertTime(UserQueue.mainqueue[0].workingtime) | date:'d MMM y HH:mm น.' %> </td>
-															<td> <% UserQueue.mainqueue[0].workmin %> </td>
+															<td> <% Queue.convertTime(UserQueue.mainqueue[0].service_start) | date:'d MMM y HH:mm น.' %> </td>
+															<td> <% UserQueue.reserved_min %> </td>
 															<td>
 																<% Queue.convertTime(UserQueue.time) | date:'d MMM y HH:mm น.' %>
 															</td>
@@ -166,24 +174,26 @@ height: 100%;
 												<thead>
 													<tr>
 															<th>Queue Name</th>
-															<th>Working Time</th>
-															<th>Service/Mins</th>
+															<th>Service Time</th>
+															<th>Interval</th>
 															<th>User</th>
 															<th>Start time</th>
+															<th>Reserved time</th>
 															<th>Status</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr dir-paginate="Running in RunningQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="RunningQueues">
 														<td> <% Running.name %> </td>
-														<td> <% Queue.convertTime(Running.workingtime) | date:'d MMM y HH:mm น.' %> </td>
-														<td> <% Running.workmin %> </td>
+														<td> <% Queue.convertTime(Running.service_start) | date:'d MMM y HH:mm น.' %> </td>
+														<td> <% Running.max_minutes %> </td>
 														<td>
-															<% Queue.runningUser(Running.userqueue,Running.workmin,$index) %>
+															<% Queue.runningUser(Running.userqueue,$index) %>
 															<% Running.running.user.name %>
 														</td>
-														<td> <% Queue.convertTime(Running.running.time)  | date:'d MMM y HH:mm น.' %> </td>
-														<td> <% Running.running.isAccept | uppercase %> </td>
+														<td> <% Queue.convertTime(Running.userqueue[$index].time)  | date:'d MMM y HH:mm น.' %> </td>
+														<td> <% Running.userqueue[$index].reserved_min %> </td>
+														<td> <% Running.userqueue[$index].isAccept | uppercase %> </td>
 													</tr>
 												</tbody>
 											</table>
@@ -311,6 +321,7 @@ height: 100%;
 					mainService.getRunningQueues()
 						.then(function(data){
 							$scope.RunningQueues = data.result;
+							console.log($scope.RunningQueues);
 							$scope.loading = false;
 						})
 				}
@@ -345,17 +356,18 @@ height: 100%;
 					return (diff<=0)?0:diff;
 				}
 
-				this.Status = function(open,close)
+				this.Status = function(open,close,current,max)
 				{
 					var now = new Date().getTime();
 					var open = new Date(open).getTime();
 					var close = new Date(close).getTime();
-					if(now > open && now > close) return "Closed";
+					if(current >= max) return "Full";
+					else if(now > open && now > close) return "Closed";
 					else if(now >= open && now <= close) return "Opening";
 					else if(now < open && now < close) return "Waiting";
 				}
 
-				this.runningUser = function(userInqueue,workmin,index){
+				this.runningUser = function(userInqueue,index){
 					var date = new Date();
 					var nil = {
 						user : { name : "-"},
@@ -366,6 +378,7 @@ height: 100%;
 					else{
 						for(var i = 0; i < userInqueue.length; i++){
 							servicetime = new Date(userInqueue[i].time);
+							workmin = userInqueue[i].reserved_min;
 							if(date.getTime() >= servicetime.getTime() &&  date.getTime() < servicetime.getTime()+(workmin*1000*60)){
 								$scope.RunningQueues[index].running = userInqueue[i];
 							}

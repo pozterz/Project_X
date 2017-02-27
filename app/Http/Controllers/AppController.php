@@ -51,7 +51,10 @@ class AppController extends Controller
 			$Queue = MainQueue::findOrfail($id);
 			$Queue['current'] = $Queue->userqueue()->count();
 			$Queue->QueueType;
-			$Queue->userqueue;
+			foreach ($Queue->userqueue as $key => $user) {
+				$user->user;
+			}
+
 			$result = 'Success';
 		}catch(ModelNotFoundException $ex) {
 			return response()->json([
@@ -95,7 +98,7 @@ class AppController extends Controller
 	 */
 	public function getPassedQueues(){
 
-		$Queues = MainQueue::where('close','<',Carbon::now()->toDateTimeString())->where('workingtime','<',Carbon::now()->toDateTimeString())->orderBy('close','desc')->get();
+		$Queues = MainQueue::where('close','<',Carbon::now()->toDateTimeString())->where('service_start','<',Carbon::now()->toDateTimeString())->orderBy('close','desc')->get();
 
 		foreach ($Queues as $key => $Queue) {
 			$Queue->QueueType;
@@ -116,7 +119,7 @@ class AppController extends Controller
 	 * @return [json] [Running queue]
 	 */
 	public function getRunningQueues(){
-		$Queues = MainQueue::where('workingtime','<=',Carbon::now()->toDateTimeString())->where('workingtime','<=',Carbon::now()->endOfDay()->toDateTimeString())->where('workingtime','>=',Carbon::now()->startOfDay()->toDateTimeString())->where('close','<',Carbon::now()->toDateTimeString())->orderBy('workingtime','desc')->get();
+		$Queues = MainQueue::where('service_start','<=',Carbon::now()->toDateTimeString())->where('service_end','>',Carbon::now()->toDateTimeString())->where('close','<',Carbon::now()->toDateTimeString())->orderBy('service_start','desc')->get();
 
 		foreach ($Queues as $key => $Queue) {
 			$Queue->QueueType;

@@ -8,10 +8,9 @@
             <li><a href="{{ url('login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
             <li><a href="{{ url('register') }}"><i class="fa fa-pencil"></i> Register</a></li>
             @else
-            <li><a class="dropdown-button" data-beloworigin="true" data-constrainwidth="false" data-hover="true" href="#!" data-activates="nav_dropdown">{{ Auth::user()->username }}  <i class="fa fa-caret-down"></i></a></li>
+            <li><a class="dropdown-button" data-beloworigin="true" data-constrainwidth="false" data-hover="true" href="#!" data-activates="nav_dropdown">{{ Auth::user()->name }}  <i class="fa fa-caret-down"></i></a></li>
             <ul id="nav_dropdown" class="dropdown-content">
                 @if(Auth::user()->isAdmin(Auth::user()))
-                <li><a href="{{ url('admin/activities') }}"><i class="fa fa-check"></i> Check User</a></li>
                 <li><a href="{{ url('admin') }}"><i class="fa fa-gear"></i> Admin Panel</a></li>
                 @endif
                 <li><a href="{{ url('profile') }}"><i class="fa fa-user"></i> Profile</a></li>
@@ -49,7 +48,7 @@
             </li>
             <li><div class="divider"></div></li>
             <li><a href="{{ url('index') }}"><i class="fa fa-home"></i> Home</a></li>
-            @if(Auth::user()->level == 'admin')
+            @if(Auth::user()->isAdmin(Auth::user()))
                 <li><a href="{{ url('admin') }}"><i class="fa fa-gear"></i> Admin Panel</a></li>
             @endif
             <li><a href="{{ url('profile') }}"><i class="fa fa-user"></i> Profile</a></li>

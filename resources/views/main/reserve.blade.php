@@ -10,7 +10,7 @@
 
 <div class="container" ng-app="ReserveApp" ng-controller="ReserveCtrl as Reserve">
 	<div class="row">
-		<div class="col s12 m12 l8 offset-l2">
+		<div class="col s12 m6 l6">
 			<div class="card">
 				<div ng-show="loading" class="center-align"><br/><br/><loading></loading><br/><br/><br/><br/></div>
 				<div ng-show="!QueueData.length && !loading">
@@ -42,10 +42,19 @@
 								<strong>Counter</strong> : <% Queue.counter %>
 							</li>
 							<li class="collection-item blue-border">
-								<strong>Working time</strong> :  <% Reserve.convertTime(Queue.workingtime) | date:'d MMM y HH:mm น.' %>
+								<p class="flow-text">Service Time</p>
 							</li>
 							<li class="collection-item blue-border">
-								<strong>Service time per user</strong> :  <% Queue.workmin %>
+								<strong>Start</strong> :  <% Reserve.convertTime(Queue.service_start) | date:'d MMM y HH:mm น.' %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>End</strong> :  <% Reserve.convertTime(Queue.service_end) | date:'d MMM y HH:mm น.' %>
+							</li>
+							<li class="collection-item blue-border">
+								<strong>Max service time/queue</strong> :  <% Queue.max_minutes %> Minutes.
+							</li>
+							<li class="collection-item blue-border">
+								<p class="flow-text">Reserve Detail</p>
 							</li>
 							<li class="collection-item blue-border">
 								<strong>Start</strong> : <% Reserve.convertTime(Queue.open) | date:'d MMM y HH:mm น.' %>
@@ -66,7 +75,7 @@
           accept="image/*,application/pdf" ngf-max-size="3MB" class="btn waves-effect waves-light pink">
       							<i class="material-icons">description</i> Upload files
       						</button>
-      						<p class="red-text">*สามารถอัพโหลดได้ทีละหลายไฟล์ในครั้งเดียว โดยการกด Shift ค้าง แล้วคลิกที่ไฟล์ที่ต้องการอัพโหลด เมื่อเลือกแล้วไฟล์จะถูกอัพโหลดทันที</p>
+      						<p class="red-text"><br/>*สามารถอัพโหลดได้ทีละหลายไฟล์ในครั้งเดียว โดยการกด Shift ค้าง แล้วคลิกที่ไฟล์ที่ต้องการอัพโหลด เมื่อเลือกแล้วไฟล์จะถูกอัพโหลดทันที</p>
       						<li ng-repeat="uploaded in uploadedFiles" class="collection-item blue-border">
       							<% uploaded %> Uploaded.
       						</li>
@@ -82,17 +91,75 @@
     							</li> 
 							</li>
 							<li class="collection-item blue-border">
+								<p class="flow-text">Reserve</p>
+							</li>
+							<li class="collection-item blue-border">
+								<div class="row">
+									<div class="col s12 m6">
+										<input id="reserve_start" type="text" input-date ng-model="Queue.service_start" name="reserve_start" class="validate{{ $errors->has('reserve_start') ? ' invalid' : '' }}" value="{{ old('reserve_start')}}" placeholder="Please choose reserve time.">
+										@if ($errors->has('reserve_start'))
+											<label for="reserve_start" data-error="{{ $errors->first('reserve_start') }}">reserve_start</label>
+										@else
+											<label for="reserve_start" data-error="Please choose reserve time." data-success="Validated">Reserve Time</label>
+										@endif
+									</div>
+									<div class="col s12 m6">
+										<input id="open_timepicker" type="time" name="reserve_start_time" ng-model="newQueue.service_start_time" input-clock data-twelvehour="false">
+									</div>
+								</div>
+							</li>
+							<li class="collection-item blue-border">
+								<input id="reserve_minutes" type="number" name="reserve_minutes" class="validate{{ $errors->has('reserve_minutes') ? ' invalid' : '' }}" value="{{ old('reserve_minutes') }}" pattern=".{[0-9]}">
+									@if ($errors->has('reserve_minutes'))
+										<label for="reserve_minutes" data-error="{{ $errors->first('reserve_minutes') }}">reserve_minutes</label>
+									@else
+										<label for="reserve_minutes" data-error="Plase input number." data-success="Validated">Reserve Minutes.</label>
+									@endif
+							</li>
+							<li class="collection-item blue-border">
 								{!! app('captcha')->display()!!}
 							</li>
 							<li class="collection-item center">
-								<input type="hidden" name="id" value="$id">
+								<input type="hidden" name="id" value="{{ $id }}">
 								<input type="hidden" name="ip" value="{{Request::getClientIp()}}">
-								<button type="submit" class="btn waves-effect waves-light blue">
+								<button type="submit" class="btn waves-effect waves-light blue" ng-if="QueueData.status == 'Opening'">
 									<i class="fa fa-btn fa-plus-circle"></i> Reserve
+								</button>
+								<button type="button" class="btn waves-effect waves-light blue disabled" ng-if="QueueData.status == 'Closed'" disabled>
+									<i class="fa fa-btn fa-plus-circle"></i> Closed
+								</button>
+								<button type="button" class="btn waves-effect waves-light blue disabled" ng-if="Queue.current >= Queue.max" disabled>
+									<i class="fa fa-btn fa-plus-circle"></i> Full
+								</button>
+								<button type="button" class="btn waves-effect waves-light blue disabled" ng-if="QueueData.status == 'Waiting'" disabled>
+									<i class="fa fa-btn fa-plus-circle"></i> Waiting to Open
 								</button>
 							</li>
 						</form>
 					  </ul>  		
+				</div>
+			</div>
+		</div>
+		<div class="col s12 m6 l6">
+			<div class="card">
+				<div ng-show="loading" class="center-align"><br/><br/><loading></loading><br/><br/><br/><br/></div>
+				<div ng-show="!QueueData[0].userqueue && !loading">
+					<br/><br/><br/>
+    			<p class="flow-text center-align">NO RESERVED USER.</p>
+    			<br/><br/><br/>
+	    	</div>
+				<div class="card-panel white z-depth-1" ng-show="QueueData[0].userqueue && !loading">
+					<ul class="collection with-header">
+						<li class="collection-item red-border">
+							 <p class="flow-text">User Reserved Detail</p>
+						</li>
+						<li class="collection-item blue-border" ng-repeat="user in QueueData[0].userqueue">
+							No. : <% $index+1 %> <br/>
+							Name: <% user.user.name %> <br/>
+							Time: <% Reserve.convertTime(user.time) | date:'d MMM y HH:mm น.' %><br/>
+							Reserved time : <% user.reserved_min %> <br/>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
@@ -138,6 +205,9 @@
 			{
 				$scope.loading = false;
 				$scope.uploadedFiles = [];
+				$scope.reserve_start;
+				$scope.reserve_time;
+
 
 				$scope.uploadFiles = function(files, errFiles) {
 	        $scope.files = files;
@@ -170,12 +240,24 @@
 					return (diff<=0)?0:diff;
 				}
 
+				var Status = function(open,close)
+        {
+        	var now = new Date().getTime();
+        	var open = new Date(open).getTime();
+        	var close = new Date(close).getTime();
+        	if(now > open && now > close) return "Closed";
+        	else if(now >= open && now <= close) return "Opening";
+        	else if(now < open && now < close) return "Waiting";
+        }
+
 				this.getQueue = function(id)
 				{
 					$scope.loading = true;
 					reserveService.getQueue(id)
 					.then(function(data){
 						$scope.QueueData = data.result;
+						console.log($scope.QueueData[0].userqueue);
+						$scope.QueueData.status = Status($scope.QueueData[0].open,$scope.QueueData[0].close);
 						$scope.loading = false;
 					})
 				}

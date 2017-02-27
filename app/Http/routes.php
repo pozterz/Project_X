@@ -102,9 +102,12 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/Admin/getUserInQueue/{id}','AdminController@getUserInQueue');
     Route::get('/Admin/getUserHistory/{id}','AdminController@getUserHistory');
     Route::get('/Admin/deleteUser/{id}','AdminController@deleteUser');
+    Route::get('/Admin/deleteQueue/{id}','AdminController@deleteQueue');
     Route::get('/Admin/deleteUserQueue/{id}','AdminController@DeleteUserQueue');
-
+    Route::get('/Admin/getRunningQueues','AdminController@getRunningQueues');
     Route::get('/Admin/getQueues','AdminController@getQueues');
-
-
+    Route::get('/Admin/UserQueueDetail/{queue_id}/{userqueue_id}','AdminController@UserQueueDetail');
+    Route::get('/Admin/getUserQueueDetail/{queue_id}/{userqueue_id}','AdminController@getUserQueueDetail');
+    Route::get('/Admin/AcceptQueue/{queue_id}/{userqueue_id}','AdminController@AcceptQueue');
+    Route::get('/Admin/CancelQueue/{queue_id}/{userqueue_id}','AdminController@CancelQueue');
 });

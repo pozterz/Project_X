@@ -12,7 +12,7 @@ class UserQueue extends Model
 		'updated_at',
 	];
 
-    protected $fillable = ['queue_id','user_id', 'captcha','time','isAccept'];
+    protected $fillable = ['queue_id','user_id', 'captcha','time','isAccept','reserved_min'];
 
     protected $hidden = ['created_at','updated_at','pivot','captcha'];
 

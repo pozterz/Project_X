@@ -17,8 +17,9 @@ class MainQueue extends Migration
             $table->string('name',150);
             $table->integer('queuetype_id')->unsigned()->index();
             $table->string('counter',100);
-            $table->dateTime('workingtime');
-            $table->integer('workmin')->unsigned();
+            $table->dateTime('service_start');
+            $table->dateTime('service_end');
+            $table->integer('max_minutes')->unsigned();
             $table->dateTime('open');
             $table->dateTime('close');
             $table->integer('max')->unsigned();
