@@ -135,9 +135,9 @@ Queue Management is a online reserve queue for any activity at the bank.
 Queue Management uses a number of open source projects to work properly.
 
 * [Laravel] - The PHP Framework For Web Artisans
+* [AngularJS] - The JavaScript Framework to manage DOM.
 * [Materialize CSS] - a modern CSS framework based on Flexbox.
-* [Gulp] - the streaming build system
-* [jQuery]
+
 
 And of course Queue Managerment itself is open source with a [public repository][projectx]
  on GitHub.
