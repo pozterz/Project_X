@@ -95,7 +95,7 @@ Queue Management is a online reserve queue for any activity at the bank.
   - <button> show info
 ```
 
-- [s] **Login & Register**
+- [x] **Login & Register**
 
 ```
 - Register requirement
@@ -106,7 +106,7 @@ Queue Management is a online reserve queue for any activity at the bank.
   - phone
 ```
 
-- [s] **Reserve**
+- [x] **Reserve**
 
 ```
 - name
