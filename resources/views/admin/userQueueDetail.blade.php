@@ -8,7 +8,7 @@
 </style>
 @if(Request::is('Admin/UserQueueDetail/'.$queue_id.'/'.$userqueue_id))
 
-<div class="container" ng-app="ReserveApp" ng-controller="ReserveCtrl as Reserve">
+<div ng-app="ReserveApp" ng-controller="ReserveCtrl as Reserve">
 	<div class="row">
 		<div class="col s12 m16 l6">
 			<div class="card">

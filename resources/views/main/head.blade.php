@@ -8,6 +8,7 @@
 
 <link rel="stylesheet"  type="text/css" href="{{ asset('css/reset.css') }}">
   <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Prompt:300" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
 <link rel="icon" href="{{ asset('icon.png') }}">
 <!-- Styles -->
@@ -15,3 +16,4 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
 <link rel="stylesheet" type="text/css" href="{{ url('/')}}{{ elixir('css/all.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url('/')}}{{ elixir('css/app.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url('bower_resources/sweetalert/dist/sweetalert.css') }}">

@@ -51,6 +51,7 @@ class AppController extends Controller
 			$Queue = MainQueue::findOrfail($id);
 			$Queue['current'] = $Queue->userqueue()->count();
 			$Queue->QueueType;
+			$Queue->user;
 			foreach ($Queue->userqueue as $key => $user) {
 				$user->user;
 			}
@@ -123,6 +124,7 @@ class AppController extends Controller
 
 		foreach ($Queues as $key => $Queue) {
 			$Queue->QueueType;
+			$Queue->user;
 			$Queue['current'] = $Queue->userqueue()->count();
 			foreach ($Queue->userqueue as $key => $user) {
 				$user->user->name;
@@ -142,6 +144,19 @@ class AppController extends Controller
 		return response()->json([
 				'status' => $result,
 				'result' => QueueType::all(),
+			]);
+	}
+
+	public function AllCount(){
+		$Queues = MainQueue::all();
+		foreach ($Queues as $key => $Queue)
+		{
+			$Queue['current'] = $Queue->userqueue()->count();
+		}
+		
+		return response()->json([
+				'status' => 'Success',
+				'result' => $Queues,
 			]);
 	}
 }

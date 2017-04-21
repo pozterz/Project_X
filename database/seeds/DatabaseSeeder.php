@@ -31,6 +31,7 @@ class RoleSeeder extends Seeder {
         Role::truncate();
         Role::create(['name'=>'administrator','description'=>'full access']);
         Role::create(['name'=>'user','description'=>'basic access']);
+        Role::create(['name'=>'moderator','description'=>'manage']);
     }
 } 
 class AdminSeeder extends Seeder{
@@ -42,15 +43,17 @@ class AdminSeeder extends Seeder{
             'password' => bcrypt('123456789'),
             'email' => 'admin@symple.world',
             'phone' => '0815385925',
-            'role_id' => 1
+            'role_id' => 1,
+            'counter_id' => 1
             ]);
         User::create([
             'name' => 'สมชาย ใจดี',
             'username' => 'testuser1',
             'password' => bcrypt('123456789'),
-            'email' => 'somchai@gmail.com',
+            'email' => 'pozterz3@gmail.com',
             'phone' => '0812345678',
-            'role_id' => 2
+            'role_id' => 2,
+            'counter_id' => 2
             ]);
         User::create([
             'name' => 'สมพร นอนดึก',
@@ -58,7 +61,8 @@ class AdminSeeder extends Seeder{
             'password' => bcrypt('123456789'),
             'email' => 'somporn@gmail.com',
             'phone' => '0819876543',
-            'role_id' => 2
+            'role_id' => 2,
+            'counter_id' => 3
             ]);
         //Role::create(['name'=>'user','description'=>'basic access']);
     }
@@ -522,22 +526,38 @@ class UserQueueSeeder extends Seeder{
             'user_id' => 3,
             'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
             'time' => Carbon::now()->addMinutes(10),
-            'reserved_min' => $faker->numberBetween($min = 20, $max = 60),
+            'reserved_min' => 25,
             'isAccept' => 'no'
         ]);
         UserQueue::create([
             'user_id' => 2,
             'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
             'time' => Carbon::now()->subDay(),
-            'reserved_min' => $faker->numberBetween($min = 20, $max = 60),
+            'reserved_min' => 23,
             'isAccept' => 'no'
         ]);
         UserQueue::create([
             'user_id' => 3,
             'captcha' => $faker->regexify('[A-Z0-9._%+-]+[A-Z0-9.-]+'),
             'time' => Carbon::now()->subMinutes(10),
-            'reserved_min' => $faker->numberBetween($min = 20, $max = 60),
+            'reserved_min' => 22,
             'isAccept' => 'yes'
+        ]);
+
+         UserQueue::create([
+            'user_id' => 2,
+            'captcha' => $faker->regexify('[A-Z0-9._%+-]+[A-Z0-9.-]+'),
+            'time' => Carbon::now(),
+            'reserved_min' => 20,
+            'isAccept' => 'no'
+        ]);
+
+         UserQueue::create([
+            'user_id' => 2,
+            'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
+            'time' => Carbon::now()->addMinutes(10),
+            'reserved_min' => 25,
+            'isAccept' => 'no'
         ]);
     }
 }
@@ -547,28 +567,31 @@ class MainQueueSeeder extends Seeder{
         MainQueue::truncate();
         // opening
         $faker = Faker::create();
-        MainQueue::create([
+        $opening = MainQueue::create([
             'name' => 'Test Queue 1[Opening]',
             'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
             'counter' => $faker->numberBetween($min = 1, $max = 5),
             'service_start' => Carbon::now()->addDay(),
-            'service_end' => (Carbon::now()->addDay())->addHours(7),
+            'service_end' => Carbon::now()->addDay()->addHours(7),
             'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
             'open' => Carbon::now()->subDays(2),
             'close' => Carbon::now()->addHour(),
             'max' => $faker->numberBetween($min = 10, $max = 16),
             'user_id' => 1
         ]);
+
+        $opening->userqueue()->sync([1,5]);
+
         // waiting
         MainQueue::create([
             'name' => 'Test Queue 2[Waiting]',
             'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
             'counter' => $faker->numberBetween($min = 1, $max = 5),
             'service_start' => Carbon::now()->addDays(2),
-            'service_end' => (Carbon::now()->addDays(2))->addHours(7),
+            'service_end' => Carbon::now()->addDays(2)->addHours(7),
             'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
             'open' => Carbon::now()->addDays(2),
-            'close' => Carbon::now()->addDay(),
+            'close' => Carbon::now()->addDay(4),
             'max' => $faker->numberBetween($min = 10, $max = 16),
             'user_id' => 1
         ]);
@@ -578,14 +601,14 @@ class MainQueueSeeder extends Seeder{
             'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
             'counter' => $faker->numberBetween($min = 1, $max = 5),
             'service_start' => Carbon::now()->addDays(2),
-            'service_end' => (Carbon::now()->addDays(2))->addHours(7),
+            'service_end' => Carbon::now()->addDays(2)->addHours(7),
             'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
             'open' => Carbon::now()->subDay(),
             'close' => Carbon::now()->subDays(2),
             'max' => $faker->numberBetween($min = 10, $max = 16),
             'user_id' => 1
         ]);
-        $closed->userqueue()->attach(2);
+        $closed->userqueue()->sync([2]);
         //Running
         $running = MainQueue::create([
             'name' => 'Test Queue 4[running]',
@@ -599,8 +622,79 @@ class MainQueueSeeder extends Seeder{
             'max' => $faker->numberBetween($min = 10, $max = 16),
             'user_id' => 1
         ]);
-        $running->userqueue()->attach(1);
-        $running->userqueue()->attach(3);
+        $running->userqueue()->sync([3,4]);
+        $running = MainQueue::create([
+            'name' => 'Test Queue 4[running]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now(),
+            'service_end' => Carbon::now()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDay(),
+            'close' => Carbon::now()->subDays(2),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        $running = MainQueue::create([
+            'name' => 'Test Queue 4[running]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now(),
+            'service_end' => Carbon::now()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDay(),
+            'close' => Carbon::now()->subDays(2),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        $running = MainQueue::create([
+            'name' => 'Test Queue 8[running]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now(),
+            'service_end' => Carbon::now()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDay(),
+            'close' => Carbon::now()->subDays(2),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        $opening = MainQueue::create([
+            'name' => 'Test Queue 7[Opening]',
+            'queuetype_id' => 1,
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now()->addDay(),
+            'service_end' => Carbon::now()->addDay()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDays(2),
+            'close' => Carbon::now()->addHour(),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+        $opening = MainQueue::create([
+            'name' => 'Test Queue 6[Opening]',
+            'queuetype_id' => 1,
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now()->addDay(),
+            'service_end' => Carbon::now()->addDay()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDays(2),
+            'close' => Carbon::now()->addHour(),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
+       $opening = MainQueue::create([
+            'name' => 'Test Queue 5[Opening]',
+            'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),
+            'counter' => $faker->numberBetween($min = 1, $max = 5),
+            'service_start' => Carbon::now()->addDay(),
+            'service_end' => Carbon::now()->addDay()->addHours(7),
+            'max_minutes' => $faker->numberBetween($min = 20, $max = 60),
+            'open' => Carbon::now()->subDays(2),
+            'close' => Carbon::now()->addHour(),
+            'max' => $faker->numberBetween($min = 10, $max = 16),
+            'user_id' => 1
+        ]);
     }
 }
 

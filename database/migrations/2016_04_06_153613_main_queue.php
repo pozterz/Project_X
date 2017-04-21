@@ -16,10 +16,10 @@ class MainQueue extends Migration
             $table->increments('id');
             $table->string('name',150);
             $table->integer('queuetype_id')->unsigned()->index();
-            $table->string('counter',100);
+            $table->integer('counter')->unsigned();
             $table->dateTime('service_start');
             $table->dateTime('service_end');
-            $table->integer('max_minutes')->unsigned();
+            $table->integer('max_minutes')->unsigned()->index();
             $table->dateTime('open');
             $table->dateTime('close');
             $table->integer('max')->unsigned();
@@ -28,6 +28,7 @@ class MainQueue extends Migration
         });
         Schema::table('main_queues',function(Blueprint $table){
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('counter')->references('counter_id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('queuetype_id')->references('id')->on('queue_types')->onDelete('cascade')->onUpdate('cascade');
         });
     }

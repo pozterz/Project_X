@@ -12,6 +12,7 @@ use Validator;
 use App\User;
 use App\MainQueue;
 use App\UserQueue;
+use App\QueueType;
 use App\UserInformation;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -21,8 +22,10 @@ class AdminController extends Controller
 {
 	
 		public function __construct(){
-				if(Gate::denies('isAdmin',Auth::user())){
+				if(Gate::denies('isModerator',Auth::user())){
+					if(Gate::denies('isAdmin',Auth::user())){
 						abort(403);
+					}
 				}
 		}
 
@@ -218,7 +221,12 @@ class AdminController extends Controller
 
 		public function getUsers()
 		{
-				$Users = User::all();
+				if($this->isAdmin()){
+					$Users = User::all();
+				}
+				else if(Auth::user()->hasRole('moderator')){
+					$Users = User::where('role_id',2)->get();
+				}
 				return response()->json([
 						'status' => 'Success',
 						'result' => $Users,
@@ -234,6 +242,11 @@ class AdminController extends Controller
 				{
 						$User = User::find($id);
 						$User['Phone'] = $User->getPhone();
+						if(!$this->isAdmin()){
+							if($this->isUserAreAdmin($User)){
+								$User = null;
+							}
+						}
 						$result = 'Success';
 				}
 				catch(ModelNotFoundException $ex)
@@ -243,6 +256,8 @@ class AdminController extends Controller
 								'result' => null,
 						]);
 				}
+
+
 
 				return response()->json([
 						'status' => $result,
@@ -255,7 +270,16 @@ class AdminController extends Controller
 				$result = 'Success';
 				try
 				{
-						$UserQueue = UserQueue::where('user_id',$id)->where('isAccept','no')->where('time','>',Carbon::now()->toDateTimeString())->get();
+						if($this->isAdmin()){
+							$UserQueue = UserQueue::where('user_id',$id)
+								->where('isAccept','no')->where('time','>',Carbon::now()->toDateTimeString())
+								->get();
+						}
+						else{
+							$UserQueue = UserQueue::where('user_id',$id)->where('isAccept','no')
+								->where('time','>',Carbon::now()->toDateTimeString())
+								->get();
+						}
 						foreach ($UserQueue as $key => $Queue) {
 								$Queue->mainqueue;
 								$Queue['captcha_key'] = $Queue->getQueue_captcha();
@@ -280,7 +304,9 @@ class AdminController extends Controller
 				$result = 'Success';
 				try
 				{
-						$UserQueue = UserQueue::where('user_id',$id)->where('time','<',Carbon::now()->toDateTimeString())->get();
+						$UserQueue = UserQueue::where('user_id',$id)
+							->where('time','<',Carbon::now()->toDateTimeString())->get();
+
 						foreach ($UserQueue as $key => $Queue) {
 								$Queue->mainqueue;
 								$Queue['captcha_key'] = $Queue->getQueue_captcha();
@@ -301,8 +327,20 @@ class AdminController extends Controller
 		}
 
 		public function getQueues(){
-				
-				$Queues = MainQueue::all();
+
+				if($this->isAdmin()){
+					$Queues = MainQueue::all();
+				}
+				else{
+					$Queues = MainQueue::where('user_id',Auth::user()->id)->get();
+				}
+
+				foreach ($Queues as $key => $Queue)
+				{
+					$Queue->QueueType;
+					$Queue['current'] = $Queue->userqueue()->count();
+				}
+
 				$result = 'Success';
 				return response()->json([
 								'status' => $result,
@@ -336,12 +374,93 @@ class AdminController extends Controller
 						]); 
 		}
 
+		public function addNewType(Request $request){
+			$result = 'Success';
+			$validator = Validator::make($request->all(),[
+						'name' => 'required|string|max:255',
+						'requirement' => 'string',
+						'document' => 'string',
+						'description' => 'string'
+				]);
+
+			if($validator->fails()){
+						$result = 'Failed';
+						return response()->json([
+								'status' => $result,
+								'result' => $validator->errors(),
+						]);
+				}
+
+			$newType = new QueueType;
+			$newType->name = $request->get('name');
+			$newType->requirement = $request->get('requirement');
+			$newType->document = $request->get('document');
+			$newType->description = $request->get('description');
+			$newType->save();
+
+			$request->session()->flash('success', 'Added new queue type!');
+
+				return response()->json([
+						'status' => $result,
+						'result' => $newType,
+				]);
+
+		}
+
+		public function UpdateType(Request $request){
+			$result = 'Success';
+			$validator = Validator::make($request->all(),[
+						'name' => 'required|string|max:255',
+						'requirement' => 'string',
+						'document' => 'string',
+						'description' => 'string'
+				]);
+
+			if($validator->fails()){
+						$result = 'Failed';
+						return response()->json([
+								'status' => $result,
+								'result' => $validator->errors(),
+						]);
+				}
+			$type = QueueType::find($request->id);
+			$type->name = $request->get('name');
+			$type->requirement = $request->get('requirement');
+			$type->document = $request->get('document');
+			$type->description = $request->get('description');
+			$type->save();
+
+			$request->session()->flash('success', 'Save queue type success!');
+
+				return response()->json([
+						'status' => $result,
+						'result' => $type,
+				]);
+		}
+
+		public function DeleteType($id){
+			try {
+				$type = QueueType::find($id);
+				$type->delete();
+
+				return response()->json([
+						'status' => 'Success',
+						'result' => null,
+				]);
+			}
+			catch(ModelNotFoundException $ex){
+				return response()->json([
+						'status' => 'Failed',
+						'result' => null,
+				]);
+			}
+		}
+
 		public function addNewQueue(Request $request){
 				$result = 'Success';
 
 				$validator = Validator::make($request->all(),[
 						'name' => 'required|string|max:150',
-						'counter' => 'required|string|max:100',
 						'service_start' => 'required',
 						'service_end' => 'required',
 						'max_minutes' => 'required|integer',
@@ -361,7 +480,7 @@ class AdminController extends Controller
 				$Queue = new MainQueue;
 				$Queue->name = $request->get('name');
 				$Queue->queuetype_id = $request->get('queuetype_id');
-				$Queue->counter = $request->get('counter');
+				$Queue->counter = Auth::user()->counter_id;
 				$Queue->service_start = $this->ConvertDate($request->get('service_start'),$request->get('service_start_time'));
 				$Queue->service_end = $this->ConvertDate($request->get('service_end'),$request->get('service_end_time'));
 				$Queue->max_minutes = $request->get('max_minutes');
@@ -451,7 +570,19 @@ class AdminController extends Controller
 
 		public function getRunningQueues()
 		{
-				$Queues = MainQueue::where('service_start','<=',Carbon::now()->toDateTimeString())->where('service_end','>',Carbon::now()->toDateTimeString())->where('close','<',Carbon::now()->toDateTimeString())->orderBy('service_start','desc')->get();
+				if($this->isAdmin()){
+					$Queues = MainQueue::where('service_start','<=',Carbon::now()->toDateTimeString())
+						->where('service_end','>',Carbon::now()->toDateTimeString())
+						->where('close','<',Carbon::now()->toDateTimeString())
+						->orderBy('service_start','desc')->get();
+				}
+				else{
+					$Queues = MainQueue::where('service_start','<=',Carbon::now()->toDateTimeString())
+							->where('service_end','>',Carbon::now()->toDateTimeString())
+							->where('close','<',Carbon::now()->toDateTimeString())
+							->where('user_id',Auth::user()->id)
+							->orderBy('service_start','desc')->get();
+				}
 
 				foreach ($Queues as $key => $Queue) {
 						$Queue->QueueType;
@@ -597,6 +728,36 @@ class AdminController extends Controller
 				]);
 		}
 
+		public function addMod($id){
+			if($this->isAdmin()){
+				$user = User::find($id);
+				$user->role_id = 3;
+				$user->save();
+			}
+			return response()->json([
+				'result' => 'Success',
+				]);
+		}
+
+		public function removeMod($id){
+			if($this->isAdmin()){
+				$user = User::find($id);
+				$user->role_id = 2;
+				$user->save();
+			}
+			return response()->json([
+				'result' => 'Success',
+				]);
+		}
+
+		public function getQueueTypes(){
+			$types = QueueType::all();
+			return response()->json([
+				'status' => 'Success',
+				'result' => $types,
+				]);
+		}
+
 		//----------------------------------
 		//-         Function Section
 		//----------------------------------
@@ -614,6 +775,14 @@ class AdminController extends Controller
 						->addMinutes($split[1])
 						->toDateTimeString();
 				return $end_time;
+		}
+
+		private function isAdmin(){
+			return Auth::user()->hasRole('administrator');
+		}
+
+		private function isUserAreAdmin($user){
+			return $user->hasRole('administrator');
 		}
 
 }

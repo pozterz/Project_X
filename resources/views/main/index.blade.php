@@ -50,56 +50,69 @@ height: 100%;
 									<div ng-if="Queue.isSelected(1)">
 										<div ng-show="loading" class="center-align"><loading></loading></div>
 										<div ng-show="!ActiveQueues.length && !loading">
-												<p class="flow-text center-align">NO AVAILABLE QUEUE.</p>
+												<p class="flow-text center-align">NO AVAILABLE QUEUE.
+													<button type="button" class="btn-floating waves-effect waves-light blue" ng-click="Queue.selectedTab(1)">
+														<i class="material-icons">refresh</i>
+													</button>
+												</p>
 										</div>
 										<div ng-show="ActiveQueues.length && !loading">
-											<table class="highlight centered responsive-table">
-												<thead>
-													<tr>
-														<th>Name</th>
-														<th>Type</th>
-														<th>Service time</th>
-														<th>Max time</th>
-														<th>Reserve time</th>
-														<th>Count</th>
-														<th>Ramaining</th>
-														<th>Status</th>
-														@if(!Auth::guest())
-															<th>Reserve</th>
-														@endif
-													</tr>
-												</thead>
-												<tbody>
-													<tr dir-paginate="Active in ActiveQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="ActiveQueues">
-														<td> <% Active.name %> </td>
-														<td> <% Active.queue_type.name %> </td>
-														<td> 
-															<p>เริ่ม : <% Queue.convertTime(Active.service_start) | date:'d MMM y HH:mm น.' %></p>
-															<p>ถึง : <% Queue.convertTime(Active.service_end) | date:'d MMM y HH:mm น.' %></p>
-														 </td>
-														<td> <% Active.max_minutes %> </td>
-														<td>
-															<p>เริ่ม : <% Queue.convertTime(Active.open) | date:'d MMM y HH:mm น.' %></p>
-															<p>ถึง : <% Queue.convertTime(Active.close) | date:'d MMM y HH:mm น.' %></p>
-														</td>
-														<td> <% Active.current %>/<% Active.max %> </td>
-														<td>
-															<timer countdown="Queue.countd(Active.close)"  max-time-unit="'day'" interval="1000">
-																<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
-															</timer>
-														</td>
-														<td> <% Queue.Status(Active.open,Active.close,Active.current,Active.max) %> </td>
-														@if(!Auth::guest())
-														<td>
-															<a type="button" class="btn blue wave-effect" href="{{ url('User/Reserve') }}/<% Active.id %>" ng-show="Active.current < Active.max">Detail</a>
-															<a type="button" class="btn blue wave-effect disabled" ng-show="Active.current >= Active.max" disabled>Full</a>
-														</td>
-														@endif
-													</tr>
-												</tbody>
-											</table>
-											<br/>
-											<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html" pagination-id="ActiveQueues"></dir-pagination-controls>
+										  <div class="row">
+											  <div  dir-paginate="Active in ActiveQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="ActiveQueues">
+											    <div class="col s12 m4">
+											      <div class="card z-depth-2">
+											        <div class="card-content">
+												        <div class="card-title">
+												      		<% Active.name %>
+												      	</div>
+											          <p>
+											          	<span class="label label-info label-as-badge""><% Active.queue_type.name %></span>
+											          	<span class="label label-as-badge" ng-class="Queue.StatusColor(Active.open,Active.close,Active.current,Active.max)">
+												          		<% Queue.Status(Active.open,Active.close,Active.current,Active.max) %>
+												          	</span>
+											          </p><br/>
+											          <p class="flow-text"><strong>เวลาที่เปิดจอง : </strong><br/>
+											          	<% Queue.convertTime(Active.open) | date:'d MMM y HH:mm น.' %> -
+											          	<% Queue.convertTime(Active.close) | date:'d MMM y HH:mm น.' %>
+											          </p>
+											          <p class="flow-text"><strong>จำนวน : </strong>
+											          	<span class="label label-danger label-as-badge"><% Active.current %>/<% Active.max %> คน</span>
+											          </p>
+											           <p class="flow-text" ng-if="Queue.Status(Active.open,Active.close,Active.current,Active.max) === 'Opening'"><strong>เวลาที่เหลือ : </strong>
+											          	<timer countdown="Queue.countd(Active.close)"  max-time-unit="'day'" interval="1000">
+																		<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
+																	</timer>
+											          	</p>
+											          	<p class="flow-text" ng-if="Queue.Status(Active.open,Active.close,Active.current,Active.max) === 'Waiting'"><strong>เวลาที่เหลือ : </strong>
+												          	<timer countdown="Queue.countd(Active.open)"  max-time-unit="'day'" interval="1000">
+																			<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
+																		</timer>
+											          	</p>
+											          <div class="more-detail" ng-show="collapsed" ng-class="{ 'active':collapsed }">
+												          <p class="flow-text"><strong>เวลาให้บริการ : </strong><br/>
+												          	<% Queue.convertTime(Active.service_start) | date:'d MMM y HH:mm น.' %> - 
+												          	<% Queue.convertTime(Active.service_end) | date:'d MMM y HH:mm น.' %>
+												          </p>
+												          <p class="flow-text"><strong>เวลาที่จองได้ : </strong>
+												          	<% Active.max_minutes %> นาที
+												          </p>
+											          </div>
+											        </div>
+											        <div class="card-action center">
+											        	<button type="button" class="btn green lighten-1 wave-effect" ng-click="collapsed=!collapsed">
+											        		More <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
+											        	</button>
+											        	@if(!Auth::guest())
+																	<a type="button" class="btn blue wave-effect" href="{{ url('User/Reserve') }}/<% Active.id %>" ng-show="Active.current < Active.max">Reserve <i class="fa fa-calendar-check-o"></i></a>
+																	<a type="button" class="btn blue wave-effect disabled" ng-show="Active.current >= Active.max" disabled>Full</a>
+																@endif
+											        </div>
+											      </div>
+											    </div>
+										      <div class="clearfix" ng-if="($index+1)%3==0"></div>
+										    </div>
+										    <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html" pagination-id="ActiveQueues"></dir-pagination-controls>
+										  </div>
 										</div>
 									</div>
 								</div>
@@ -120,42 +133,50 @@ height: 100%;
 												<p class="flow-text center-align">NO RESERVED QUEUE.</p>
 											</div>
 											<div ng-show="UserQueues.length && !loading">
-												<table class="highlight centered responsive-table">
-													<thead>
-														<tr>
-															<th>Name</th>
-															<th>Service time</th>
-															<th>Reserved time</th>
-															<th>Queue time</th>
-															<th>Remaining</th>
-															<th>Status</th>
-															<th>Verify Key</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr dir-paginate="UserQueue in UserQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="UserQueues">
-															<td> <% UserQueue.mainqueue[0].name %>(<% UserQueue.mainqueue[0].queuetype.name %>) </td>
-															<td> <% Queue.convertTime(UserQueue.mainqueue[0].service_start) | date:'d MMM y HH:mm น.' %> </td>
-															<td> <% UserQueue.reserved_min %> </td>
-															<td>
-																<% Queue.convertTime(UserQueue.time) | date:'d MMM y HH:mm น.' %>
-															</td>
-															<td>
-																<timer countdown="Queue.countd(UserQueue.time)"  max-time-unit="'day'" interval="1000">
-																	<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
-																</timer>
-															</td>
-																<td>
-																<% UserQueue.isAccept | uppercase %>
-															</td>
-															<td>
-																<a tooltipped class="btn red lighten-2" data-position="right" data-delay="50" data-tooltip="<% UserQueue.captcha_key %>">SHOW</a>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-												<br/>
+												<div class="row">
+													<div dir-paginate="UserQueue in UserQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="UserQueues">
+														<div class="col s12 m4">
+															<div class="card z-depth-2">
+											        	<div class="card-content">
+												        	<div class="card-title">
+												        		<% UserQueue.mainqueue[0].name %>
+												        	</div>
+												        	<p>
+												          	<span class="label label-info label-as-badge"">
+												          		<% UserQueue.mainqueue[0].queuetype.name %>
+												          	</span>
+											          	</p><br/>
+											          	<p class="flow-text"><strong>เวลาที่จอง : </strong><br/>
+												          	<% Queue.convertTime(UserQueue.time) | date:'d MMM y HH:mm น.' %>
+												          </p>
+											          	<p class="flow-text"><strong>จำนวน : </strong>
+												          	<% UserQueue.reserved_min %> นาที
+												          </p>
+												          <p class="flow-text"><strong>เคาน์เตอร์ : </strong>
+												          	<% UserQueue.mainqueue[0].user.counter_id %> | <% UserQueue.mainqueue[0].user.name %>
+												          </p>
+												          <p class="flow-text"><strong>เหลือเวลา : </strong>
+												          	<timer countdown="Queue.countd(UserQueue.time)"  max-time-unit="'day'" interval="1000">
+																		<% days %> วัน, <%hours %> ชั่วโมง <% mminutes %> นาที <% sseconds %> วินาที
+																		</timer>
+												          </p>
+												          <div class="more-detail" ng-show="collapsed" ng-class="{ 'active':collapsed }">
+													          <p class="flow-text"><strong>รหัสยืนยัน : </strong><br/>
+													          	<% UserQueue.captcha_key %>
+													          </p>
+												          </div>
+												        </div>
+												        <div class="card-action center">
+												        	<button type="button" class="btn green lighten-1 wave-effect" ng-click="collapsed=!collapsed">
+												        		VERIFY KEY <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
+												        	</button>
+												        </div>
+												      </div>
+														</div>
+														<div class="clearfix" ng-if="($index+1)%3==0"></div>
+													</div>
 												<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html" pagination-id="UserQueues"></dir-pagination-controls>
+												</div>
 											</div>
 										@endif
 									</div>
@@ -169,45 +190,64 @@ height: 100%;
 										<div ng-show="!RunningQueues.length && !loading">
 											<p class="flow-text center-align">NO RUNNING QUEUE.</p>
 										</div>
-										<div ng-show="RunningQueues.length && !loading" class="center-align">
-											<table class="highlight centered responsive-table">
-												<thead>
-													<tr>
-															<th>Queue Name</th>
-															<th>Service Time</th>
-															<th>Interval</th>
-															<th>User</th>
-															<th>Start time</th>
-															<th>Reserved time</th>
-															<th>Status</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr dir-paginate="Running in RunningQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="RunningQueues">
-														<td> <% Running.name %> </td>
-														<td> <% Queue.convertTime(Running.service_start) | date:'d MMM y HH:mm น.' %> </td>
-														<td> <% Running.max_minutes %> </td>
-														<td>
-															<% Queue.runningUser(Running.userqueue,$index) %>
-															<% Running.running.user.name %>
-														</td>
-														<td> <% Queue.convertTime(Running.userqueue[$index].time)  | date:'d MMM y HH:mm น.' %> </td>
-														<td> <% Running.userqueue[$index].reserved_min %> </td>
-														<td> <% Running.userqueue[$index].isAccept | uppercase %> </td>
-													</tr>
-												</tbody>
-											</table>
-											<br/>
-											<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html" pagination-id="RunningQueues"></dir-pagination-controls>
+										<div ng-show="RunningQueues.length && !loading">
+											<div class="row">
+												<div dir-paginate="Running in RunningQueues | filter:search | itemsPerPage: pageSize" current-page="currentPage" pagination-id="RunningQueues">
+													<div class="col s12 m4">
+														<div class="card z-depth-2">
+											        <div class="card-content">
+												        <div class="card-title">
+												      		<% Running.name %>
+												      	</div>
+												      	<p>
+												          	<span class="label label-info label-as-badge""><% Running.queue_type.name %></span>
+											          </p><br/>
+											          <p class="flow-text"><strong>เวลาให้บริการ : </strong><br/>
+											          	<% Queue.convertTime(Running.service_start) | date:'d MMM y HH:mm น.' %> -
+											          	<% Queue.convertTime(Running.service_end) | date:'d MMM y HH:mm น.' %>
+											          </p>
+											          <p class="flow-text"><strong>เคาน์เตอร์ : </strong>
+											          	<% Running.user.counter_id %> | <% Running.user.name %>
+											          </p>
+										          	<p class="flow-text"><strong>คิวที่ : </strong>
+												          	<span class="label label-danger label-as-badge">
+												          		<% Queue.runningUser(Running.userqueue,$index) %>
+												          	</span>
+												        </p>
+											          <div class="more-detail" ng-show="collapsed" ng-class="{ 'active':collapsed }">
+											          	<p class="flow-text"><strong>เวลาที่จอง : </strong>
+												          	<% Queue.convertTime(RunningQueues[$index].running.time) | date:'d MMM y HH:mm น.' %> 
+												          </p>
+												          <p class="flow-text"><strong>เวลาที่จอง : </strong>
+												          	<% RunningQueues[$index].running.reserved_min?RunningQueues[$index].running.reserved_min:0 %> นาที
+												          </p>
+												          <p class="flow-text"><strong>สถานะ : </strong>
+												          	<span class="label label-as-badge" ng-class="(RunningQueues[$index].running.isAccept == 'yes')?'label-success':'label-danger'" ng-if="RunningQueues[$index].running.isAccept">
+												          		<% RunningQueues[$index].running.isAccept | uppercase %>
+												          	</span>
+												          </p>
+												         </div>
+												      </div>
+												      <div class="card-action">
+											        	<button type="button" class="btn green lighten-1 wave-effect" ng-click="collapsed=!collapsed">
+											        		More <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
+											        	</button>
+												      </div>
+													  </div>
+													</div>
+													<div class="clearfix" ng-if="($index+1)%3==0"></div>
+												</div>
+												<dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html" pagination-id="RunningQueues"></dir-pagination-controls>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+				</div> <!-- queueapp angular -->
+			</div> <!-- content -->
+		</div> <!-- row -->
+	</div> <!-- ctn -->
 
 @endsection
 
@@ -219,7 +259,7 @@ height: 100%;
 		// Main Controller
 
 		angular
-			.module('QueueApp', ['ui.materialize', 'Queue', 'User', 'ngAnimate', 'angularUtils.directives.dirPagination', 'ngLocale', 'timer'],setInterpolate)
+			.module('QueueApp', ['ui.materialize', 'Queue', 'User', 'ngAnimate', 'angularUtils.directives.dirPagination', 'ngLocale', 'timer','oitozero.ngSweetAlert'],setInterpolate)
 			.controller('QueueCtrl', ['$scope', 'mainService', 'userService', QueueCtrl])
 			.constant("CSRF_TOKEN", '{{ csrf_token() }}')
 			.filter('range', rangeFilter)
@@ -261,6 +301,7 @@ height: 100%;
 				$scope.tab = 1;
 				$scope.loading = false;
 
+
 				// Service
 				// 
 				this.selectedTab = function(tab)
@@ -287,6 +328,11 @@ height: 100%;
 						.then(function(data){
 							$scope.UserQueues = data.result;
 							$scope.loading = false;
+						},function (error){
+							if(error != 200){
+								swal("Sorry",'An error occured please refresh page.',"error")
+								$scope.loading = false;
+							}
 						})
 					@else
 						$scope.UserQueues = [];
@@ -301,8 +347,13 @@ height: 100%;
 					.then(function(data){
 						$scope.QueueData = data.result;
 						$scope.loading = false;
-						console.log(data.result);
-					})
+						//console.log(data.result);
+					},function (error){
+							if(error != 200){
+								swal('An error occured please refresh page.',"error")
+								$scope.loading = false;
+							}
+						})
 				}
 				
 				this.getActiveQueues = function()
@@ -312,6 +363,11 @@ height: 100%;
 						.then(function(data){
 							$scope.ActiveQueues = data.result;
 							$scope.loading = false;
+						},function (error){
+							if(error != 200){
+								this.selectedTab = 1;
+								$scope.loading = false;
+							}
 						})
 				}
 
@@ -321,7 +377,7 @@ height: 100%;
 					mainService.getRunningQueues()
 						.then(function(data){
 							$scope.RunningQueues = data.result;
-							console.log($scope.RunningQueues);
+							//console.log($scope.RunningQueues);
 							$scope.loading = false;
 						})
 				}
@@ -333,7 +389,9 @@ height: 100%;
 
 				// First declaration
 				this.selectedTab(1);
-				
+				@if(Session::has('success'))
+					Materialize.toast('{{ Session::get('success') }}',3000,'rounded');
+				@endif
 
 				// Local function
 				// 
@@ -367,6 +425,17 @@ height: 100%;
 					else if(now < open && now < close) return "Waiting";
 				}
 
+				this.StatusColor = function(open,close,current,max)
+				{
+					var now = new Date().getTime();
+					var open = new Date(open).getTime();
+					var close = new Date(close).getTime();
+					if(current >= max) return "Full";
+					else if(now > open && now > close) return "label-danger";
+					else if(now >= open && now <= close) return "label-success";
+					else if(now < open && now < close) return "label-warning";
+				}
+
 				this.runningUser = function(userInqueue,index){
 					var date = new Date();
 					var nil = {
@@ -380,13 +449,16 @@ height: 100%;
 							servicetime = new Date(userInqueue[i].time);
 							workmin = userInqueue[i].reserved_min;
 							if(date.getTime() >= servicetime.getTime() &&  date.getTime() < servicetime.getTime()+(workmin*1000*60)){
+								console.log(userInqueue[i]);
 								$scope.RunningQueues[index].running = userInqueue[i];
+								return i+1;
 							}
 							else{
 								$scope.RunningQueues[index].running = nil;
 							}
 						}
 					}
+					return 0;
 				}
 
 			}
@@ -460,7 +532,7 @@ height: 100%;
 			.module('User', [])
 			.factory('userService', ['$http','$q', UserService]);
 
-			function UserService($http)
+			function UserService($http,$q)
 			{
 				var getUserQueues = function()
 				{
@@ -475,7 +547,7 @@ height: 100%;
 
 				function handleError( response ) 
 				{
-					return( $q.reject( response.data.status ) );
+					return( $q.reject( response.status ) );
 				}
 
 				function handleSuccess( response ) 

@@ -45,9 +45,9 @@ class MainController extends Controller
 	public function UpdateProfile(Request $req){
 		$id = Auth::user()->id;
 		$user = User::find($id);
-    $user->username = $req->get('username');
     $user->name = $req->get('name');
-    $user->tel = $req->get('tel');
+    $user->phone = $req->get('tel');
+    $user->counter_id = $req->get('counter_id');
     $user->save();
 
     $req->session()->flash('success', 'Update Complete.');

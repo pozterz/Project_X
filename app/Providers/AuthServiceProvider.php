@@ -33,6 +33,13 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
+        $gate->define('isModerator',function($user){
+            if($user->hasRole('moderator')){
+                return true;
+            }
+            return false;
+        });
+
         $gate->define('isUser',function($user){
             if($user->hasRole('user')){
                 return true;

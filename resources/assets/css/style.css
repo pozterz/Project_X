@@ -1,9 +1,71 @@
+@font-face {
+ font-family: 'Prompt';
+ font-style: normal;
+ font-weight: 300;
+ src: local('Prompt Light'), local('Prompt-Light'), url(http://localhost/projectx/public/Prompt.ttf) format('truetype');
+} 
+
 html,
 body {
+    font-family: 'Prompt', sans-serif !important;
     background-color: #E8E8E8;
     height: 100%;
 }
+.more-detail{
+  max-height:300px;
+  transition:max-height 0.35s ease;
+  overflow:hidden;
+  position:relative;
+}
 
+.more-detail.ng-hide {
+  max-height:0;
+  transition:max-height 0.35s ease;
+  overflow:hidden;
+  position:relative;
+}
+
+.clearfix{
+  clear:both;
+}
+
+.more-detail.ng-hide-remove,
+.more-detail.ng-hide-add {
+  /* remember, the .hg-hide class is added to element
+  when the active class is added causing it to appear
+  as hidden. Therefore set the styling to display=block
+  so that the hide animation is visible */
+  display:block!important;
+}
+
+
+.more-detail.ng-hide-add{
+  animation-name: hide;
+  -webkit-animation-name: hide;  
+
+  animation-duration: .5s; 
+  -webkit-animation-duration: .5s;
+
+  animation-timing-function: ease-in;  
+  -webkit-animation-timing-function: ease-in;  
+}
+.more-detail.ng-hide-remove {
+  animation-name: show;
+  -webkit-animation-name: show;  
+
+  animation-duration: .5s; 
+  -webkit-animation-duration: .5s;
+
+  animation-timing-function: ease-out;  
+  -webkit-animation-timing-function: ease-out;  
+}
+
+.card-content p{
+        line-height: 1.7;
+}
+strong{
+    font-weight: bold;
+}
 .content {
     margin-top: 30px;
 }
@@ -164,6 +226,63 @@ label:not(.active):after {
     padding: 20px;
 }
 
+.label{
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+}
+
+.label-as-badge {
+    border-radius: 1em;
+}
+.label-default {
+  background-color: #999;
+}
+.label-default[href]:hover,
+.label-default[href]:focus {
+  background-color: #808080;
+}
+.label-primary {
+  background-color: #428bca;
+}
+.label-primary[href]:hover,
+.label-primary[href]:focus {
+  background-color: #3071a9;
+}
+.label-success {
+  background-color: #5cb85c;
+}
+.label-success[href]:hover,
+.label-success[href]:focus {
+  background-color: #449d44;
+}
+.label-info {
+  background-color: #5bc0de;
+}
+.label-info[href]:hover,
+.label-info[href]:focus {
+  background-color: #31b0d5;
+}
+.label-warning {
+  background-color: #f0ad4e;
+}
+.label-warning[href]:hover,
+.label-warning[href]:focus {
+  background-color: #ec971f;
+}
+.label-danger {
+  background-color: #d9534f;
+}
+.label-danger[href]:hover,
+.label-danger[href]:focus {
+  background-color: #c9302c;
+}
 
 .ctn{
         margin: 0 10px;
@@ -172,10 +291,25 @@ label:not(.active):after {
     .ctn{
         margin: 0 20px;
     }
+    .more-detail{
+      max-height:300px;
+      transition:height 0.35s ease;
+      overflow:hidden;
+      position:relative;
+    }
+    
 }
+
 
 @media only screen and (min-width : 993px){
     .ctn{
         margin: 0 40px;
     }
+}
+
+@media only screen and (min-width: 960px){
+    .card-content .flow-text {
+        font-size:1.1rem;
+    }
+    
 }

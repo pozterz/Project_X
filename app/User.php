@@ -13,7 +13,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username','password','email', 'ip','role_id','name','phone'
+        'username','password','email','counter_id','ip','role_id','name','phone'
     ];
 
     /**
@@ -22,7 +22,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','role_id','have_role','phone'
+        'password', 'remember_token','phone'
     ];
 
 
@@ -39,6 +39,10 @@ class User extends Authenticatable
         return ( $user->getUserRole()->name == 'administrator' );
     }
 
+     public function isModerator($user) {
+        return ( $user->getUserRole()->name == 'moderator' );
+    }
+
     public function role(){
         return $this->hasOne(Role::class, 'id', 'role_id');
     }
@@ -50,7 +54,10 @@ class User extends Authenticatable
             return true;
         }
 
+
         if(is_array($roles)){
+        dd($this->have_role->name);
+            
             foreach($roles as $need_role){
                 if($this->checkIfUserHasRole($need_role)) {
                     return true;

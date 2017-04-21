@@ -17,7 +17,7 @@ class UserQueue extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->string('captcha',40);
             $table->dateTime('time');
-            $table->dateTime('reserved_min');
+            $table->integer('reserved_min')->unsigned();
             $table->enum('isAccept',['yes','no'])->default('no');
             $table->string('ip',20);
             $table->timestamps();

@@ -8,7 +8,7 @@
 </style>
 @if(Request::is('User/Reserve/'.$id))
 
-<div class="container" ng-app="ReserveApp" ng-controller="ReserveCtrl as Reserve">
+<div  ng-app="ReserveApp" ng-controller="ReserveCtrl as Reserve">
 	<div class="row">
 		<div class="col s12 m6 l6">
 			<div class="card">
@@ -29,20 +29,20 @@
 							<li class="collection-item blue-border">
 								<strong>Type</strong> : <% Queue.queue_type.name %>
 							</li>
-							<li class="collection-item blue-border white-space-pre-line">
+							<li class="collection-item blue-border white-space-pre-line" ng-if="Queue.queue_type.requirement.length">
 								<strong>Requirement</strong> : <% Queue.queue_type.requirement %>
 							</li>
-							<li class="collection-item blue-border white-space-pre-line">
+							<li class="collection-item blue-border white-space-pre-line" ng-if="Queue.queue_type.document.length">
 								<strong>Document</strong> : <% Queue.queue_type.document %>
 							</li>
-							<li class="collection-item blue-border white-space-pre-line">
+							<li class="collection-item blue-border white-space-pre-line" ng-if="Queue.queue_type.description.length">
 								<strong>Description</strong> : <% Queue.queue_type.description %>
 							</li>
 							<li class="collection-item blue-border">
-								<strong>Counter</strong> : <% Queue.counter %>
+								<strong>Counter</strong> : <% Queue.counter %> | <% Queue.user.name %>
 							</li>
 							<li class="collection-item blue-border">
-								<p class="flow-text">Service Time</p>
+								<p class="flow-text">Available Time</p>
 							</li>
 							<li class="collection-item blue-border">
 								<strong>Start</strong> :  <% Reserve.convertTime(Queue.service_start) | date:'d MMM y HH:mm น.' %>
@@ -70,7 +70,7 @@
 							<li class="collection-item blue-border">
 								<strong>Reserved count</strong> : <% Queue.current %>/<% Queue.max %>
 							</li>
-							<li class="collection-item blue-border">
+							<li class="collection-item blue-border" ng-if="QueueData.status == 'Opening'">
 								 <button ngf-select="uploadFiles($files, $invalidFiles)" multiple
           accept="image/*,application/pdf" ngf-max-size="3MB" class="btn waves-effect waves-light pink">
       							<i class="material-icons">description</i> Upload files
@@ -90,10 +90,10 @@
 							    <li ng-repeat="f in errFiles"  class="collection-item blue-border"><%f.name%> <%f.$error%> <%f.$errorParam%>
     							</li> 
 							</li>
-							<li class="collection-item blue-border">
+							<li class="collection-item blue-border" ng-if="QueueData.status == 'Opening'">
 								<p class="flow-text">Reserve</p>
 							</li>
-							<li class="collection-item blue-border">
+							<li class="collection-item blue-border" ng-if="QueueData.status == 'Opening'">
 								<div class="row">
 									<div class="col s12 m6">
 										<input id="reserve_start" type="text" input-date ng-model="Queue.service_start" name="reserve_start" class="validate{{ $errors->has('reserve_start') ? ' invalid' : '' }}" value="{{ old('reserve_start')}}" placeholder="Please choose reserve time.">
@@ -108,7 +108,7 @@
 									</div>
 								</div>
 							</li>
-							<li class="collection-item blue-border">
+							<li class="collection-item blue-border" ng-if="QueueData.status == 'Opening'">
 								<input id="reserve_minutes" type="number" name="reserve_minutes" class="validate{{ $errors->has('reserve_minutes') ? ' invalid' : '' }}" value="{{ old('reserve_minutes') }}" pattern=".{[0-9]}">
 									@if ($errors->has('reserve_minutes'))
 										<label for="reserve_minutes" data-error="{{ $errors->first('reserve_minutes') }}">reserve_minutes</label>
@@ -116,7 +116,7 @@
 										<label for="reserve_minutes" data-error="Plase input number." data-success="Validated">Reserve Minutes.</label>
 									@endif
 							</li>
-							<li class="collection-item blue-border">
+							<li class="collection-item blue-border" ng-if="QueueData.status == 'Opening'">
 								{!! app('captcha')->display()!!}
 							</li>
 							<li class="collection-item center">
@@ -151,13 +151,16 @@
 				<div class="card-panel white z-depth-1" ng-show="QueueData[0].userqueue && !loading">
 					<ul class="collection with-header">
 						<li class="collection-item red-border">
-							 <p class="flow-text">User Reserved Detail</p>
+							 <p class="flow-text">User Reserved Detail <span class="new badge red" data-badge-caption="คน"><% QueueData[0].userqueue.length %></span></p>
 						</li>
-						<li class="collection-item blue-border" ng-repeat="user in QueueData[0].userqueue">
+						<li class="collection-item" ng-class="(user.user_id == {{Auth::user()->id}})?'green-border':'blue-border'" ng-repeat="user in QueueData[0].userqueue">
+							<a ng-show="user.user_id == {{Auth::user()->id}}" href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
 							No. : <% $index+1 %> <br/>
-							Name: <% user.user.name %> <br/>
-							Time: <% Reserve.convertTime(user.time) | date:'d MMM y HH:mm น.' %><br/>
-							Reserved time : <% user.reserved_min %> <br/>
+							From : <% Reserve.convertTime(user.time) | date:'d MMM y HH:mm น.' %><br/>
+							To : <% Reserve.convertEndTime(user.time,user.reserved_min) | date:'d MMM y HH:mm น.' %><br/>
+							Reserved time : <% user.reserved_min %>  Minutes.
+
+							<br/>
 						</li>
 					</ul>
 				</div>
@@ -266,6 +269,12 @@
 				{
 					var date = new Date(time);
 					return date;
+				}
+
+				this.convertEndTime = function(time,min)
+				{
+					var date = new Date(time);
+					return new Date(date.getTime() + min * 1000 * 60);
 				}
 				
 				this.getQueue({{ $id }});

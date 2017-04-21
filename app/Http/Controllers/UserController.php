@@ -9,6 +9,7 @@ use App\UserQueue;
 use Carbon\Carbon;
 use Auth;
 use Gate;
+use Mail;
 use App\Http\Requests;
 use Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,8 +17,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class UserController extends Controller
 {
 	public function __construct(){
-		if(Gate::denies('isUser',Auth::user())){
-			abort(403);
+		if(Gate::denies('isModerator',Auth::user())){
+			if(Gate::denies('isUser',Auth::user())){
+				abort(403);
+	  	}
   	}
   }
 
@@ -31,6 +34,7 @@ class UserController extends Controller
 			$Queue['captcha_key'] = $Queue->getQueue_captcha();
 			$Queue->mainqueue;
 			$Queue->mainqueue[0]->Queuetype;
+			$Queue->mainqueue[0]->user;
 		}
 		return response()->json([
 				'status' => 'Success',
@@ -59,7 +63,8 @@ class UserController extends Controller
 
 	public function Reserve(Request $request){
 		$result = 'Failed';
-
+		$id = $request->get('id');
+		$mainqueue = MainQueue::find($id);
 		$validator = Validator::make($request->all(), [
 			'id' => 'required',
 			'g-recaptcha-response'=>'required|captcha',
@@ -75,29 +80,41 @@ class UserController extends Controller
 			$id = $request->get('id');
 			$mainqueue = MainQueue::find($id);
 			$userq = $mainqueue->userqueue->contains('user_id',$userid);
-			$last = $mainqueue->userqueue->last();
 			$current_count = $mainqueue->userqueue->count();
-			if($mainqueue->close >= Carbon::now() && $mainqueue->start <= Carbon::now()){
+			// if open close in range date 
+			if($mainqueue->close >= Carbon::now() && $mainqueue->open <= Carbon::now()){
+				// if not reserved
 				if(!$userq){
+					// if queue not full
 					if($current_count < $mainqueue->max){
+						// if reserve in range
 						if($this->isInRange($mainqueue,$request)){
+							// if reserve min < max
 							if($request->get('reserve_minutes') <= $mainqueue->max_minutes){
+								// if not overlap with other reserved
 								if(!$this->isOverlap($mainqueue,$request)){
-									$cap = str_random(12);
-									$start = $this->ConvertDate($request->get('reserve_start'),$request->get('reserve_start_time'));
-									$reserved_min = $request->get('reserve_minutes');
-									$createduq = UserQueue::create([
-										"user_id" => $userid,
-										"captcha" => $cap,
-										"time" => $start,
-										"reserved_min" => $reserved_min,
-										"ip" => $request->get('ip'),
-										]);
-									$mainqueue = MainQueue::find($id);
-									$mainqueue->userqueue()->attach($createduq->id);
-									$request->session()->flash('success','Reserved Success.');
-									return redirect('/index');
+										$cap = str_random(9);
+										$start = $this->ConvertDate($request->get('reserve_start'),$request->get('reserve_start_time'));
+										$reserved_min = $request->get('reserve_minutes');
+										$createduq = UserQueue::create([
+											"user_id" => $userid,
+											"captcha" => $cap,
+											"time" => $start,
+											"reserved_min" => $reserved_min,
+											"ip" => $request->get('ip'),
+											]);
+										$mainqueue = MainQueue::find($id);
+										$mainqueue->userqueue()->attach($createduq->id);
+										$this->sendMail($createduq,$mainqueue);
+										$request->session()->flash('success','Reserved Success.');
+										return redirect('/index');
+									
 								}else{
+									// check other queue with the same type
+									if($this->reserveOtherQueue($mainqueue,$request)){
+										$request->session()->flash('success','Reserved Success (With auto assigned).');
+										return redirect('/index');
+									}
 									$request->session()->flash('success','overlap.');
 									return back();
 								}
@@ -150,8 +167,10 @@ class UserController extends Controller
 		try{
 			$user = User::find($id);
 			$user->username = $request->get('username');
-	    $user->name = $request->get('name');
-	    $user->tel = $request->get('tel');
+			$user->name = $request->get('name');
+	    $user->email = $request->get('email');
+	    $user->tel = $request->get('phone');
+	    $user->counter_id = $request->get('counter_id');
 	    $user->save();
 	    $result = 'Success';
 		}catch(ModelNotFoundException $ex) {
@@ -166,27 +185,79 @@ class UserController extends Controller
 	}
 
 	public function Upload($id,Request $request){
-		$result = 'Success';
-		$filename = Auth::user()->username.'_'.$id.'_'.Carbon::now()->timestamp.'.'.$request->file->extension();
-		$path = $request->file('file')->move('files', $filename);
-		return response()->json([
-    		'status' => $result,
-				'result' => $filename,
-			]);
+		
+			$result = 'Success';
+			$filename = Auth::user()->username.'_'.$id.'_'.Carbon::now()->timestamp.'.'.$request->file->extension();
+			$path = $request->file('file')->move('files', $filename);
+			return response()->json([
+	    		'status' => $result,
+					'result' => $filename,
+				]);
+	
 	}
 
 	private function isOverlap($mainqueue,$request){
-		$service_start = Carbon::parse($mainqueue->service_start);
-		$service_end = Carbon::parse($mainqueue->service_end);
-		$reserve_start = Carbon::parse($request->get('service_start'));
-		$reserve_end = $reserve_start->addMinutes($request->get('reserve_minutes'));
-		return max($service_start,$reserve_start) < min($service_end,$reserve_end);
+		foreach ($mainqueue->userqueue as $key => $queue) {
+			$another_start = Carbon::parse($queue->time);
+			$another_end = Carbon::parse($queue->time)->addMinutes($queue->reserved_min);
+			$reserve_start = Carbon::parse($this->ConvertDate($request->get('reserve_start'),$request->get('reserve_start_time')));
+			$reserve_end = Carbon::parse($this->ConvertDate($request->get('reserve_start'),$request->get('reserve_start_time')))->addMinutes($request->get('reserve_minutes'));
+			if(max($another_start,$reserve_start) < min($another_end,$reserve_end)){
+				return true;
+			}
+		}
+		
+		return false;
+
+	}
+
+	private function reserveOtherQueue($mainqueue,$request){
+		$userid = Auth::user()->id;
+		$queues = MainQueue::where('queuetype_id',$mainqueue->queuetype_id)
+			->where('id','!=',$mainqueue->id)
+			->where('close', '>=', Carbon::now())
+			->where('open', '<=', Carbon::now())
+			->get();
+
+		foreach ($queues as $key => $other) {
+			if($this->isInRange($other,$request)){
+				$userq = $other->userqueue->contains('user_id',$userid);
+				$current_count = $other->userqueue->count();
+				if(!$userq){
+					// if queue not full
+					if($current_count < $other->max){
+						// if reserve min < max
+						if($request->get('reserve_minutes') <= $other->max_minutes){
+							// if not overlap with other reserved
+							if(!$this->isOverlap($other,$request)){
+								$cap = str_random(9);
+								$start = $this->ConvertDate($request->get('reserve_start'),$request->get('reserve_start_time'));
+								$reserved_min = $request->get('reserve_minutes');
+								$createduq = UserQueue::create([
+									"user_id" => $userid,
+									"captcha" => $cap,
+									"time" => $start,
+									"reserved_min" => $reserved_min,
+									"ip" => $request->get('ip'),
+									]);
+								$reserve = MainQueue::find($other->id);
+								$reserve->userqueue()->attach($createduq->id);
+								$this->sendMail($createduq,$mainqueue);
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 
 	}
 
 	private function isInRange($mainqueue,$request){
 		$start = $this->ConvertDate($request->get('reserve_start'),$request->get('reserve_start_time'));
-		if($start >= $mainqueue->service_start && $start <= Carbon::parse($mainqueue->service_end)->subMinutes($request->get('reserve_minutes'))) return true;
+		if($start >= $mainqueue->service_start && $start <= Carbon::parse($mainqueue->service_end)->subMinutes($request->get('reserve_minutes')))
+			return true;
 		return false;
 	}
 
@@ -217,6 +288,19 @@ class UserController extends Controller
             ->addMinutes($split[1])
             ->toDateTimeString();
         return $end_time;
+    }
+
+    private function sendMail($data,$mainqueue){
+
+      Mail::send('layouts.mail', ['data' => $data,'queue' => $mainqueue], function ($m)  {
+          $m->from('pozterz2@gmail.com', 'Queue System Auto Mail');
+
+          $user  = User::find(Auth::user()->id);
+
+          $m->to($user->email)->subject('Reserved complete.');
+      });
+
+      return true;
     }
 
 }

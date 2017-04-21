@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('phone', 10);
             $table->string('ip',20);
             $table->integer('role_id')->unsigned();
+            $table->integer('counter_id')->unsigned()->index()->default(0);
             $table->string('remember_token',100);
             $table->timestamps();
         });

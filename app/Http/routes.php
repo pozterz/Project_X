@@ -16,9 +16,7 @@ Route::get('/', function () {
    return redirect('/index');
 });
 
-Route::get('/test', function () {
-    return view('test');
-});
+Route::get('/test','ViewController@testMail');
 
 
 
@@ -48,6 +46,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/admin/userqueue/{id}','AdminController@ViewUserQueue');
     Route::get('/admin/delete/{id}','AdminController@DeleteUser');
     Route::get('/admin/deleteUserQueue/{id}','AdminController@DeleteUserQueue');
+
 
         // activity
     Route::get('/admin/activities','AdminController@Activities');
@@ -97,6 +96,9 @@ Route::group(['middleware' => 'web'], function () {
     /***** Admin *****/
     Route::get('/Admin/getUsers','AdminController@getUsers');
     Route::post('/Admin/addNewQueue','AdminController@addNewQueue');
+    Route::post('/Admin/addNewType','AdminController@addNewType');
+    Route::post('/Admin/UpdateType','AdminController@UpdateType');
+    Route::get('/Admin/deleteType/{id}','AdminController@DeleteType');
     Route::get('/Admin/getUser/{id}','AdminController@getUser');
     Route::get('/Admin/getUserReserved/{id}','AdminController@getUserReserved');
     Route::get('/Admin/getUserInQueue/{id}','AdminController@getUserInQueue');
@@ -110,4 +112,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/Admin/getUserQueueDetail/{queue_id}/{userqueue_id}','AdminController@getUserQueueDetail');
     Route::get('/Admin/AcceptQueue/{queue_id}/{userqueue_id}','AdminController@AcceptQueue');
     Route::get('/Admin/CancelQueue/{queue_id}/{userqueue_id}','AdminController@CancelQueue');
+    Route::get('/Admin/addMod/{id}','AdminController@addMod');
+    Route::get('/Admin/removeMod/{id}','AdminController@removeMod');
+    Route::get('/Admin/getQueueTypes','AdminController@getQueueTypes');
 });

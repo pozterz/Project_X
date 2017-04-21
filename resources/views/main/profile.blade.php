@@ -30,6 +30,15 @@
 							<li class="collection-item blue-border">
 								Phone. : {{ Auth::user()->phone }}
 							</li>
+							@if(Auth::user()->isModerator(Auth::user()))
+							<li class="collection-item blue-border">
+								@if(Auth::user()->counter_id != 0)
+									Counter. : {{ Auth::user()->counter_id }}
+								@else 
+									Counter. : <span class="red-text">ยังไม่ได้ตั้งค่า</span>
+								@endif
+							</li>
+							@endif
 						</ul>
 						<div class="center">
 							<a href="{{ url('/index') }}" title="Back"><button type="button" class="btn waves-effect waves-light red"><i class="fa fa-arrow-left"></i>  Back</button></a>

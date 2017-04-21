@@ -9,4 +9,5 @@ class QueueType extends Model
 	 public function mainqueue(){
 	  return $this->hasMany(MainQueue::class);
 	 }
+
 }
