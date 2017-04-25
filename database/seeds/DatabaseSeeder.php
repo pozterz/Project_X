@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use File as File;
 use App\Role;
 use App\User;
 use App\MainQueue;
@@ -21,6 +22,12 @@ class DatabaseSeeder extends Seeder
         foreach ($m as $key => $ma) {
             $ma->userqueue()->detach();
         }
+        
+        $contents = \File::allFiles('public/files');
+        foreach ($contents as $key => $file) {
+           File::delete($file);
+        }
+
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         $this->call('RoleSeeder');
         $this->call('QueueTypeSeeder');
