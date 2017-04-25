@@ -276,8 +276,12 @@ class AdminController extends Controller
 								->get();
 						}
 						else{
-							$UserQueue = UserQueue::where('user_id',$id)->where('isAccept','no')
+							$UserQueue = UserQueue::where('user_id',$id)
+								->where('isAccept','no')
 								->where('time','>',Carbon::now()->toDateTimeString())
+								->whereHas('MainQueue',function($query){
+									$query->where('user_id',Auth::user()->id);
+								})
 								->get();
 						}
 						foreach ($UserQueue as $key => $Queue) {
@@ -304,8 +308,18 @@ class AdminController extends Controller
 				$result = 'Success';
 				try
 				{
+					if($this->isAdmin()){
 						$UserQueue = UserQueue::where('user_id',$id)
 							->where('time','<',Carbon::now()->toDateTimeString())->get();
+					}
+					else{
+						$UserQueue = UserQueue::where('user_id',$id)
+							->where('time','<',Carbon::now()->toDateTimeString())
+							->whereHas('MainQueue',function($query){
+									$query->where('user_id',Auth::user()->id);
+							})
+							->get();
+					}
 
 						foreach ($UserQueue as $key => $Queue) {
 								$Queue->mainqueue;

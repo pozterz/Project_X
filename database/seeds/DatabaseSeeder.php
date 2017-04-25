@@ -577,7 +577,7 @@ class UserQueueSeeder extends Seeder{
         ]);
 
          UserQueue::create([
-            'user_id' => 4,
+            'user_id' => 3,
             'captcha' => $faker->regexify('[A-Z0-9._%+-]+[A-Z0-9.-]+'),
             'time' => Carbon::now(),
             'reserved_min' => 20,
@@ -585,8 +585,18 @@ class UserQueueSeeder extends Seeder{
             'isAccept' => 'no'
         ]);
 
-         UserQueue::create([
+        UserQueue::create([
             'user_id' => 4,
+            'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
+            'time' => Carbon::now()->addMinutes(50),
+            'reserved_min' => 10,
+            'isnotify' => 0,
+            'isAccept' => 'no'
+        ]);
+
+
+        UserQueue::create([
+            'user_id' => 3,
             'captcha' => $faker->regexify('[A-Z0-9._%+-]+@[A-Z0-9.-]+'),
             'time' => Carbon::now()->addMinutes(50),
             'reserved_min' => 10,
@@ -686,7 +696,7 @@ class MainQueueSeeder extends Seeder{
 
         $opening->userqueue()->sync([2]);
 
-         $opening = MainQueue::create([
+        $opening = MainQueue::create([
             'name' => 'Test Queue 7[Op & St]',
             'queuetype_id' => 1,
             'counter' => $faker->numberBetween($min = 1, $max = 5),
@@ -698,6 +708,9 @@ class MainQueueSeeder extends Seeder{
             'max' => $faker->numberBetween($min = 10, $max = 13),
             'user_id' => 5
         ]);
+
+        $opening->userqueue()->sync([6]);
+
         $running = MainQueue::create([
             'name' => 'Test Queue 8[running]',
             'queuetype_id' => $faker->numberBetween($min = 1, $max = 14),

@@ -53,8 +53,8 @@ class emailUser extends Command
 
 		private function sendMail($data,$mainqueue){
 			Mail::queue('layouts.notify', ['data' => $data,'queue' => $mainqueue[0]], function ($m) use ($data)  {
-					$m->from('pozterz2@gmail.com', '[Notify]Queue System Notify');
-					$m->to($data->user->email);
+					$m->from('pozterz2@gmail.com', '[Notify]Queue System');
+					$m->to($data->user->email)->subject('Queue Notification');
 			});
 
 			return true;
