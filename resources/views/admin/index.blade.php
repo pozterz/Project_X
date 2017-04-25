@@ -2,7 +2,18 @@
 
 @section('content')
 <div class="content" ng-app="AdminApp" ng-controller="QueueAdminCtrl as QueueAdmin">
-	<div class="">
+	<div class="row">
+		<!-- Switch -->
+	  <div class="switch right">
+	    <label>
+	      Off
+	      <input type="checkbox" ng-init="menu = true" ng-click="menu=!menu" ng-checked="menu">
+	      <span class="lever"></span>
+	      On
+	    </label>
+	  </div>
+	</div>
+	<div ng-show="menu">
 		<div class="row card-panel">
 			<div class="col s12 m12 l12">
 				<div class="col s12 m4 l4" ng-click="QueueAdmin.selectedTab(1)">
