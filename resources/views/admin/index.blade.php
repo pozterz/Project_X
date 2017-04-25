@@ -515,7 +515,7 @@
 								<strong>Description</strong> : <% q.queue_type.description %>
 							</li>
 							<li class="collection-item blue-border">
-								<strong>Counter</strong> : <% q.counter %>
+								<strong>Counter</strong> : <% q.user.counter_id %> | <% q.user.name %>
 							</li>
 							<li class="collection-item blue-border">
 								<p class="flow-text">Service Time</p>
@@ -803,7 +803,6 @@
 						.then(function(data){
 							$scope.Queues = data.result;
 							$scope.loading = false;
-							console.log($scope.Queues);
 						})
 				}
 
@@ -850,7 +849,6 @@
 					$scope.innerloading = true;
 					userAdminService.getUserReserved(id)
 						.then(function(data){
-							console.log(data);
 							$scope.UserReserved = data.result;
 							$scope.innerloading = false;
 						})
@@ -1155,7 +1153,6 @@
 					$scope.loading = true;
 					QueueAdminService.getRunningQueues()
 						.then(function(data){
-							console.log(data.result);
 							$scope.RunningQueues = data.result;
 							$scope.loading = false;
 						})

@@ -1,8 +1,8 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="{{ url('js/jquery.min.js') }}"></script>
 <script src="{{ url('js/angular.min.js') }}"></script>
-<script src="https://code.angularjs.org/latest/angular-animate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-materialize/0.2.1/angular-materialize.min.js"></script>
+<script src="{{ url('js/angular-animate.min.js') }}"></script>
+<script src="{{ url('js/materialize.min.js') }}"></script>
+<script src="{{ url('js/angular-materialize.min.js') }}"></script>
 <script src="{{ url('js/HumanizeDuration.js') }}" ></script>
 <script src="{{ url('js/angular-timer.min.js') }}" ></script>
 <script src="{{ url('js/angular-locale-th-th.min.js') }}"></script>

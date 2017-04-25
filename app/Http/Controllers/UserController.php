@@ -64,7 +64,6 @@ class UserController extends Controller
 	public function Reserve(Request $request){
 		$result = 'Failed';
 		$id = $request->get('id');
-		$mainqueue = MainQueue::find($id);
 		$validator = Validator::make($request->all(), [
 			'id' => 'required',
 			'g-recaptcha-response'=>'required|captcha',
@@ -103,12 +102,16 @@ class UserController extends Controller
 											"reserved_min" => $reserved_min,
 											"ip" => $request->get('ip'),
 											]);
-										$mainqueue = MainQueue::find($id);
+										$reserve = MainQueue::find($id);
 										$mainqueue->userqueue()->attach($createduq->id);
-										$this->sendMail($createduq,$mainqueue);
-										$request->session()->flash('success','Reserved Success.');
-										return redirect('/index');
-									
+										if($this->sendMail($createduq,$mainqueue)){
+											$request->session()->flash('success','Reserved Success.');
+											return redirect('/index');
+										}
+										else{
+											$request->session()->flash('success','Something went wrong please try again.');
+											return redirect('/index');
+										}
 								}else{
 									// check other queue with the same type
 									if($this->reserveOtherQueue($mainqueue,$request)){
@@ -241,9 +244,16 @@ class UserController extends Controller
 									"ip" => $request->get('ip'),
 									]);
 								$reserve = MainQueue::find($other->id);
-								$reserve->userqueue()->attach($createduq->id);
-								$this->sendMail($createduq,$mainqueue);
-								return true;
+								$reserve->userqueue()->sync($createduq->id);
+								
+								if($this->sendMail($createduq,$mainqueue)){
+									$request->session()->flash('success','Reserved Success.');
+									return redirect('/index');
+								}
+								else{
+									$request->session()->flash('success','Something went wrong please try again.');
+									return redirect('/index');
+								}
 							}
 						}
 					}
@@ -292,7 +302,7 @@ class UserController extends Controller
 
     private function sendMail($data,$mainqueue){
 
-      Mail::send('layouts.mail', ['data' => $data,'queue' => $mainqueue], function ($m)  {
+      Mail::queue('layouts.mail', ['data' => $data,'queue' => $mainqueue], function ($m)  {
           $m->from('pozterz2@gmail.com', 'Queue System Auto Mail');
 
           $user  = User::find(Auth::user()->id);
@@ -300,7 +310,7 @@ class UserController extends Controller
           $m->to($user->email)->subject('Reserved complete.');
       });
 
-      return true;
+			return true;
     }
 
 }

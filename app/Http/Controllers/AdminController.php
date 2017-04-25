@@ -585,6 +585,7 @@ class AdminController extends Controller
 				}
 
 				foreach ($Queues as $key => $Queue) {
+						$Queue->user;
 						$Queue->QueueType;
 						$Queue['current'] = $Queue->userqueue()->count();
 						foreach ($Queue->userqueue as $key => $user) {
@@ -633,6 +634,7 @@ class AdminController extends Controller
 				$result = 'Failed';
 				try {
 						$queue = MainQueue::find($queue_id);
+						$queue->user;
 						$queue->QueueType;
 						$userqueue = UserQueue::find($userqueue_id);
 						if($userqueue){

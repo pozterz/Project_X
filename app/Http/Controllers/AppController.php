@@ -50,8 +50,8 @@ class AppController extends Controller
 		{
 			$Queue = MainQueue::findOrfail($id);
 			$Queue['current'] = $Queue->userqueue()->count();
-			$Queue->QueueType;
 			$Queue->user;
+			$Queue->QueueType;
 			foreach ($Queue->userqueue as $key => $user) {
 				$user->user;
 			}

@@ -17,6 +17,7 @@ elixir(function (mix) {
     ]);
 
     mix.styles([
+        'materialize.min.css',
         'style.css',
     ]);
 

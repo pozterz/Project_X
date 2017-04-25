@@ -52,6 +52,26 @@
 								</div>
 							</div>
 							@endif
+							<div class="row">
+								<div class="input-field col s12">
+									<input id="password" type="password" name="password" class="validate{{ $errors->has('password') ? ' invalid' : '' }}" value="{{ $user->phone }}" pattern="[0-9].{9}" length="10">
+									@if ($errors->has('password'))
+										<label for="password" data-error="{{ $errors->first('password') }}">Password</label>
+									@else
+										<label for="password" data-error="Phone number had 10 digits and number only" data-success="Validated">Password</label>
+									@endif
+								</div>
+							</div>
+							<div class="row">
+								<div class="input-field col s12">
+									<input id="password_confirmation" type="password" name="password_confirmation" class="validate{{ $errors->has('password_confirmation') ? ' invalid' : '' }}" pattern=".{6,}">
+									@if ($errors->has('password_confirmation'))
+										<label for="password_confirmation" data-error="{{ $errors->first('password_confirmation') }}">Confirm Password</label>
+									@else
+										<label for="password_confirmation" data-error="Please input 6 charactor or more" data-success="Validated">Confirm Password</label>
+									@endif
+								</div>
+							</div>
 							<input type="hidden" name="ip" value="{{Request::getClientIp()}}">
 							<div class="row">
 						  	<div class="center">

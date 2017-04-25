@@ -43,11 +43,20 @@ class MainController extends Controller
 		return view('main.edit',compact('user'));
 	}
 	public function UpdateProfile(Request $req){
+		$this->validate($request, [
+			'username' => 'required|max:255|min:6|unique:users',
+      'password' => 'required|confirmed|min:6',
+      'name' => 'required|max:255',
+      'email' => 'required|email|max:255|unique:users',
+      'phone' => 'required|min:10|max:10',
+		]);
+
 		$id = Auth::user()->id;
 		$user = User::find($id);
     $user->name = $req->get('name');
+    $user->email = $req->get('email');
     $user->phone = $req->get('tel');
-    $user->counter_id = $req->get('counter_id');
+    $user->counter_id = isset($req->get('counter_id'))?$req->get('counter_id'):0;
     $user->save();
 
     $req->session()->flash('success', 'Update Complete.');

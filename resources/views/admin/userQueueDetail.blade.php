@@ -37,7 +37,7 @@
 								<strong>Description</strong> : <% QueueData.queue.queue_type.description %>
 							</li>
 							<li class="collection-item blue-border">
-								<strong>Counter</strong> : <% QueueData.queue.counter %>
+								<strong>Counter</strong> : <% QueueData.queue.user.counter_id %> | <% QueueData.queue.user.name %> 
 							</li>
 					  </ul>  		
 				</div>

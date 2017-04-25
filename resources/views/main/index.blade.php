@@ -100,7 +100,7 @@ height: 100%;
 											        </div>
 											        <div class="card-action center">
 											        	<button type="button" class="btn green lighten-1 wave-effect" ng-click="collapsed=!collapsed">
-											        		More <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
+											        		<% collapsed?'Less':'More' %> <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
 											        	</button>
 											        	@if(!Auth::guest())
 																	<a type="button" class="btn blue wave-effect" href="{{ url('User/Reserve') }}/<% Active.id %>" ng-show="Active.current < Active.max">Reserve <i class="fa fa-calendar-check-o"></i></a>
@@ -230,7 +230,7 @@ height: 100%;
 												      </div>
 												      <div class="card-action">
 											        	<button type="button" class="btn green lighten-1 wave-effect" ng-click="collapsed=!collapsed">
-											        		More <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
+											        		<% collapsed?'Less':'More' %> <i class="fa " ng-class="collapsed?'fa-caret-up':'fa-caret-down'"></i> 
 											        	</button>
 												      </div>
 													  </div>
