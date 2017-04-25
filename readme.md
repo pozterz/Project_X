@@ -38,8 +38,9 @@ Queue Management is a online reserve queue for any activity at the bank.
 - name string (150)
 - description string (500)
 - counter string (100)
-- workingtime dateTime
-- workmin integer unsigned
+- service_start dateTime
+- service_end dateTime
+- max_minutes integer unsigned
 - open dateTime
 - close dateTime
 - max integer
@@ -54,6 +55,7 @@ Queue Management is a online reserve queue for any activity at the bank.
 - user_id integer unsigned FK ref:id [users]
 - captcha string (40)
 - time dateTime
+- reserved_min integer unsigned
 - isAccepted enum['yes','no'] default ['no']
 - ip string (20)
 - timestamp
@@ -68,7 +70,7 @@ Queue Management is a online reserve queue for any activity at the bank.
 
 #### View ####
 
-- [ ] **index**
+- [x] **index**
 
 ```
 - 3 Tabs
@@ -86,14 +88,14 @@ Queue Management is a online reserve queue for any activity at the bank.
   - captcha code
   - <button> show info
 
- - 3 future queues
+ - 3 running queues
   - queue name
   - opentime
   - remaining time
   - <button> show info
 ```
 
-- [ ] **Login & Register**
+- [x] **Login & Register**
 
 ```
 - Register requirement
@@ -104,7 +106,7 @@ Queue Management is a online reserve queue for any activity at the bank.
   - phone
 ```
 
-- [ ] **Reserve**
+- [x] **Reserve**
 
 ```
 - name
@@ -133,9 +135,9 @@ Queue Management is a online reserve queue for any activity at the bank.
 Queue Management uses a number of open source projects to work properly.
 
 * [Laravel] - The PHP Framework For Web Artisans
+* [AngularJS] - The JavaScript Framework to manage DOM.
 * [Materialize CSS] - a modern CSS framework based on Flexbox.
-* [Gulp] - the streaming build system
-* [jQuery]
+
 
 And of course Queue Managerment itself is open source with a [public repository][projectx]
  on GitHub.
@@ -144,7 +146,7 @@ And of course Queue Managerment itself is open source with a [public repository]
 
 ### Installation
 
-Ez-Quiz requires [Laravel](https://laravel.com/docs/5.2/) v5.2 to run.
+This project requires [Laravel](https://laravel.com/docs/5.2/) v5.2 to run.
 
 Install with composer.
 
@@ -176,7 +178,7 @@ php artisan migrate
 
 ### License
 
-The Ez-Quiz is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+My Project is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
 
    [projectx]: <https://github.com/pozterz/Project_X>
    [git-repo-url]: <https://github.com/pozterz/Project_X.git>
