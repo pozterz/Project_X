@@ -105,40 +105,40 @@ class UserController extends Controller
 										$reserve = MainQueue::find($id);
 										$mainqueue->userqueue()->attach($createduq->id);
 										if($this->sendMail($createduq,$mainqueue)){
-											$request->session()->flash('success','Reserved Success.');
+											$request->session()->flash('success','การจองสำเร็จ.');
 											return redirect('/index');
 										}
 										else{
-											$request->session()->flash('success','Something went wrong please try again.');
+											$request->session()->flash('success','มรบางอย่างผิดพลาด กรุณาลองใหม่อีกครั้ง.');
 											return redirect('/index');
 										}
 								}else{
 									// check other queue with the same type
 									if($this->reserveOtherQueue($mainqueue,$request)){
-										$request->session()->flash('success','Reserved Success (With auto assigned).');
+										$request->session()->flash('success','การจองสำเร็จ (จัดอัตโนมัติ).');
 										return redirect('/index');
 									}
-									$request->session()->flash('success','overlap.');
+									$request->session()->flash('success','ทับซ้อนกับคิวอื่น กรุณาลองใหม่อีกครั้ง.');
 									return back();
 								}
 							}else{
-								$request->session()->flash('success','Minutes value must less than Service time/queue');
+								$request->session()->flash('success','เวลาที่จองต้องน้อยกว่าเวลาที่กำหนดสูงสุด กรุณาลองใหม่อีกครั้ง');
 								return back();
 							}
 						}else{
-							$request->session()->flash('success','Out of service time range');
+							$request->session()->flash('success','เวลาที่เลือกเกินไปจากเวล่ที่เปิดให้จอง กรุณาลองใหม่อีกครั้ง');
 							return back();
 						}
 					}else{
-						$request->session()->flash('success','This service is full.');
+						$request->session()->flash('success','คิวนี้เต็มแล้ว กรุณาลองใหม่อีกครั้ง.');
 						return back();
 					}
 				}else{
-					$request->session()->flash('success','Already reserved this queue.');
+					$request->session()->flash('success','คุณได้จองคิวนี้ไว้แล้ว.');
 					return back();
 				}
 			}else{
-				$request->session()->flash('success','This activity isn\'t begin.');
+				$request->session()->flash('success','คิวนี้ยังไม่เปิดให้จอง.');
 				return back();
 			}
 		}catch(ModelNotFoundException $ex) {
@@ -247,11 +247,11 @@ class UserController extends Controller
 								$reserve->userqueue()->sync($createduq->id);
 								
 								if($this->sendMail($createduq,$mainqueue)){
-									$request->session()->flash('success','Reserved Success.');
+									$request->session()->flash('success','การจองสำเร็จ.');
 									return redirect('/index');
 								}
 								else{
-									$request->session()->flash('success','Something went wrong please try again.');
+									$request->session()->flash('success','มรบางอย่างผิดพลาด กรุณาลองใหม่อีกครั้ง.');
 									return redirect('/index');
 								}
 							}

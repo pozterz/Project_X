@@ -56,7 +56,7 @@ class MainController extends Controller
     $user->name = $req->get('name');
     $user->email = $req->get('email');
     $user->phone = $req->get('tel');
-    $user->counter_id = isset($req->get('counter_id'))?$req->get('counter_id'):0;
+    $user->counter_id = ($req->get('counter_id') !== null)?$req->get('counter_id'):0;
     $user->save();
 
     $req->session()->flash('success', 'Update Complete.');

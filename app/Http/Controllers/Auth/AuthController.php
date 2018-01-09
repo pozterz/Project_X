@@ -110,7 +110,7 @@ class AuthController extends Controller
 
     public function authenticated($request, $user)
     {
-        $request->session()->flash('success', 'Logged in as ' . $user->name);
+        $request->session()->flash('success', 'ยินดีต้องรับเข้าสู่ระบบ คุณ ' . $user->name);
         $request->session()->reflash();
         return redirect($this->redirectPath());
     }
@@ -118,7 +118,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::guard($this->getGuard())->logout();
-        Session::flash('success', 'You have been successfully logged out!');
+        Session::flash('success', 'ออกจากระบบเรียบร้อย!');
         return redirect($this->redirectAfterLogout);
     }
     public function ConvertDate($date,$time){

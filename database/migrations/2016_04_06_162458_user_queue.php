@@ -18,6 +18,7 @@ class UserQueue extends Migration
             $table->string('captcha',40);
             $table->dateTime('time');
             $table->integer('reserved_min')->unsigned();
+            $table->integer('isnotify')->unsigned();
             $table->enum('isAccept',['yes','no'])->default('no');
             $table->string('ip',20);
             $table->timestamps();
